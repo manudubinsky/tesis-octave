@@ -10,7 +10,7 @@
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage {tikz}
-\usetikzlibrary{arrows,matrix,positioning}
+\usetikzlibrary{arrows,matrix,positioning,fit}
 %\usepackage{bera}
 \usepackage{listings}
 \usepackage{xcolor}
@@ -42,7 +42,7 @@
 \bigskip
 
 Given a connected graph $G=(V,E)$ with $V$ vertices, and $E$ edges and a 
-1-form $v: E \rightarrow \mathbb{R}^D$. We 're looking for the 0-form 
+1-form $v: E \rightarrow \mathbb{R}^D$. We're looking for the 0-form 
 $x: V \rightarrow \mathbb{R}^D$ minimizing the error:
 
 $$E(x) = \sum_{(i,j) \in E} ||dx_{ij} - v_{ij}||^2$$
@@ -88,10 +88,12 @@ The proposed process for integrating $v$ is as follows:
 	\item We will refer to the remaining graph edges (those which do not 
 	belong to the tree) as ``loop-edges". Orient the loop-edges from 
 	parent to child.
-	\item Construct the incidence matrix $D$: this is an $E \times V$ 
-	sparse matrix with one row per graph edge and one column per vertex. For 
-	each edge $e_{ij} \ (i < j)$ we set the $i-th$ column entry to $-1$ 
-	and the $j-th$ column to $1$ (See figure~\ref{fig:M2}).
+	\item Construct the oriented incidence matrix $D$: this is an $E \times V$ 
+	sparse matrix with one row per graph edge and one column per vertex. 
+	For each edge $e_{ij} \ (i < j)$ we set the $i-th$ column entry to $-1$ 
+	and the $j-th$ column to $1$ (See figure~\ref{fig:M2}). Rows 
+	representing tree-edges are ordered such that the $N-1 \times 
+	N-1$ upper-right submatrix is lower triangular.
 \end{enumerate}
 
 
@@ -99,7 +101,7 @@ The proposed process for integrating $v$ is as follows:
 \centering
 \input{ejemplo1.tex}
 \caption{BFS traversal of a spanning tree. Nodes and edges are 
-enumerated according tree traversal. Edges are oriented from 
+enumerated according to tree traversal. Edges are oriented from 
 parent to child. Red edges correspond to 
 $loop-edges$.}
 \label{fig:M1}
@@ -108,10 +110,127 @@ $loop-edges$.}
 \begin{figure}
 \centering
 \input{matriz_ejemplo1.tex}
-\caption{Incidence matrix correspondig to graph in figure~\ref{fig:M1}}
+\caption{Incidence matrix correspondig to graph in figure~\ref{fig:M1}. 
+The first column corresponds to the tree root, it can be dropped. 
+Green and blue submatrixes correspond to tree-edges and loop-edges, 
+respectively. The tree-edge submatrix is lower triangular.}
 \label{fig:M2}
 \end{figure}
 
+\newpage
 
+\textbf{Properties of the oriented incidence matrix $D$ and other facts}
+
+\bigskip
+
+\underline{Dropping the root column of $D$}
+
+\bigskip
+
+We can rewrite the minimization problem in matrix form as follows:
+
+$$E(x) = \sum_{(i,j) \in E} ||dx_{ij} - v_{ij}||^2 = || D x - v||^2$$
+
+Note that as we are dealing with an integration problem, the solutions 
+are equivalent \textit{modulo a translation}. The consequence of this 
+fact is that we can fix the value of the tree root (ie. $x_1 = 0$). 
+Thus we can drop the first column of $D$. (See 
+figure~\ref{fig:M2})
+
+\bigskip
+
+\underline{Relation to the \textit{Laplacian} matrix and rank of $D$}
+
+\bigskip
+
+The directed incidence matrix has the following property:
+
+$$L = D^t D$$
+
+where $L$ is the \textit{Laplacian} matrix of $G$. The rank of 
+$L$ is: $n-c$ (where $c$ is the number of connected components of $G$). 
+In our case, as $G$ is connected, the rank of $L$ (and consequently the 
+rank of $D$) is $n-1$.
+
+\bigskip
+
+\underline{The problem is equivalent to solve a linear system}
+
+\bigskip
+
+To solve the minimizatiom problem is equivalent to find where the 
+gradient of $E(x)$ vanishes:
+ 
+$$\nabla E = [\frac{\partial E}{\partial x_1}, \dots, \frac{\partial 
+E}{\partial x_n}] = D^tDx-D^tv=0$$
+
+It is equivalent to solve the linear system:
+
+$$D^tDx = D^tv$$
+
+As the rank of $D$ is $n-1$, the linear system may not have a solution. 
+But solving the problem by iterative methods will converge to the 
+closest ``possible" guess.
+
+\bigskip
+
+\underline{The full rank matrix $M$ based on $D$}
+
+\bigskip
+
+A full rank $E \times E$ matrix can be constructed based on $D$. We 
+drop the first column of $D$ (as pointed before) to obtain $D'$ (a $E 
+\times (V-1)$ matrix). Suppose that we rewrite $D'$ as follows:
+
+\begin{equation}
+     D'=\begin{bmatrix}
+         T \\
+         L
+	\end{bmatrix}
+ \end{equation}
+
+Where the rows of $T$ correspond to tree edges and the rows of $L$ to 
+loop-edges. We can append $E-V+1$ linearly independent columns 
+spannning the orthogonal complement of $D'$:
+
+\begin{equation}
+     D'=\begin{bmatrix}
+         T B\\
+         L I
+	\end{bmatrix}
+\end{equation}
+
+Where $I$ is the indentity matrix and the following orthogonality 
+condition is satisfied: 
+
+\begin{equation}
+     0=\begin{bmatrix}
+         T \\
+         L
+	\end{bmatrix}^t
+	\begin{bmatrix}
+         B\\
+         I
+	\end{bmatrix}
+\end{equation}
+
+This implies that
+
+$$B = -(L)^{-t}A^t$$
+
+The minimization we are intended to solve is equivalent to solve this 
+linear system:
+
+\newpage
+
+TODO: Tengo que entender la matriz B del apunte de Gabriel.
+
+
+Otras partes:
+
+- Descripción del problema de Poisson y Laplace
+- Mostrar ejemplo simple de que la elección del árbol generador es 
+fundamental
+- Problema combinatorio de elegir mejor árbol generador. Es NP? Se puede 
+atacar con métodos exctos y heurísticos?
 \end{document}
-

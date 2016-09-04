@@ -5,16 +5,7 @@
 % OUTPUT: x (vector columna de dim n)
 %
 
-function x=gradientDescent(A,b,xInitial = zeros(size(A,2),1),maxIter = 10000)
+function x=gradientDescent2(A,b,xInitial = zeros(size(A,2),1),maxIter = 1000)
 x = xInitial;
-xOld = x + 1;
-AtA = A' * A;
-Atb = A' * b;
-i = 0;
-while (norm(xOld - x) > 0.00001 && i < maxIter)
-  xOld = x;
-  grad = 2 * (AtA * x - Atb);
-  x = x - 0.01 * grad;
-  i++;
-end
-i
+Ainvb = inverse(A) * b;
+x = x + (Ainvb - x);

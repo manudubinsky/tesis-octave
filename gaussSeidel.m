@@ -19,4 +19,4 @@ while (error > delta)
   end
   error = norm(b - A * x);
 end
-plot(errors)
+plot(errors, 'linewidth'   ,1)

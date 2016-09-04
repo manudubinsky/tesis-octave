@@ -16,4 +16,4 @@ while (error > delta)
   x =  Dinv_b - Dinv_R * x;
   error = norm(b - A * x);
 end
-plot(errors);
+plot(errors, 'linewidth',1);
