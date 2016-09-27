@@ -1,0 +1,24 @@
+\begin {tikzpicture}[-latex ,auto ,node distance =3cm ,on grid ,
+semithick ,state/.style ={ circle ,top color =white , bottom color = processblue!20 ,
+draw,processblue , text=blue , minimum width =1 cm}]
+\node[state] (1) {$root$};
+\node[state] (2) [below =of 1] {$k$};
+\node[state] (3) [below  left =of 2] {$i$};
+\node[state] (4) [below  right =of 2] {$j$};
+\draw[dashed] (1) .. controls (1,-1) and (-1,-2) .. (2);
+\draw[dashed] (2) .. controls (-2,-3) and (0,-4) .. (3);
+\draw[dashed] (2) .. controls (2,-3) and (0,-4) .. (4);
+\draw[red] (3) -- (4);
+\end{tikzpicture}
+
+%\begin{tikzpicture}[-latex ,auto ,node distance =3cm ,on grid ,
+%semithick ,state/.style ={ circle ,top color =white , bottom color = processblue!20 ,
+%draw,processblue , text=blue , minimum width =1 cm},edge from parent path=
+%{(\tikzparentnode.south) .. controls +(0,-2) and +(0,2) .. (\tikzchildnode.north)}]
+%\node[state] {root}
+	%child[state] {node {left}}	
+	%child[state] {node {right}
+		%child[state] {node {child}}
+		%child[state] {node {child}}
+	%};
+%\end{tikzpicture}
