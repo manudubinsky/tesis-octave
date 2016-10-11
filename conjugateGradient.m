@@ -5,7 +5,7 @@
 %
 % Nota: A = D + R
 
-function x=conjugateGradient(A,b,delta = 0.00001,xInitial = zeros(size(A,2),1), maxIter = 1000)
+function x=conjugateGradient(A,b,delta = 0.00001,xInitial = zeros(size(A,2),1), maxIter = 10000)
 x = xInitial;
 r = b - A * x;
 p = r;

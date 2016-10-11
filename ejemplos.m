@@ -6,7 +6,7 @@ A1 = full(sparse(
 [2,3,1,4,1,5,6,2,5,7,8,3,4,9,3,4,4,9,5,8],
 [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],9,9));
 
-B1 = oneFormMatrix(A1);
+B1 = oneFormMatrix(A1, W);
 
 % la matriz trasladando al origen a la raiz del arbol (nodo 1)
 C1 = B1(:,2:11);
@@ -29,7 +29,7 @@ oneFormSolve(A1,W,p);
 
 p = [2,1,3,4,5,6,7,8,9];
 
-oneFormSolve(A1,W,p);
+[x,oneForm,v,Adj,W]=oneFormSolve(A1,W,p);
 
 %ejemplo 2 (matriz de adyacencia)%%%%%%%%%%%%%%%%
 A2 = full(sparse(
@@ -69,21 +69,36 @@ W = sparse(
 [2,3,3],
 [1000,30,5],3,3);
 
-p1 = [1,2,3];
+%W2 = sparse(
+%[1,1,2],
+%[2,3,3],
+%[1000,1500,500],3,3);
 
-%[x1,oneForm1,v1,Adj1,W1]=oneFormSolve(Adj,W,p)
+p123 = [1,2,3];
 
-p2 = [2,1,3];
+%[x123,oneForm123,v,Adj,W]=oneFormSolve(Adj,W,p123);
 
-%[x2,oneForm2,v2,Adj2,W2]=oneFormSolve(Adj,W,p2)
+%norm(v - oneForm123(:,2:3) * x123)
 
-p3 = [3,2,1];
+p132 = [1,3,2];
 
-%[x3,oneForm3,v3,Adj3,W3]=oneFormSolve(Adj,W,p3)
+%[x132,oneForm132,v,Adj,W]=oneFormSolve(Adj,W,p132);
 
-p4 = [1,3,2];
+p213 = [2,1,3];
 
-%[x4,oneForm4,v4,Adj4,W4]=oneFormSolve(Adj,W,p4)
+%[x213,oneForm213,v,Adj,W]=oneFormSolve(Adj,W,p213);
+
+p231 = [2,3,1];
+
+%[x231,oneForm231,v,Adj2,W2]=oneFormSolve(Adj,W,p231);
+
+p312 = [3,1,2];
+
+%[x312,oneForm312,v,Adj2,W2]=oneFormSolve(Adj,W,p312);
+
+p321 = [3,2,1];
+
+%[x321,oneForm321,v,Adj2,W2]=oneFormSolve(Adj,W,p321);
 
 %%% Varios
 A = sparse(
