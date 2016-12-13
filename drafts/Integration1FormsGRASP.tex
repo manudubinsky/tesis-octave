@@ -1,0 +1,204 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+
+\usepackage[table,xcdraw]{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage{ulem}
+\usepackage{color}
+\usepackage{enumerate}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage {tikz}
+\usetikzlibrary{arrows,matrix,positioning,fit}
+%\usepackage{bera}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+%\setenumerate[2]{label=\roman*.}
+\usepackage{blindtext}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{hhline}
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+
+\definecolor {processblue}{cmyk}{0.96,0,0,0}
+
+%\setenumerate[1]{label=\textbf{\thesection.\arabic*.}}
+
+
+\begin{document}
+\textbf{Integration of 1-forms on Graphs}
+
+\bigskip
+
+\textbf{Introduction}
+
+\bigskip
+
+Given a connected graph $G=(V,E)$ with $V$ vertices, and $E$ edges and a 
+1-form $v: E \rightarrow \mathbb{R}^D$. We're looking for the 0-form 
+$x: V \rightarrow \mathbb{R}^D$ minimizing the error:
+
+$$E(x) = \sum_{(i,j) \in E} ||dx_{ij} - v_{ij}||^2$$
+
+where $dx: E \rightarrow \mathbb{R}^D$ is the differential of $x$.
+
+\bigskip
+
+\textbf{Obs. 1}: It is sufficient to consider the case $D=1$, because 
+the problem can be reduced to solving $D$ independent 1-D problems on 
+the same graph for each coordinate.
+
+\bigskip
+
+\textbf{Obs. 2} (Abuses of notation): We use $V$ to denote both the set 
+of vertices and the total number of vertices of the graph. And we denote 
+$v$ to the 1-form and $v_i$ is the $i-th$ vertex.
+
+\bigskip
+
+\textbf{Obs. 3}: Vertices and edges can be enumerated in many different 
+ways. We will enumerate vertices and edges according to a traversal 
+order of a spanning tree. This process determines a consistent 
+orientation of the edges: an edge will be oriented from a lower vertex 
+to a greater vertex:
+
+$$e_{ij}: v_i \rightarrow v_j \ (for \ i < j)$$
+
+\bigskip
+
+
+\textbf{Properties of the oriented incidence matrix $D$ and other facts}
+
+\bigskip
+
+\underline{Oriented incidence matrix $D$}
+
+\bigskip
+
+We can rewrite the minimization problem in matrix form as follows:
+
+$$E(x) = \sum_{(i,j) \in E} ||dx_{ij} - v_{ij}||^2 = || D x - v||^2$$
+
+Where $D$ is the \emph{oriented incidence matrix}. 
+
+\bigskip
+
+\underline{The problem is equivalent to solve a linear system}
+
+\bigskip
+
+To solve the minimizatiom problem is equivalent to find where the 
+gradient of $E(x)$ vanishes:
+ 
+$$\nabla E = [\frac{\partial E}{\partial x_1}, \dots, \frac{\partial 
+E}{\partial x_n}] = D^tDx-D^tv=0$$
+
+It is equivalent to solve the linear system:
+
+$$D^tDx = D^tv$$
+
+As the rank of $D$ is $n-1$, the linear system may not have a solution. 
+But solving the problem by iterative methods will converge to the 
+closest ``possible" guess.
+
+\bigskip
+
+\underline{Relation to the \textit{Laplacian} matrix and rank of $D$}
+
+\bigskip
+
+The directed incidence matrix has the following property:
+
+$$L = D^t D$$
+
+where $L$ is the \textit{Laplacian} matrix of $G$. The rank of 
+$L$ is: $n-c$ (where $c$ is the number of connected components of $G$). 
+In our case, as $G$ is connected, the rank of $L$ (and consequently the 
+rank of $D$) is $n-1$.
+
+\bigskip
+
+\underline{The orthogonal complement of the \textit{Laplacian} matrix}
+
+\bigskip
+
+The \textit{Laplacian} matrix is simmetric. In our case its rank is $n-1$ 
+because $G$ is connected. So its orthogonal complement is the same 
+subspace as its kernel. More precisely:
+
+$$ker(L) = arg_{<x>} (L x = 0) = <(1,\dots,1)^t>$$
+
+And the 1-dimensional subspace $L^{\bot}$:
+
+$$L^{\bot} = arg_{<x>} (L^t x = 0) = arg_{<x>} (L x = 0) = <(1,\dots,1)^t>$$
+
+So the equation $L x = D^t D x = D^t v = w$ will have a solution if $w 
+\in <L>$. In other words if $w$ is as "orthogonal as possible" to 
+$L^{\bot}$. This fact can be expressed as follows:
+
+$$(1,\dots,1) w = cos(\alpha) ||(1,\dots,1)^t||^2 ||w||^2 = n \ cos(\alpha) 
+||w||^2$$
+
+It follows that:
+
+$$|\frac{\sum w_i}{||w||^2}| = n |cos(\alpha)|$$
+
+So the original minimization problem can be expressed as:
+
+$$argmin_w(|\frac{\sum w_i}{||w||^2}|)$$
+
+Where $w = D^t v$, which means that we must find the "best" $D$: the 
+"best" directions for the edges of $G$.
+
+\bigskip
+
+
+\textbf{Exact and metaheuristic approaches}
+
+\bigskip
+
+The exact approach finds the best solution. The algorithms are not 
+suitable for big datasets. But they may be the best choice for small 
+ones.
+
+\bigskip
+
+The metaheuristic approach tries to find good solutions (not 
+necessarilly the best) in polynomial time. Some metaheuristics are:
+
+\begin{itemize}
+	\item Simulated-annealing
+	\item Tabu-search
+	\item GRASP
+	\item Genetic algorithms
+	\item Ant-colony
+\end{itemize}
+
+Finding the best metaheuristic depends on the problem and must be 
+demonstrated empirically.
+
+\bigskip
+
+\underline{A GRASP metaheuristic for our problem}
+
+\bigskip
+
+Recall from the last section that the problem that we want to solve is 
+the following:
+
+$$argmin_w(|\frac{\sum w_i}{||w||^2}|)$$
+
+where $w = D^t v$. Trying to solve it by exact methods is impossible 
+because there are $2^m$ choices for $D$ (i.e. there are $2^m$ directed 
+graphs). This is an extremely large space even for small graphs. So a 
+metaheuristic approach is the alternative to find a best-effort solution.
+
+
+\end{document}
