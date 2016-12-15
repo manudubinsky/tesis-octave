@@ -42,37 +42,21 @@
 \bigskip
 
 Given a connected graph $G=(V,E)$ with $V$ vertices, and $E$ edges and a 
-1-form $v: E \rightarrow \mathbb{R}^D$. We're looking for the 0-form 
-$x: V \rightarrow \mathbb{R}^D$ minimizing the error:
+1-form $v: E \rightarrow \mathbb{R}$. We're looking for the 0-form 
+$x: V \rightarrow \mathbb{R}$ minimizing the error:
 
 $$E(x) = \sum_{(i,j) \in E} ||dx_{ij} - v_{ij}||^2$$
 
-where $dx: E \rightarrow \mathbb{R}^D$ is the differential of $x$.
+where $dx: E \rightarrow \mathbb{R}$ is the differential of $x$.
 
 \bigskip
 
-\textbf{Obs. 1}: It is sufficient to consider the case $D=1$, because 
-the problem can be reduced to solving $D$ independent 1-D problems on 
-the same graph for each coordinate.
 
-\bigskip
-
-\textbf{Obs. 2} (Abuses of notation): We use $V$ to denote both the set 
+\textbf{Obs.} (Abuses of notation): We use $V$ to denote both the set 
 of vertices and the total number of vertices of the graph. And we denote 
 $v$ to the 1-form and $v_i$ is the $i-th$ vertex.
 
 \bigskip
-
-\textbf{Obs. 3}: Vertices and edges can be enumerated in many different 
-ways. We will enumerate vertices and edges according to a traversal 
-order of a spanning tree. This process determines a consistent 
-orientation of the edges: an edge will be oriented from a lower vertex 
-to a greater vertex:
-
-$$e_{ij}: v_i \rightarrow v_j \ (for \ i < j)$$
-
-\bigskip
-
 
 \textbf{Properties of the oriented incidence matrix $D$ and other facts}
 
@@ -86,7 +70,7 @@ We can rewrite the minimization problem in matrix form as follows:
 
 $$E(x) = \sum_{(i,j) \in E} ||dx_{ij} - v_{ij}||^2 = || D x - v||^2$$
 
-Where $D$ is the \emph{oriented incidence matrix}. 
+Where $D$ is the "best" \emph{oriented incidence matrix}. 
 
 \bigskip
 
@@ -148,11 +132,11 @@ $$(1,\dots,1) w = cos(\alpha) ||(1,\dots,1)^t||^2 ||w||^2 = n \ cos(\alpha)
 
 It follows that:
 
-$$|\frac{\sum w_i}{||w||^2}| = n |cos(\alpha)|$$
+$$\frac{|\sum w_i|}{||w||^2} = n |cos(\alpha)|$$
 
 So the original minimization problem can be expressed as:
 
-$$argmin_w(|\frac{\sum w_i}{||w||^2}|)$$
+$$argmin_w(\frac{|\sum w_i|}{||w||^2})$$
 
 Where $w = D^t v$, which means that we must find the "best" $D$: the 
 "best" directions for the edges of $G$.
@@ -193,12 +177,71 @@ demonstrated empirically.
 Recall from the last section that the problem that we want to solve is 
 the following:
 
-$$argmin_w(|\frac{\sum w_i}{||w||^2}|)$$
+$$argmin_w(\frac{|\sum w_i|}{||w||^2})$$
 
 where $w = D^t v$. Trying to solve it by exact methods is impossible 
 because there are $2^m$ choices for $D$ (i.e. there are $2^m$ directed 
 graphs). This is an extremely large space even for small graphs. So a 
 metaheuristic approach is the alternative to find a best-effort solution.
 
+\bigskip
+
+A \textit{GRASP} metaheuristic combines some local search 
+with randomness. Local search refers to exploring some neighborhood of 
+the of the current "point". In our case a "point" is some choice of 
+directions for the edges of G, or in more practical terms: is a 
+concrete matrix $D$ with 1's and -1's fixed. The neighborhood of a 
+point can be defined in different ways, an obvious defintion is to 
+change the direction of one edge (switching the corresponding pair of 
+(1,-1) in $D$). The random part refers to choosing as the "new" point to 
+explore a random neighbor among the "best" ones. Every time a global 
+minimum is found, it replaces the previous one. The simplicity of 
+\textit{GRASP} and the fact that it can be parallelized in a natural 
+way makes it an interesting choice.
+
+\bigskip
+
+Our strategy is a variant of \textit{GRASP} that inverts the local and 
+random parts: we choose random neighbors and set the best of them as 
+our new point. It will be as follows:
+
+\begin{enumerate}
+	\item Initialization: an arbitrary directed incidence matrix $D$ 
+	will be generated based on the labels of the nodes of $G$. Each edge 
+	will be oriented from the lower label node to the higher one. 
+	\item Iterate for a while. In each iteration.
+	\begin{enumerate}
+		\item Choose a random number ($\alpha$) of edges to modify (a 
+		number in some parametrized range, i.e. an integer in [1,5])
+		\item Choose a random number ($\beta$) of $\alpha$-tuples 
+		(another number in some parametrized range)
+		\item Choose $\beta$ $\alpha$-tuples as the neighbors of the
+		current point
+		\item Set as the new point the "best" neighbor, the one that 
+		minimizes:
+		$$argmin_w(\frac{|\sum w_i|}{||w||^2})$$
+ 	\end{enumerate}
+	\item After some predefined number of iterations (or time lapse) a  
+	global candidate $w = D^t v$ is obtained. To calculate the 
+	integration problem associated to $w$, we solve by 
+	\textit{conjugate gradient} the linear system:
+	$$L x = w$$
+\end{enumerate}
+
+\bigskip
+
+\emph{Some calculation remarks}
+
+\bigskip
+
+As pointed above, we choose the "best" neighbor: the one that minimizes:
+
+$$argmin_w(\frac{|\sum w_i|}{||w||^2})$$
+
+Note that changing the direction of an edge (switching the corresponding 
+pair of (1,-1) in the current $D$ matrix), does not alter the 
+numerator. And the new denominator can be calculated based on the value 
+of the current point by simply subtracting and adding the appropriate 
+compenents. So finding the best neighbor is a fast operation.
 
 \end{document}
