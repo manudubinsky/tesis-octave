@@ -41,56 +41,51 @@
 
 \bigskip
 
-Given a connected graph $G=(V,E)$ with $V$ vertices, and $E$ edges and a 
-1-form $v: E \rightarrow \mathbb{R}$. We're looking for the 0-form 
-$x: V \rightarrow \mathbb{R}$ minimizing the error:
+Given a connected graph $G=(V,E)$ and a 1-form $f: E \rightarrow 
+\mathbb{R}$. We're looking for the 0-form $x: V \rightarrow \mathbb{R}$ 
+minimizing the error:
 
-$$E(x) = \sum_{(i,j) \in E} ||dx_{ij} - v_{ij}||^2$$
+$$E(x) = \sum_{(i,j) \in E} ||dx_{ij} - f_{ij}||^2$$
 
 where $dx: E \rightarrow \mathbb{R}$ is the differential of $x$.
 
 \bigskip
 
+The differential $dx$ determine an orientation of the edges of $G$. 
+The problem can be expressed informally in two steps:
 
-\textbf{Obs.} (Abuses of notation): We use $V$ to denote both the set 
-of vertices and the total number of vertices of the graph. And we denote 
-$v$ to the 1-form and $v_i$ is the $i-th$ vertex.
+\begin{enumerate}
+\item Find the ``best" orientation of the edges of $G$
+\item Solve the corresponding linear system
+\end{enumerate}
+
+The minimization expression on the oriented version of $G$ is: 
+
+$$E(x) = \sum_{e=v_i \rightarrow v_j \in E} ||(x(v_j) - x(v_i)) - f_{ij}||^2$$
+
+\bigskip
+
+The \textit{oriented incidence matrix} of an oriented graph $G$ is the $m 
+\times n$ matrix $D$ such that for each oriented edge $e_k=v_i \rightarrow 
+v_j$: $D_{ki} = -1$, $D_{kj} = 1$ and $0$ otherwise.
+
+\bigskip
+
+In more practical terms, step 1) can be restated as: find the "best" 
+\textit{oriented incidence matrix} $D$ such that: 
+
+$$||Dx-f||^2$$
+
+achives the global minimum.
+
+\bigskip
+
+As we describe below, step 2) can be solved by some iterative method for 
+linear systems.
 
 \bigskip
 
 \textbf{Properties of the oriented incidence matrix $D$ and other facts}
-
-\bigskip
-
-\underline{Oriented incidence matrix $D$}
-
-\bigskip
-
-We can rewrite the minimization problem in matrix form as follows:
-
-$$E(x) = \sum_{(i,j) \in E} ||dx_{ij} - v_{ij}||^2 = || D x - v||^2$$
-
-Where $D$ is the "best" \emph{oriented incidence matrix}. 
-
-\bigskip
-
-\underline{The problem is equivalent to solve a linear system}
-
-\bigskip
-
-To solve the minimizatiom problem is equivalent to find where the 
-gradient of $E(x)$ vanishes:
- 
-$$\nabla E = [\frac{\partial E}{\partial x_1}, \dots, \frac{\partial 
-E}{\partial x_n}] = D^tDx-D^tv=0$$
-
-It is equivalent to solve the linear system:
-
-$$D^tDx = D^tv$$
-
-As the rank of $D$ is $n-1$, the linear system may not have a solution. 
-But solving the problem by iterative methods will converge to the 
-closest ``possible" guess.
 
 \bigskip
 
@@ -109,48 +104,96 @@ rank of $D$) is $n-1$.
 
 \bigskip
 
-\underline{The orthogonal complement of the \textit{Laplacian} matrix}
+\underline{Solving the linear system induced by $D$}
 
 \bigskip
 
-The \textit{Laplacian} matrix is simmetric. In our case its rank is $n-1$ 
-because $G$ is connected. So its orthogonal complement is the same 
-subspace as its kernel. More precisely:
+To solve step 2), that is: once we have a candidate matrix $D$, we must 
+find the 0-form $x: V \rightarrow \mathbb{R}$. The minimizatiom problem 
+is equivalent to find where the gradient of $E(x)$ vanishes:
+ 
+$$\nabla E = [\frac{\partial E}{\partial x_1}, \dots, \frac{\partial 
+E}{\partial x_n}] = D^tDx-D^tv=0$$
 
-$$ker(L) = arg_{<x>} (L x = 0) = <(1,\dots,1)^t>$$
+Which in turn is equivalent to solve the linear system:
 
-And the 1-dimensional subspace $L^{\bot}$:
+$$D^tDx = Lx = D^tv$$
 
-$$L^{\bot} = arg_{<x>} (L^t x = 0) = arg_{<x>} (L x = 0) = <(1,\dots,1)^t>$$
-
-So the equation $L x = D^t D x = D^t v = w$ will have a solution if $w 
-\in <L>$. In other words if $w$ is as "orthogonal as possible" to 
-$L^{\bot}$. This fact can be expressed as follows:
-
-$$(1,\dots,1) w = cos(\alpha) ||(1,\dots,1)^t||^2 ||w||^2 = n \ cos(\alpha) 
-||w||^2$$
-
-It follows that:
-
-$$\frac{|\sum w_i|}{||w||^2} = n |cos(\alpha)|$$
-
-So the original minimization problem can be expressed as:
-
-$$argmin_w(\frac{|\sum w_i|}{||w||^2})$$
-
-Where $w = D^t v$, which means that we must find the "best" $D$: the 
-"best" directions for the edges of $G$.
+As the rank of $D$ is $n-1$, the linear system may not have a solution. 
+But solving the problem by iterative methods will converge to the 
+closest ``possible" guess. In particular, $L$ meets the hypothesis of 
+the \textit{Conjugate Gradient} method.
 
 \bigskip
 
-
-\textbf{Exact and metaheuristic approaches}
+\textbf{The ``best" oriented incidence matrix $D$}
 
 \bigskip
 
-The exact approach finds the best solution. The algorithms are not 
-suitable for big datasets. But they may be the best choice for small 
-ones.
+In order to solve step 1) we need some criteria to compare the possible 
+orientations of the edges of $G$. Note that given an orientation, and its 
+corresponding $D$ matrix, changing the direction of a single edge is 
+reflected as inverting the row corresponding to the edge. More generally, 
+if we want to change the direction of several edges the new incidence 
+matrix $\bar{D}$ can be computed as follows:
+
+$$\bar{D} = \bar{I} D$$
+
+\bigskip
+
+where $\bar{I}$ is the $m \times m$ diagonal matrix that has a $-1$ in 
+every row associated to each of the edges that we need to invert an $1$ 
+elsewhere.
+
+\bigskip
+
+A geometric interpretation of the problem: 
+
+$$argmin_D||Dx-f||^2$$
+
+\bigskip
+
+would be: find the ``best" $D$ so that the \textit{orthogonal 
+projection} of $f$ onto the subspace generated by the columns of $D$ is 
+maximum w.r.t. to its norm. 
+
+\bigskip
+
+Note that the expression:
+
+\begin{equation}
+     D^t f = \begin{bmatrix}
+         cos(\alpha_1) ||d_1||_2 ||f||_2\\
+         \dots \\
+         cos(\alpha_n) ||d_n||_2 ||f||_2
+	\end{bmatrix}
+\end{equation}
+
+where $\alpha_i$ is the angle among $f$ and the $i$-th column of $D$ 
+expresses the orthogonal projection of $f$ onto the subspace generated 
+by $D$. As matrices $D$ and $\bar{D}$ differ in the signs of some 
+entries, the norm of the respective columns are the same:
+
+\begin{equation}
+     \bar{D}^t f = \begin{bmatrix}
+         cos(\bar{\alpha_1}) ||d_1||_2 ||f||_2\\
+         \dots \\
+         cos(\bar{\alpha_n}) ||d_n||_2 ||f||_2
+	\end{bmatrix}
+\end{equation}
+
+So in our context, the ``best" directed incidence matrix $D$ will be the 
+one that maximizes $||D^t f||_2$. $D$ will not be unique in general.
+
+\bigskip
+
+\textbf{Metaheuristic approach}
+
+\bigskip
+
+The problem that should be addressed is how to explore the space of 
+directed incidence matrices associated to $D$. It is an intractable 
+combinatorial problem in general. 
 
 \bigskip
 
@@ -170,32 +213,31 @@ demonstrated empirically.
 
 \bigskip
 
-\underline{A GRASP metaheuristic for our problem}
+\underline{A GRASP metaheuristic}
 
 \bigskip
 
 Recall from the last section that the problem that we want to solve is 
-the following:
-
-$$argmin_w(\frac{|\sum w_i|}{||w||^2})$$
-
-where $w = D^t v$. Trying to solve it by exact methods is impossible 
-because there are $2^m$ choices for $D$ (i.e. there are $2^m$ directed 
-graphs). This is an extremely large space even for small graphs. So a 
-metaheuristic approach is the alternative to find a best-effort solution.
+to find a directed incidence matrix $D$ that maximizes $||D^t f||_2$ on
+the space of all directed incidence matrices associated to $G$. Trying 
+to solve it by exact methods (i.e. backtracking) is impossible because 
+there are $2^m$ choices for $D$ (i.e. there are $2^m$ directed graphs). 
+This is an extremely large space even for small graphs. So a 
+metaheuristic approach is the alternative to find a best-effort 
+solution.
 
 \bigskip
 
 A \textit{GRASP} metaheuristic combines some local search 
 with randomness. Local search refers to exploring some neighborhood of 
-the of the current "point". In our case a "point" is some choice of 
+the of the current ``point". In our case a ``point" is some choice of 
 directions for the edges of G, or in more practical terms: is a 
 concrete matrix $D$ with 1's and -1's fixed. The neighborhood of a 
 point can be defined in different ways, an obvious defintion is to 
 change the direction of one edge (switching the corresponding pair of 
-(1,-1) in $D$). The random part refers to choosing as the "new" point to 
-explore a random neighbor among the "best" ones. Every time a global 
-minimum is found, it replaces the previous one. The simplicity of 
+(1,-1) in $D$). The random part refers to choosing as the ``new" point 
+to explore a random neighbor among the ``best" ones. Every time a global 
+maximum is found, it replaces the previous one. The simplicity of 
 \textit{GRASP} and the fact that it can be parallelized in a natural 
 way makes it an interesting choice.
 
@@ -209,24 +251,31 @@ our new point. It will be as follows:
 	\item Initialization: an arbitrary directed incidence matrix $D$ 
 	will be generated based on the labels of the nodes of $G$. Each edge 
 	will be oriented from the lower label node to the higher one. 
+	\item Set the parameters of the algorithm
+	\begin{enumerate}
+		\item $\alpha$: the number of edges of the current point to 
+		modify to obtain a neighbor
+		\item $\beta$: the number of neighbors to consider in each 
+		iteration
+	\end{enumerate}
 	\item Iterate for a while. In each iteration.
 	\begin{enumerate}
-		\item Choose a random number ($\alpha$) of edges to modify (a 
-		number in some parametrized range, i.e. an integer in [1,5])
-		\item Choose a random number ($\beta$) of $\alpha$-tuples 
-		(another number in some parametrized range)
 		\item Choose $\beta$ $\alpha$-tuples as the neighbors of the
 		current point
-		\item Set as the new point the "best" neighbor, the one that 
-		minimizes:
-		$$argmin_w(\frac{|\sum w_i|}{||w||^2})$$
+		\item Set as the new point the ``best" neighbor, the one that 
+		maximizes:
+		$$||D^t f||_2$$
  	\end{enumerate}
 	\item After some predefined number of iterations (or time lapse) a  
-	global candidate $w = D^t v$ is obtained. To calculate the 
-	integration problem associated to $w$, we solve by 
-	\textit{conjugate gradient} the linear system:
-	$$L x = w$$
+	global candidate $D$ is obtained. To calculate the integration 
+	problem associated to $D$, solve by \textit{Conjugate Gradient} 
+	the linear system:
+	$$L x = D^t f$$
 \end{enumerate}
+
+\bigskip
+
+\textbf{Implementation}
 
 \bigskip
 
@@ -234,14 +283,47 @@ our new point. It will be as follows:
 
 \bigskip
 
-As pointed above, we choose the "best" neighbor: the one that minimizes:
+*To calculate $||D^t f||_2$ it is not neccessary to do it explicitly.
 
-$$argmin_w(\frac{|\sum w_i|}{||w||^2})$$
+*Laplacian matrix implementation
 
-Note that changing the direction of an edge (switching the corresponding 
-pair of (1,-1) in the current $D$ matrix), does not alter the 
-numerator. And the new denominator can be calculated based on the value 
-of the current point by simply subtracting and adding the appropriate 
-compenents. So finding the best neighbor is a fast operation.
+\bigskip
+
+\emph{Interesting facts}
+
+\bigskip
+
+For dense-edge graphs, the chance of improving the maximization 
+condition for a random neighbor decreases with an increasing $\alpha$. 
+This fact was noted while adjusting parameters for an input mid-size 
+complete graph (100 nodes). 
+
+\bigskip
+
+To illustrate the situation, consider a matrix $D$ and a neighbor 
+$\bar{D}$. As mentioned above they are related via some diagonal matrix 
+$\bar{I}$ with values $1,-1$ in the diagonal:
+
+$$\bar{D} = \bar{I} D$$
+
+Note that the maximization condition for the neighbor $\bar{D}$ uncovers 
+a new point of view of the problem:
+
+$$||\bar{D}^tf||_2 = ||(\bar{I} D)^t f||_2 = ||D^t (\bar{I} f)||_2 = 
+||D^t \bar{f}||_2$$
+
+Our problem can be stated as: find the ``closest" point $\bar{f}$ to 
+the subspace generated by $D$. Where $f$ and $\bar{f}$, differ in the 
+sign of exactly $\alpha$ components.
+
+\bigskip
+
+So informally, as the span of $D$ has dimension $n-1$, and as $\alpha$ 
+increases, any random point $\bar{f}$ will tend to diverge from that 
+subspace in dense-edge graphs ($m \approx O(n^2)$).
+
+\bigskip
+
+\emph{Parameter adjustment}
 
 \end{document}
