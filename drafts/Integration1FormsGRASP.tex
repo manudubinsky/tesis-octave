@@ -326,4 +326,53 @@ subspace in dense-edge graphs ($m \approx O(n^2)$).
 
 \emph{Parameter adjustment}
 
+\bigskip
+
+\emph{Varios}
+
+\bigskip
+
+Almost Orthogonal Basis. The inner product of two columns of any oriented 
+incidence matrix is $-1$ or $0$ depending if there exists an edge among
+the corresponding nodes or not. Note that if the inner product is $0$, 
+the columns are orthogonal.
+
+\bigskip
+
+If G is connected, the angle among two columns $d_i$ and $d_j$ of $D$ is 
+at least $45^{\circ}$. To see this, suppose that there exists an edge 
+between the corresponding nodes $v_i$ and $v_j$. The angle can be 
+measured in the following way:
+
+$$cos \alpha ||d_i|| ||d_j||= d_i  d_j$$
+
+So: 
+
+$$cos \alpha = \frac{d_i d_j}{||d_i|| ||d_j||}$$
+
+The module of this fraction is maximized when the norms of the columns 
+are minimal or equivalently when the degrees of the nodes are minimal. So 
+(as $G$ is connected) suppose that $deg(v_i) = 1$ and $deg(v_j)=2$. Then 
+we have:
+
+$$cos \alpha = \frac{d_i d_j}{||d_i|| ||d_j||} = \frac{-1}{\sqrt{2}}$$
+
+\bigskip
+
+Implying that $\alpha$ is at least $45^{\circ}$.
+
+\bigskip
+Another related fact is that for any dimension of the space 
+$\mathbb{R}^m$ only two columns of $D$ meet that dimension, which 
+is a geometric way of expressing that the dimension of $D$ is at least 
+$n-1$ (we already showed via the Laplacian matrix that its dimension is 
+in fact $n-1$)
+
+\bigskip
+
+So the reason that the angles among the columns of $D$ are at least 
+$45^{\circ}$ and at most $90^{\circ}$ justifies the criteria that we 
+propose to compare the possible choices of oriented incidence matrices.
+The criteria that we'll adopt is to 
+
 \end{document}
