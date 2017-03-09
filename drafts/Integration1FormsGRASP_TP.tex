@@ -1,0 +1,525 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+
+\usepackage[table,xcdraw]{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage{ulem}
+\usepackage{color}
+\usepackage{enumerate}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage {tikz}
+\usetikzlibrary{arrows,matrix,positioning,fit}
+%\usepackage{bera}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+%\setenumerate[2]{label=\roman*.}
+\usepackage{blindtext}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{hhline}
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+
+\definecolor {processblue}{cmyk}{0.96,0,0,0}
+
+%\setenumerate[1]{label=\textbf{\thesection.\arabic*.}}
+
+
+\begin{document}
+\textbf{Una Metaheurística GRASP para Integración No Orientada en Grafos}
+
+\bigskip
+
+\textbf{Abstract}
+ 
+\bigskip
+
+Dado un grafo $G=(V,E)$ y una función de pesos en los vértices $g: V 
+\rightarrow \mathbb{R}$, definimos el \textit{diferencial no orientado} 
+$dg: E \rightarrow \mathbb{R}^+$ en cada eje $e=(v,w)$ como $dg(e) = 
+|g(v) - g(w)|$.
+
+\smallskip
+
+En el presente trabajo abordamos el siguiente problema: dado un grafo 
+$G=(V,E)$ y una función de pesos en los ejes $f: E \rightarrow 
+\mathbb{R}^+$, se trata de encontrar la función de pesos en los vértices 
+$g: V \rightarrow \mathbb{R}$ cuyo \textit{diferencial no orientado} 
+ajuste del mejor modo posible (en términos de cuadrados mínimos) los 
+pesos de los ejes dados por $f$.
+
+\smallskip
+
+Para ello presentamos un algoritmo basado en la metaheurística GRASP 
+cuya simplicidad permite paralelizarlo para procesar instancias de 
+tamaño arbitrario.
+
+\bigskip
+
+\textbf{Introducción}
+
+\bigskip
+
+Dado un grafo conexo $G=(V,E)$ y una función de pesos en los ejes 
+$f: E \rightarrow \mathbb{R}^+$, queremos hallar una función de pesos 
+en los vértices $g: V \rightarrow \mathbb{R}$ de modo de minimizar el 
+error:
+
+$$Error(g) := \sum_{e \in E} ||dg(e) - f(e)||^2$$
+
+donde $dx: E \rightarrow \mathbb{R}^+$ es el \textit{diferencial 
+no orientado} de $g$ y se define en cada eje $e=(v,w)$ como $dg(e) = 
+|g(v) - g(w)|$.
+
+\bigskip
+
+
+The differential $dx$ determine an orientation of the edges of $G$. 
+The problem can be expressed informally in two steps:
+
+\begin{enumerate}
+\item Find the ``best" orientation of the edges of $G$
+\item Solve the corresponding linear system
+\end{enumerate}
+
+The minimization expression on the oriented version of $G$ is: 
+
+$$E(x) = \sum_{e=v_i \rightarrow v_j \in E} ||(x(v_j) - x(v_i)) - f_{ij}||^2$$
+
+\bigskip
+
+The \textit{oriented incidence matrix} of an oriented graph $G$ is the $m 
+\times n$ matrix $D$ such that for each oriented edge $e_k=v_i \rightarrow 
+v_j$: $D_{ki} = -1$, $D_{kj} = 1$ and $0$ otherwise.
+
+\bigskip
+
+In more practical terms, step 1) can be restated as: find the "best" 
+\textit{oriented incidence matrix} $D$ such that: 
+
+$$||Dx-f||^2$$
+
+achives the global minimum.
+
+\bigskip
+
+As we describe below, step 2) can be solved by some iterative method for 
+linear systems.
+
+\bigskip
+
+\textbf{Aplicaciones}
+
+\bigskip
+
+\textbf{Properties of the oriented incidence matrix $D$ and other facts}
+
+\bigskip
+
+\underline{Relation to the \textit{Laplacian} matrix and rank of $D$}
+
+\bigskip
+
+The directed incidence matrix has the following property:
+
+$$L = D^t D$$
+
+where $L$ is the \textit{Laplacian} matrix of $G$. The rank of 
+$L$ is: $n-c$ (where $c$ is the number of connected components of $G$). 
+In our case, as $G$ is connected, the rank of $L$ (and consequently the 
+rank of $D$) is $n-1$.
+
+\bigskip
+
+\underline{Solving the linear system induced by $D$}
+
+\bigskip
+
+To solve step 2), that is: once we have a candidate matrix $D$, we must 
+find the 0-form $x: V \rightarrow \mathbb{R}$. The minimizatiom problem 
+is equivalent to find where the gradient of $E(x)$ vanishes:
+ 
+$$\nabla E = [\frac{\partial E}{\partial x_1}, \dots, \frac{\partial 
+E}{\partial x_n}] = D^tDx-D^tv=0$$
+
+Which in turn is equivalent to solve the linear system:
+
+$$D^tDx = Lx = D^tv$$
+
+As the rank of $D$ is $n-1$, the linear system may not have a solution. 
+But solving the problem by iterative methods will converge to the 
+closest ``possible" guess. In particular, $L$ meets the hypothesis of 
+the \textit{Conjugate Gradient} method.
+
+\bigskip
+
+\textbf{The ``best" oriented incidence matrix $D$}
+
+\bigskip
+
+\underline{Preprocessing of leaves}
+
+\bigskip
+
+Degree $1$ nodes in a graph are known as \textit{leaves}. If node $v$ 
+is a leave and $w$ is its neighbor, $x(v)$ is determined by $x(w)$ and 
+the orientation of the edge $e(v,w)$, because $f(e) = \pm[x(v) - w(w)]$.
+
+\bigskip
+
+So we can preprocess $G$ by recursively stripping the leaves in order 
+to obtain a simpler graph (a graph with less nodes and edges):
+
+\bigskip
+
+\begin{verbatim}
+         while (G has leaves) {
+             G = stripLeaves(G);
+         }
+\end{verbatim}
+
+A corollary of this fact is that if $G$ is a tree, then $x: V 
+\rightarrow \mathbb{R}$ is determined by any orientation of the edges 
+and $x(v)$ for some node $v$.
+
+\bigskip
+
+For the ramaining part of the article we will consider that the degree 
+of any node of $G$ is at least 2.
+
+\bigskip
+
+\underline{A semi-orthogonal basis}
+
+\bigskip
+
+Another interesting fact is that the inner product of two columns of any 
+oriented incidence matrix is $-1$ or $0$ depending on whether there exists an 
+edge among the corresponding nodes or not. Note that if the inner 
+product is $0$, the columns are orthogonal.
+
+\bigskip
+
+If G is connected, the angle among two columns $d_i$ and $d_j$ of $D$ is 
+in the range $[\frac{\pi}{2},\frac{2\pi}{3}]$. To see this, suppose that there exists 
+an edge between the corresponding nodes $v_i$ and $v_j$. The angle can be 
+measured in the following way:
+
+$$cos(\alpha) \ ||d_i|| \ ||d_j||= d_i  d_j$$
+
+So: 
+
+$$cos(\alpha) = \frac{d_i d_j}{||d_i|| \ ||d_j||}$$
+
+The module of this fraction is maximized when the norms of the columns 
+are minimal or equivalently when the degrees of the nodes are minimal 
+(recall that the degree of any node of $G$ is at least 2). Suppose that 
+$deg(v_i) = deg(v_j) = 2$. Then we have:
+
+$$cos \ \alpha = \frac{d_i d_j}{||d_i|| \ ||d_j||} = \frac{-1}{2}$$
+
+\bigskip
+
+Implying that $\alpha$ is at most $\frac{2\pi}{3}$.
+
+\bigskip
+
+We will denote a basis such that the angle among any pair of generators 
+is in the range $[\frac{\pi}{2},\frac{2\pi}{3}]$ a \textit{semi-orthogonal} 
+basis.
+
+\bigskip
+
+The fact that the columns of oriented incidence matrices define a 
+semi-orthogonal basis will justify the criteria that we will propose to 
+compare them. 
+
+\bigskip
+
+\underline{Orthogonal projection norm}
+
+\bigskip
+The norm of the projection of a vector $v$ onto another vector $w$ can 
+be computed as:
+
+$$\frac{v w}{||w||} = \frac{cos(\alpha) \ ||v|| \ ||w||}{||w||} = \frac{||Proj_w(v)||}{||v||} ||v|| = ||Proj_w(v)||$$
+
+\bigskip
+
+The norm of the orthogonal projection of a vector $v \in \mathbb{R}^n$ 
+onto a $k$-dimensional subspace $S \subset \mathbb{R}^n$ generated by an 
+orthogonal basis $S = <s_1, \dots, s_k>$ can be computed as:
+
+$$
+||\begin{bmatrix}
+	\frac{v \ s_1}{||s_1||} \\
+	\dots \\
+	\frac{v \ s_k}{||s_k||}
+\end{bmatrix}|| = 
+||\begin{bmatrix}
+	||Proj_{s_1}(v)|| \\
+	\dots \\
+	||Proj_{s_k}(v)||
+\end{bmatrix}||
+$$
+
+\bigskip
+
+To visualize this, supposse (without loss of generality) that $S = 
+<e_1, \dots, e_k>$ (the first $k$ cannonical vectors) and $v = (v_1, 
+\dots, v_n)$. Clearly the orthogonal projection of $v$ onto $S$ 
+is $(v1, \dots, v_k)$ (the first $k$ components of $v$). So lets verify 
+the above fact:
+
+$$
+||\begin{bmatrix}
+	\frac{v \ e_1}{||e_1||} \\
+	\dots \\
+	\frac{v \ e_k}{||e_k||}
+\end{bmatrix}|| = 
+||\begin{bmatrix}
+	cos(\alpha_1) \ ||v|| \\
+	\dots \\
+	cos(\alpha_k) \ ||v||
+\end{bmatrix}|| = 
+||\begin{bmatrix}
+	\frac{v_1}{||v||} \ ||v|| \\
+	\dots \\
+	\frac{v_k}{||v||} \ ||v||
+\end{bmatrix}|| = 
+||\begin{bmatrix}
+	v_1 \\
+	\dots \\
+	v_k
+\end{bmatrix}||
+$$
+
+\bigskip
+
+Informally, the general case can be reduced to this simple case by a 
+rotation matrix which is norm preserving.
+
+\bigskip
+
+\underline{The \textit{pseudo-norm}. A criteria to compare directed incidence matrices}
+
+\bigskip
+
+A geometric interpretation of the problem $argmin_D||Dx-f||^2$ would be: 
+find the ``best" $D$ so that the \textit{orthogonal projection} of $f$ 
+onto the subspace generated by the columns of $D$ is 
+maximum w.r.t. to its norm. In case $f$ is contained in the subspace, 
+then the problem has an exact solution (ie. the linear system $Dx = f$ 
+can be solved).
+
+\bigskip
+
+In order to solve step 1) we need some criteria to compare the possible 
+orientations of the edges of $G$ or equivalently: their respective 
+oriented incidence matrices. As the columns of $D$ define a 
+semi-orthogonal basis. The criteria will be to approximate the norm 
+of the orthogonal projection of $f$ onto $D$ as if the columns of $D$ 
+where orthogonal. We will denote this quantity as \textit{pseudo-norm}.
+ So among two oriented incidence matrices $D$ and $\bar{D}$ we will 
+prefer the one that has ``bigger" pseudo-norm. The pseudo-norm will be 
+computed in two steps. First compute:
+
+$$
+D^t f = \begin{bmatrix}
+	cos(\alpha_1) \ ||d_1|| \ ||f||\\
+	\dots \\
+	cos(\alpha_n) \ ||d_n|| \ ||f||
+\end{bmatrix}
+$$
+
+\bigskip
+
+And then divide each component by the corresponding norm:
+
+$$
+pseudoNorm_f(D) = \begin{bmatrix}
+	\frac{cos(\alpha_1) \ ||d_1|| \ ||f||}{||d_1||}\\
+	\dots \\
+	\frac{cos(\alpha_n) \ ||d_n|| \ ||f||}{||d_n||}
+\end{bmatrix} = \begin{bmatrix}
+	cos(\alpha_1) \ ||f||\\
+	\dots \\
+	cos(\alpha_n) \ ||f||
+\end{bmatrix}
+$$
+
+\bigskip
+
+
+Note that given an orientation, and its 
+corresponding $D$ matrix, changing the direction of a single edge is 
+reflected as inverting the row corresponding to the edge. More generally, 
+if we want to change the direction of several edges the new incidence 
+matrix $\bar{D}$ can be computed as follows:
+
+$$\bar{D} = \bar{I} D$$
+
+\bigskip
+
+where $\bar{I}$ is the $m \times m$ diagonal matrix that has a $-1$ in 
+every row associated to each of the edges that we need to invert an $1$ 
+elsewhere.
+
+\bigskip
+
+
+Note that the norm of the corresponding columns of $D$ and $\bar{D}$ are  
+equal because they differ in the signs of some entries. So there's no 
+need to compute the norms of the columns for each matrix. 
+
+\bigskip
+
+\textbf{Metaheuristic approach}
+
+\bigskip
+
+The problem that should be addressed is how to explore the space of 
+directed incidence matrices associated to $D$. It is an intractable 
+combinatorial problem in general. 
+
+\bigskip
+
+The metaheuristic approach tries to find good solutions (not 
+necessarilly the best) in polynomial time. Some metaheuristics are:
+
+\begin{itemize}
+	\item Simulated-annealing
+	\item Tabu-search
+	\item GRASP
+	\item Genetic algorithms
+	\item Ant-colony
+\end{itemize}
+
+Finding the best metaheuristic depends on the problem and must be 
+demonstrated empirically.
+
+\bigskip
+
+\underline{A GRASP metaheuristic}
+
+\bigskip
+
+Recall from the last section that the problem that we want to solve is 
+to find a directed incidence matrix $D$ that maximizes $pseudoNorm_f(D)$ 
+on the space of all directed incidence matrices associated to $G$. 
+Trying to solve it by exact methods (i.e. backtracking) is impossible 
+because there are $2^m$ choices for $D$ (i.e. there are $2^m$ directed 
+graphs). This is an extremely large space even for small graphs. So a 
+metaheuristic approach is the alternative to find a best-effort 
+solution.
+
+\bigskip
+
+A \textit{GRASP} metaheuristic combines some local search 
+with randomness. Local search refers to exploring some neighborhood of 
+the of the current ``point". In our case a ``point" is some choice of 
+directions for the edges of G, or in more practical terms: is a 
+concrete matrix $D$ with 1's and -1's fixed. The neighborhood of a 
+point can be defined in different ways, an obvious defintion is to 
+change the direction of one edge (switching the corresponding pair of 
+(1,-1) in $D$). The random part refers to choosing as the ``new" point 
+to explore a random neighbor among the ``best" ones. Every time a global 
+maximum is found, it replaces the previous one. The simplicity of 
+\textit{GRASP} and the fact that it can be parallelized in a natural 
+way makes it an interesting choice.
+
+\bigskip
+
+Our strategy is a variant of \textit{GRASP} that inverts the local and 
+random parts: we choose random neighbors and set the best of them as 
+our new point. It will be as follows:
+
+\begin{enumerate}
+	\item Initialization: an arbitrary directed incidence matrix $D$ 
+	will be generated based on the labels of the nodes of $G$. Each edge 
+	will be oriented from the lower label node to the higher one. 
+	\item Set the parameters of the algorithm
+	\begin{enumerate}
+		\item $\alpha$: the number of edges of the current point to 
+		modify to obtain a neighbor
+		\item $\beta$: the number of neighbors to consider in each 
+		iteration
+	\end{enumerate}
+	\item Iterate for a while. In each iteration.
+	\begin{enumerate}
+		\item Choose $\beta$ $\alpha$-tuples as the neighbors of the
+		current point
+		\item Set as the new point the ``best" neighbor, the one that 
+		maximizes $pseudoNorm_f$
+ 	\end{enumerate}
+	\item After some predefined number of iterations (or time lapse) a  
+	global candidate $D$ is obtained. To calculate the integration 
+	problem associated to $D$, solve by \textit{Conjugate Gradient} 
+	the linear system:
+	$$L x = D^t f$$
+\end{enumerate}
+
+\bigskip
+
+\textbf{Implementation}
+
+\bigskip
+
+\emph{Some calculation remarks}
+
+\bigskip
+
+*To calculate $||D^t f||_2$ it is not neccessary to do it explicitly.
+
+*Laplacian matrix implementation
+
+\bigskip
+
+\emph{Interesting facts}
+
+\bigskip
+
+For dense-edge graphs, the chance of improving the maximization 
+condition for a random neighbor decreases with an increasing $\alpha$. 
+This fact was noted while adjusting parameters for an input mid-size 
+complete graph (100 nodes). 
+
+\bigskip
+
+To illustrate the situation, consider a matrix $D$ and a neighbor 
+$\bar{D}$. As mentioned above they are related via some diagonal matrix 
+$\bar{I}$ with values $1,-1$ in the diagonal:
+
+$$\bar{D} = \bar{I} D$$
+
+Note that the maximization condition for the neighbor $\bar{D}$ uncovers 
+a new point of view of the problem:
+
+$$||\bar{D}^tf||_2 = ||(\bar{I} D)^t f||_2 = ||D^t (\bar{I} f)||_2 = 
+||D^t \bar{f}||_2$$
+
+Our problem can be stated as: find the ``closest" point $\bar{f}$ to 
+the subspace generated by $D$. Where $f$ and $\bar{f}$, differ in the 
+sign of exactly $\alpha$ components.
+
+\bigskip
+
+So informally, as the span of $D$ has dimension $n-1$, and as $\alpha$ 
+increases, any random point $\bar{f}$ will tend to diverge from that 
+subspace in dense-edge graphs ($m \approx O(n^2)$).
+
+\bigskip
+
+\emph{Parameter adjustment}
+
+\bigskip
+
+
+\end{document}
