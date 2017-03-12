@@ -20,6 +20,7 @@
 %\setenumerate[2]{label=\roman*.}
 \usepackage{blindtext}
 \usepackage{fancyhdr}
+\usepackage{bm}
 \pagestyle{fancy}
 \usepackage{hhline}
 \colorlet{punct}{red!60!black}
@@ -41,17 +42,17 @@
  
 \bigskip
 
-Dado un grafo $G=(V,E)$ y una función de pesos en los vértices $g: V 
+Dado un grafo conexo $G=(V,E)$ y una función de pesos en los nodos $x: V 
 \rightarrow \mathbb{R}$, definimos el \textit{diferencial no orientado} 
-$dg: E \rightarrow \mathbb{R}^+$ en cada eje $e=(v,w)$ como $dg(e) = 
-|g(v) - g(w)|$.
+$dx: E \rightarrow \mathbb{R}^+$ en cada eje $e=(v,w)$ como $dx(e) = 
+|x(v) - x(w)|$.
 
 \smallskip
 
 En el presente trabajo abordamos el siguiente problema: dado un grafo 
 $G=(V,E)$ y una función de pesos en los ejes $f: E \rightarrow 
-\mathbb{R}^+$, se trata de encontrar la función de pesos en los vértices 
-$g: V \rightarrow \mathbb{R}$ cuyo \textit{diferencial no orientado} 
+\mathbb{R}^+$, se trata de encontrar la función de pesos en los nodos 
+$x: V \rightarrow \mathbb{R}$ cuyo \textit{diferencial no orientado} 
 ajuste del mejor modo posible (en términos de cuadrados mínimos) los 
 pesos de los ejes dados por $f$.
 
@@ -67,96 +68,232 @@ tamaño arbitrario.
 
 \bigskip
 
+En esta sección se presenta el problema que abordaremos en el trabajo. 
+De acuerdo a nuestro entendimiento, se trata de una formulación 
+novedosa, por lo tanto no hay antecedentes a los cuales podamos 
+remitirnos.
+
+\bigskip
+
 Dado un grafo conexo $G=(V,E)$ y una función de pesos en los ejes 
 $f: E \rightarrow \mathbb{R}^+$, queremos hallar una función de pesos 
-en los vértices $g: V \rightarrow \mathbb{R}$ de modo de minimizar el 
+en los nodos $x: V \rightarrow \mathbb{R}$ de modo de minimizar el 
 error:
 
-$$Error(g) := \sum_{e \in E} ||dg(e) - f(e)||^2$$
+$$E(x) := \sum_{e \in E} (dx(e) - f(e))^2$$
 
 donde $dx: E \rightarrow \mathbb{R}^+$ es el \textit{diferencial 
-no orientado} de $g$ y se define en cada eje $e=(v,w)$ como $dg(e) = 
-|g(v) - g(w)|$.
+no orientado} de $x$ y se define en cada eje $e=(v,w)$ como $dx(e) = 
+|x(v) - x(w)|$.
 
 \bigskip
 
-
-The differential $dx$ determine an orientation of the edges of $G$. 
-The problem can be expressed informally in two steps:
-
-\begin{enumerate}
-\item Find the ``best" orientation of the edges of $G$
-\item Solve the corresponding linear system
-\end{enumerate}
-
-The minimization expression on the oriented version of $G$ is: 
-
-$$E(x) = \sum_{e=v_i \rightarrow v_j \in E} ||(x(v_j) - x(v_i)) - f_{ij}||^2$$
+Por otro lado, es posible definir en un grafo dirigido una noción de 
+\textit{diferencial orientado} del siguiente modo: dado un grafo 
+dirigido $\hat G=(\hat V,\hat E)$ y una función de pesos en los nodos 
+$\hat x: \hat V \rightarrow \mathbb{R}$, se define el 
+\textit{diferencial orientado} $\hat{dx}: \hat E \rightarrow \mathbb{R}$ 
+en cada eje $e=v \rightarrow w$ como $\hat{dx}(e) = \hat x(w) - 
+\hat x(v)$.
 
 \bigskip
 
-The \textit{oriented incidence matrix} of an oriented graph $G$ is the $m 
-\times n$ matrix $D$ such that for each oriented edge $e_k=v_i \rightarrow 
-v_j$: $D_{ki} = -1$, $D_{kj} = 1$ and $0$ otherwise.
+Es importante notar que un \textit{diferencial no orientado} induce 
+naturalmente un \textit{diferencial orientado}, informalmente: hay que 
+orientar cada eje del nodo ``menor" al ``mayor". Recíprocamente, si
+se analizan todas las orientaciones posibles del grafo original, es 
+posible resolver el problema propuesto. Concretamente, se trata de 
+encontrar por un lado la ``mejor" \textit{matriz de incidencia 
+dirigida} $D$, y por el otro la mejor función de pesos en 
+los ejes $x: V \rightarrow \mathbb{R}$ de modo de minimizar la 
+expresión:
+
+$$E(x) = ||D\bm{x}-\bm{f}||^2$$
+
+donde:
+
+$$
+\bm{x} = 
+\begin{bmatrix}
+	x(v_1)\\
+	\dots \\
+	x(v_n)
+\end{bmatrix}, 
+\bm{f} = 
+\begin{bmatrix}
+	f(e_1)\\
+	\dots \\
+	f(e_m)
+\end{bmatrix}
+$$
 
 \bigskip
 
-In more practical terms, step 1) can be restated as: find the "best" 
-\textit{oriented incidence matrix} $D$ such that: 
-
-$$||Dx-f||^2$$
-
-achives the global minimum.
+El algoritmo que proponemos justamente explora el espacio de todas las 
+orientaciones posibles del grafo original.
 
 \bigskip
 
-As we describe below, step 2) can be solved by some iterative method for 
-linear systems.
-
-\bigskip
+\newpage
 
 \textbf{Aplicaciones}
 
 \bigskip
 
-\textbf{Properties of the oriented incidence matrix $D$ and other facts}
+Las aplicaciones son aquellas en las cuales necesitamos construir una 
+función de los nodos que respete ciertas restricciones diferenciales.
 
 \bigskip
 
-\underline{Relation to the \textit{Laplacian} matrix and rank of $D$}
+Por ejemplo, supongamos que los nodos representan regiones geográficas 
+y queremos construir un mapa topográfico basado en ciertas relaciones 
+diferenciales de altura entre algunas regiones.
 
 \bigskip
 
-The directed incidence matrix has the following property:
+Otro ejemplo podría ser el de ordenar cronológicamente ciertos eventos 
+en base a algunas relaciones diferenciales entre ellos.
+
+\bigskip
+
+\textbf{Preliminares}
+
+\bigskip
+
+\underline{La \textit{matriz de incidencia dirigida}}
+
+\bigskip
+
+La \textit{matriz de incidencia dirigida} ($D$) de un grafo dirigido 
+$\hat G = (\hat V, \hat E)$ es una matriz de $m \times n$ (donde $|\hat
+ E| = m$ y $|\hat V| = n$) tal que para cada eje orientado 
+$e_k=v_i \rightarrow v_j$: $D_{ki} = -1$, $D_{kj} = 1$ y vale $0$ en 
+las demás entradas de la fila $k$.
+
+\bigskip
+
+En otros términos, una matriz de incidencia dirigida representa una 
+posible orientación de los ejes de un grafo no dirigido $G$. Y el 
+espacio de matrices de incidencia dirigida asociadas a $G$ 
+equivale al espacio de todas las orientaciones posibles de $G$.
+
+\bigskip
+
+\underline{La \textit{matriz laplaciana}}
+
+\bigskip
+
+La \textit{matriz laplaciana} ($L$) de un grafo $G$ es una matriz de 
+$n \times n$ definida del siguiente modo:
+
+\bigskip
+
+\begin{equation}
+	\begin{cases}
+	deg(v_i) & \text{en $L_{ii}$} \\
+	-1 & \text{en $L_{ij}$ si existe el eje $(v_i,v_j)$} \\
+	0 & \text{en otro caso} 
+	\end{cases}
+\end{equation}
+
+\bigskip
+
+El rango de $L$ es $n-c$ donde $c$ es la cantidad de componentes 
+conexas. En particular si $G$ es conexo, el rango de $L$ es $n-1$
+
+\bigskip
+
+\underline{Relación entre las matrices $L$ y $D$}
+
+\bigskip
+
+Es fácil verificar que las matrices $L$ y $D$ se relacionan de acuerdo
+a la expresión:
 
 $$L = D^t D$$
 
-where $L$ is the \textit{Laplacian} matrix of $G$. The rank of 
-$L$ is: $n-c$ (where $c$ is the number of connected components of $G$). 
-In our case, as $G$ is connected, the rank of $L$ (and consequently the 
-rank of $D$) is $n-1$.
+Es importante notar que $L$ es independiente de cualquier orientación 
+que se le asocie al grafo. Y que el rango de $D$ es el mismo que el de 
+$L$. Como en nuestro caso $G$ es conexo el rango de $D$ es $n-1$.
 
 \bigskip
 
-\underline{Solving the linear system induced by $D$}
+\underline{Sistema lineal inducido por $D$}
 
 \bigskip
 
-To solve step 2), that is: once we have a candidate matrix $D$, we must 
-find the 0-form $x: V \rightarrow \mathbb{R}$. The minimizatiom problem 
-is equivalent to find where the gradient of $E(x)$ vanishes:
+Recordemos que el problema que queremos resolver es encontrar la matriz 
+de incidencia dirigida $D$, es decir la ``mejor" orientación de los ejes 
+del grafo $G$, de modo de minimizar la expresión:
+
+$$E(x) = ||D\bm{x}-\bm{f}||^2$$
+
+Para eso será preciso explorar el espacio de matrices de 
+incidencia dirigida asociadas a $G$. Una vez que conseguimos una 
+matriz candidata, el problema de minimización es equivalente a encontrar
+dónde se anula el gradiente de $E(x)$:
  
 $$\nabla E = [\frac{\partial E}{\partial x_1}, \dots, \frac{\partial 
 E}{\partial x_n}] = D^tDx-D^tv=0$$
 
-Which in turn is equivalent to solve the linear system:
+Que a su vez es equivalente a resolver el sistema lineal:
 
 $$D^tDx = Lx = D^tv$$
 
-As the rank of $D$ is $n-1$, the linear system may not have a solution. 
-But solving the problem by iterative methods will converge to the 
-closest ``possible" guess. In particular, $L$ meets the hypothesis of 
-the \textit{Conjugate Gradient} method.
+Como el rango de $L$ es $n-1$, el sistema puede no tener solución. 
+Mediante métodos iterativos es posible converger al punto más cercano a 
+una solución. Específicamente en este trabajo emplearemos el método de 
+\textit{Gradiente Conjugado}. Es importante mencionar que en el último 
+tiempo ha habido grandes avances en la creación de nuevos métodos 
+iterativos para resolver esta clase particular de sistemas lineales 
+(aquellos que involucran una matriz laplaciana) denominados 
+\textit{sistemas laplacianos}.
+
+\bigskip
+
+\underline{Metaheurísticas GRASP}
+
+\bigskip
+
+En el contexto del tratamiento de problemas de complejidad $NP$, el 
+enfoque metaheurístico procura encontrar buenas soluciones (no 
+necesariamente las mejores) en tiempo polinomial. Algunas 
+metaheurísticas son:
+
+\begin{itemize}
+	\item Simulated-annealing
+	\item Tabu-search
+	\item GRASP
+	\item Algoritmos genéticos
+	\item Colonia de hormigas
+\end{itemize}
+
+Encontrar la metaheurística más adecuada depende del problema que se 
+quiera resolver y debe ser contrastada empirícamente con los resultados 
+obtenidos por otras metaheurísticas.
+
+\bigskip
+
+Específicamente una metaheurística de tipo \textit{GRASP} combina dos 
+aspectos. Por un lado, requiere cierto tipo de búsqueda local, es decir: 
+explorar un entorno de la solución de la iteración actual, para lo cual 
+es preciso definir una noción de vecindad en el espacio; en nuestro caso 
+se tratará de definir una noción de vecindad en el espacio de matrices 
+de incidencia dirigida asociadas a un grafo. Y por otro lado, GRASP 
+requiere cierto grado de azar en la elección del vecino a explorar en 
+la siguiente iteración; esto busca impedir que el algoritmo se 
+estabilice entorno a un mínimo local (no necesariamente un mínimo 
+global). 
+
+\bigskip
+
+En la próxima sección se presentará el algoritmo y se describirán las 
+particularidades de la implementación de una metaheurística GRASP en el 
+contexto del problema que queremos resolver.
+
+\bigskip
+
+\textbf{Implementación}
 
 \bigskip
 
