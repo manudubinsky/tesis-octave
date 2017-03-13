@@ -90,11 +90,11 @@ no orientado} de $x$ y se define en cada eje $e=(v,w)$ como $dx(e) =
 
 Por otro lado, es posible definir en un grafo dirigido una noción de 
 \textit{diferencial orientado} del siguiente modo: dado un grafo 
-dirigido $\hat G=(\hat V,\hat E)$ y una función de pesos en los nodos 
-$\hat x: \hat V \rightarrow \mathbb{R}$, se define el 
-\textit{diferencial orientado} $\hat{dx}: \hat E \rightarrow \mathbb{R}$ 
-en cada eje $e=v \rightarrow w$ como $\hat{dx}(e) = \hat x(w) - 
-\hat x(v)$.
+dirigido $\vec G=(\vec V,\vec E)$ y una función de pesos en los nodos 
+$\vec x: \vec V \rightarrow \mathbb{R}$, se define el 
+\textit{diferencial orientado} $\vec{dx}: \vec E \rightarrow \mathbb{R}$ 
+en cada eje $e=v \rightarrow w$ como $\vec{dx}(e) = \vec x(w) - 
+\vec x(v)$.
 
 \bigskip
 
@@ -165,8 +165,8 @@ en base a algunas relaciones diferenciales entre ellos.
 \bigskip
 
 La \textit{matriz de incidencia dirigida} ($D$) de un grafo dirigido 
-$\hat G = (\hat V, \hat E)$ es una matriz de $m \times n$ (donde $|\hat
- E| = m$ y $|\hat V| = n$) tal que para cada eje orientado 
+$\vec G = (\vec V, \vec E)$ es una matriz de $m \times n$ (donde $|\vec
+ E| = m$ y $|\vec V| = n$) tal que para cada eje orientado 
 $e_k=v_i \rightarrow v_j$: $D_{ki} = -1$, $D_{kj} = 1$ y vale $0$ en 
 las demás entradas de la fila $k$.
 
@@ -269,7 +269,7 @@ metaheurísticas son:
 \end{itemize}
 
 Encontrar la metaheurística más adecuada depende del problema que se 
-quiera resolver y debe ser contrastada empirícamente con los resultados 
+quiera resolver y debe ser contrastada empíricamente con los resultados 
 obtenidos por otras metaheurísticas.
 
 \bigskip
@@ -297,22 +297,51 @@ contexto del problema que queremos resolver.
 
 \bigskip
 
-\textbf{The ``best" oriented incidence matrix $D$}
+En esta sección describiremos el algoritmo y los detalles de la 
+implementación.
 
 \bigskip
 
-\underline{Preprocessing of leaves}
+\textbf{La ``mejor" matriz de incidencia dirigida}
 
 \bigskip
 
-Degree $1$ nodes in a graph are known as \textit{leaves}. If node $v$ 
-is a leave and $w$ is its neighbor, $x(v)$ is determined by $x(w)$ and 
-the orientation of the edge $e(v,w)$, because $f(e) = \pm[x(v) - w(w)]$.
+El primer paso de la estrategia que vamos a desarrollar es tratar de 
+encontrar la ``mejor" matriz de incidencia dirigida, o dicho en otros 
+términos: de orientar los ejes del grafo $G$ del mejor modo posible para 
+minimizar el error:
+
+$$E(x) = ||D\bm{x}-\bm{f}||^2$$
+ 
+Como el espacio matrices de incidencia dirigida asociadas a $G$ es un 
+espacio de tamaño exponencial respecto a la cantidad de ejes, dado que 
+cada eje puede tener dos orientaciones, nuestra propuesta está centrada 
+en construir un algoritmo que devuelva la ``mejor solución posible".
 
 \bigskip
 
-So we can preprocess $G$ by recursively stripping the leaves in order 
-to obtain a simpler graph (a graph with less nodes and edges):
+\underline{Preprocesamiento de las hojas del grafo}
+
+\bigskip
+
+Recordemos la formulación inicial del problema: queremos hallar una 
+función de pesos en los nodos $x: V \rightarrow \mathbb{R}$ de modo de 
+minimizar el error:
+
+$$E(x) := \sum_{e \in E} (dx(e) - f(e))^2$$
+
+\bigskip
+
+Consideremos una hoja $v$ de $G$ (un nodo de grado 1), a su único 
+vecino $w$ y al eje que los liga $e=(v,w)$. De acuerdo a la formulación, 
+surge que $x(v) = x(w) \pm f(e)$, es decir que $x(v)$ queda 
+determinado por $x(w)$, $f(e)$ y la elección de una orientación de $e$.
+
+\bigskip
+
+Por lo tanto, es posible reducir el grafo original $G$, eliminando 
+recursivamente sus  hojas de modo de obtener una grafo más simple (un 
+grafo con menos ejes y nodos):
 
 \bigskip
 
@@ -322,135 +351,148 @@ to obtain a simpler graph (a graph with less nodes and edges):
          }
 \end{verbatim}
 
-A corollary of this fact is that if $G$ is a tree, then $x: V 
-\rightarrow \mathbb{R}$ is determined by any orientation of the edges 
-and $x(v)$ for some node $v$.
+Un corolario es que si $G$ es un árbol, entonces $x: V 
+\rightarrow \mathbb{R}$ queda determinada por alguna orientación de 
+los ejes y por $x(v)$ para un nodo $v$.
 
 \bigskip
 
-For the ramaining part of the article we will consider that the degree 
-of any node of $G$ is at least 2.
+De ahora en adelante consideraremos que el grado de los nodos de $G$ es 
+al menos 2.
+ 
+\bigskip
+
+\underline{Una base semi-ortogonal}
 
 \bigskip
 
-\underline{A semi-orthogonal basis}
+Un hecho simple que se deriva de la expresión que vincula a las matrices 
+$L$ y $D$:
+
+$$L = D^t D$$
+
+es que el producto interno de dos columnas distintas de una matriz de 
+incidencia orientada vale $-1$ o $0$ dependiendo de si existe un eje 
+entre los nodos asociados a dichas columnas o no. Notar el hecho 
+evidente de que si el producto es $0$, las columnas son ortogonales.
 
 \bigskip
 
-Another interesting fact is that the inner product of two columns of any 
-oriented incidence matrix is $-1$ or $0$ depending on whether there exists an 
-edge among the corresponding nodes or not. Note that if the inner 
-product is $0$, the columns are orthogonal.
+Ahora notemos lo siguiente: si G es conexo, el ángulo entre dos 
+columnas $d_i$ y $d_j$ de $D$ está contenido en el rango 
+$[\frac{\pi}{2},\frac{2\pi}{3}]$. Para ver esto, supongamos que existe 
+un eje entre los nodos $v_i$ y $v_j$ asociados a dichas columnas. 
+El ángulo puede medirse de este modo:
 
-\bigskip
+$$cos(\alpha) \ ||d_i|| \ ||d_j||= d_i  d_j \implies cos(\alpha) = 
+\frac{d_i d_j}{||d_i|| \ ||d_j||}$$
 
-If G is connected, the angle among two columns $d_i$ and $d_j$ of $D$ is 
-in the range $[\frac{\pi}{2},\frac{2\pi}{3}]$. To see this, suppose that there exists 
-an edge between the corresponding nodes $v_i$ and $v_j$. The angle can be 
-measured in the following way:
-
-$$cos(\alpha) \ ||d_i|| \ ||d_j||= d_i  d_j$$
-
-So: 
-
-$$cos(\alpha) = \frac{d_i d_j}{||d_i|| \ ||d_j||}$$
-
-The module of this fraction is maximized when the norms of the columns 
-are minimal or equivalently when the degrees of the nodes are minimal 
-(recall that the degree of any node of $G$ is at least 2). Suppose that 
-$deg(v_i) = deg(v_j) = 2$. Then we have:
+El módulo de esta fracción se maximiza cuando las normas de las columnas
+ son más pequeñas o de modo equivalente: cuando los grados de los nodos 
+ correspondientes se minimizan. Recordemos que el grado de cada nodo de 
+ $G$, luego de preprocesar las hojas, es a lo sumo 2. Supongamos que  
+ $deg(v_i) = deg(v_j) = 2$. Entonces resulta que:
 
 $$cos \ \alpha = \frac{d_i d_j}{||d_i|| \ ||d_j||} = \frac{-1}{2}$$
 
 \bigskip
 
-Implying that $\alpha$ is at most $\frac{2\pi}{3}$.
+Implicando que $\alpha$ es a lo sumo $\frac{2\pi}{3}$.
 
 \bigskip
 
-We will denote a basis such that the angle among any pair of generators 
-is in the range $[\frac{\pi}{2},\frac{2\pi}{3}]$ a \textit{semi-orthogonal} 
-basis.
+Denotaremos base \textit{semi-ortogonal} a una base (de un 
+$\mathbb{R}$-espacio vectorial) tal que el ángulo entre cualquier par de 
+generadores está en el rango $[\frac{\pi}{2},\frac{2\pi}{3}]$.
 
 \bigskip
 
-The fact that the columns of oriented incidence matrices define a 
-semi-orthogonal basis will justify the criteria that we will propose to 
-compare them. 
+El hecho de que las columnas de una matriz de incidencia dirigida 
+definan una base semi-ortogonal va a justificar el criterio que 
+emplearemos para compararlas.
 
 \bigskip
 
-\underline{Orthogonal projection norm}
-
-\bigskip
-The norm of the projection of a vector $v$ onto another vector $w$ can 
-be computed as:
-
-$$\frac{v w}{||w||} = \frac{cos(\alpha) \ ||v|| \ ||w||}{||w||} = \frac{||Proj_w(v)||}{||v||} ||v|| = ||Proj_w(v)||$$
+\underline{Norma de la proyección ortogonal}
 
 \bigskip
 
-The norm of the orthogonal projection of a vector $v \in \mathbb{R}^n$ 
-onto a $k$-dimensional subspace $S \subset \mathbb{R}^n$ generated by an 
-orthogonal basis $S = <s_1, \dots, s_k>$ can be computed as:
+Para elaborar el criterio que nos permita comparar dos matrices de 
+incidencia dirigida y decidir cuál es mejor en el contexto del problema 
+que queremos resolver, vamos a referirnos a nociones básicas de 
+proyección ortogonal de un vector sobre un subespacio de un espacio 
+vectorial.
+
+\bigskip
+
+Sean $v,w \in \mathbb{R}^n$, notamos $p_v(w)$ a la proyección de $w$ 
+sobre $v$. Mediante relaciones trigonométricas básicas podemos 
+calcular $||p_v(w)||$ (la norma de $p_v(w)$):
+
+$$\frac{v w}{||w||} = \frac{cos(\alpha) \ ||v|| \ ||w||}{||w||} = 
+cos(\alpha) \ ||v|| = ||p_v(w)||$$
+
+\bigskip
+
+De modo más general, notamos $p_S(w)$ a la proyección ortogonal de $w$
+sobre un subespacio $S \subset \mathbb{R}^n$ generado por una base 
+ortogonal $S = <s_1, \dots, s_k>$. La norma de $p_S(w)$ puede calcularse
+de modo análogo:
 
 $$
-||\begin{bmatrix}
-	\frac{v \ s_1}{||s_1||} \\
+||p_S(w)|| = ||\begin{bmatrix}
+	||p_{s_1}(w)|| \\
 	\dots \\
-	\frac{v \ s_k}{||s_k||}
-\end{bmatrix}|| = 
-||\begin{bmatrix}
-	||Proj_{s_1}(v)|| \\
-	\dots \\
-	||Proj_{s_k}(v)||
+	||p_{s_k}(w)||
 \end{bmatrix}||
 $$
 
 \bigskip
 
-To visualize this, supposse (without loss of generality) that $S = 
-<e_1, \dots, e_k>$ (the first $k$ cannonical vectors) and $v = (v_1, 
-\dots, v_n)$. Clearly the orthogonal projection of $v$ onto $S$ 
-is $(v1, \dots, v_k)$ (the first $k$ components of $v$). So lets verify 
-the above fact:
+Para dar una intuición geométrica del hecho precedente, supongamos (sin 
+pérdida de generalidad) que $S = <e_1, \dots, e_k>$ está dada por los 
+primeros $k$ vectores canónicos y $w = (w_1, \dots, w_n)$. 
+Claramente la proyección ortogonal de $w$ sobre $S$ es 
+$(w_1, \dots, w_k)$ (las primeras $k$ componentes de $w$). Entonces 
+verifiquemos la expresión anterior:
 
 $$
 ||\begin{bmatrix}
-	\frac{v \ e_1}{||e_1||} \\
+	||p_{s_1}(w)|| \\	
 	\dots \\
-	\frac{v \ e_k}{||e_k||}
+	||p_{s_k}(w)||
 \end{bmatrix}|| = 
 ||\begin{bmatrix}
-	cos(\alpha_1) \ ||v|| \\
+	cos(\alpha_1) \ ||w|| \\
 	\dots \\
-	cos(\alpha_k) \ ||v||
+	cos(\alpha_k) \ ||w||
 \end{bmatrix}|| = 
 ||\begin{bmatrix}
-	\frac{v_1}{||v||} \ ||v|| \\
+	w \ e_1 \\
 	\dots \\
-	\frac{v_k}{||v||} \ ||v||
-\end{bmatrix}|| = 
+	w \ e_k
+\end{bmatrix}|| =  
 ||\begin{bmatrix}
-	v_1 \\
+	w_1 \\
 	\dots \\
-	v_k
+	w_k
 \end{bmatrix}||
 $$
 
 \bigskip
 
-Informally, the general case can be reduced to this simple case by a 
-rotation matrix which is norm preserving.
+Informalmente, el caso general se puede reducir a este caso simple 
+mediante una matriz rotation, que preserva las normas.
 
 \bigskip
 
-\underline{The \textit{pseudo-norm}. A criteria to compare directed incidence matrices}
+\underline{La \textit{pseudo-norma}. Un criterio para comparar matrices 
+de incidencia dirigida}
 
 \bigskip
 
 A geometric interpretation of the problem $argmin_D||Dx-f||^2$ would be: 
-find the ``best" $D$ so that the \textit{orthogonal projection} of $f$ 
+find the ``best" $D$ so tvec the \textit{orthogonal projection} of $f$ 
 onto the subspace generated by the columns of $D$ is 
 maximum w.r.t. to its norm. In case $f$ is contained in the subspace, 
 then the problem has an exact solution (ie. the linear system $Dx = f$ 
@@ -465,7 +507,7 @@ semi-orthogonal basis. The criteria will be to approximate the norm
 of the orthogonal projection of $f$ onto $D$ as if the columns of $D$ 
 where orthogonal. We will denote this quantity as \textit{pseudo-norm}.
  So among two oriented incidence matrices $D$ and $\bar{D}$ we will 
-prefer the one that has ``bigger" pseudo-norm. The pseudo-norm will be 
+prefer the one tvec has ``bigger" pseudo-norm. The pseudo-norm will be 
 computed in two steps. First compute:
 
 $$
@@ -495,7 +537,7 @@ $$
 \bigskip
 
 
-Note that given an orientation, and its 
+Note tvec given an orientation, and its 
 corresponding $D$ matrix, changing the direction of a single edge is 
 reflected as inverting the row corresponding to the edge. More generally, 
 if we want to change the direction of several edges the new incidence 
@@ -505,14 +547,14 @@ $$\bar{D} = \bar{I} D$$
 
 \bigskip
 
-where $\bar{I}$ is the $m \times m$ diagonal matrix that has a $-1$ in 
-every row associated to each of the edges that we need to invert an $1$ 
+where $\bar{I}$ is the $m \times m$ diagonal matrix tvec has a $-1$ in 
+every row associated to each of the edges tvec we need to invert an $1$ 
 elsewhere.
 
 \bigskip
 
 
-Note that the norm of the corresponding columns of $D$ and $\bar{D}$ are  
+Note tvec the norm of the corresponding columns of $D$ and $\bar{D}$ are  
 equal because they differ in the signs of some entries. So there's no 
 need to compute the norms of the columns for each matrix. 
 
@@ -522,7 +564,7 @@ need to compute the norms of the columns for each matrix.
 
 \bigskip
 
-The problem that should be addressed is how to explore the space of 
+The problem tvec should be addressed is how to explore the space of 
 directed incidence matrices associated to $D$. It is an intractable 
 combinatorial problem in general. 
 
@@ -548,8 +590,8 @@ demonstrated empirically.
 
 \bigskip
 
-Recall from the last section that the problem that we want to solve is 
-to find a directed incidence matrix $D$ that maximizes $pseudoNorm_f(D)$ 
+Recall from the last section tvec the problem tvec we want to solve is 
+to find a directed incidence matrix $D$ tvec maximizes $pseudoNorm_f(D)$ 
 on the space of all directed incidence matrices associated to $G$. 
 Trying to solve it by exact methods (i.e. backtracking) is impossible 
 because there are $2^m$ choices for $D$ (i.e. there are $2^m$ directed 
@@ -569,12 +611,12 @@ change the direction of one edge (switching the corresponding pair of
 (1,-1) in $D$). The random part refers to choosing as the ``new" point 
 to explore a random neighbor among the ``best" ones. Every time a global 
 maximum is found, it replaces the previous one. The simplicity of 
-\textit{GRASP} and the fact that it can be parallelized in a natural 
+\textit{GRASP} and the fact tvec it can be parallelized in a natural 
 way makes it an interesting choice.
 
 \bigskip
 
-Our strategy is a variant of \textit{GRASP} that inverts the local and 
+Our strategy is a variant of \textit{GRASP} tvec inverts the local and 
 random parts: we choose random neighbors and set the best of them as 
 our new point. It will be as follows:
 
@@ -593,7 +635,7 @@ our new point. It will be as follows:
 	\begin{enumerate}
 		\item Choose $\beta$ $\alpha$-tuples as the neighbors of the
 		current point
-		\item Set as the new point the ``best" neighbor, the one that 
+		\item Set as the new point the ``best" neighbor, the one tvec 
 		maximizes $pseudoNorm_f$
  	\end{enumerate}
 	\item After some predefined number of iterations (or time lapse) a  
@@ -636,7 +678,7 @@ $\bar{I}$ with values $1,-1$ in the diagonal:
 
 $$\bar{D} = \bar{I} D$$
 
-Note that the maximization condition for the neighbor $\bar{D}$ uncovers 
+Note tvec the maximization condition for the neighbor $\bar{D}$ uncovers 
 a new point of view of the problem:
 
 $$||\bar{D}^tf||_2 = ||(\bar{I} D)^t f||_2 = ||D^t (\bar{I} f)||_2 = 
@@ -649,7 +691,7 @@ sign of exactly $\alpha$ components.
 \bigskip
 
 So informally, as the span of $D$ has dimension $n-1$, and as $\alpha$ 
-increases, any random point $\bar{f}$ will tend to diverge from that 
+increases, any random point $\bar{f}$ will tend to diverge from tvec 
 subspace in dense-edge graphs ($m \approx O(n^2)$).
 
 \bigskip
