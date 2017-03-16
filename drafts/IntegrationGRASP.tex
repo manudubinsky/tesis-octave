@@ -1,79 +1,87 @@
-\documentclass[a4paper,11pt]{article}
-\usepackage{graphicx}
-\usepackage[margin=1in]{geometry}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Wenneker Article
+% LaTeX Template
+% Version 2.0 (28/2/17)
+%
+% This template was downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Authors:
+% Vel (vel@LaTeXTemplates.com)
+% Frits Wenneker
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\usepackage[table,xcdraw]{xcolor}
-\usepackage[utf8]{inputenc}
-\usepackage{ulem}
-\usepackage{color}
-\usepackage{enumerate}
-\usepackage{amssymb}
-\usepackage{amsmath}
-\usepackage {tikz}
-\usetikzlibrary{arrows,matrix,positioning,fit}
-%\usepackage{bera}
-\usepackage{listings}
-\usepackage{xcolor}
-\usepackage{framed}
-\usepackage[hidelinks]{hyperref}
-\usepackage{enumitem}
-%\setenumerate[2]{label=\roman*.}
-\usepackage{blindtext}
-\usepackage{fancyhdr}
-\usepackage{bm}
-\pagestyle{fancy}
-\usepackage{hhline}
-\colorlet{punct}{red!60!black}
-\definecolor{background}{HTML}{EEEEEE}
-\definecolor{delim}{RGB}{20,105,176}
-\colorlet{numb}{magenta!60!black}
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
 
-\definecolor {processblue}{cmyk}{0.96,0,0,0}
+\documentclass[10pt, a4paper, twocolumn]{article} % 10pt font size (11 and 12 also possible), A4 paper (letterpaper for US letter) and two column layout (remove for one column)
 
-%\setenumerate[1]{label=\textbf{\thesection.\arabic*.}}
+\input{structure.tex} % Specifies the document structure and loads requires packages
 
+%----------------------------------------------------------------------------------------
+%	ARTICLE INFORMATION
+%----------------------------------------------------------------------------------------
+
+\title{Una Metaheurística GRASP para Integración No Orientada en Grafos} % The article title
+
+\author{
+	\authorstyle{Manuel Dubinsky\textsuperscript{1}, 
+	César Massri\textsuperscript{2}, Fernando Asteasuain\textsuperscript{1}} % Authors
+	\newline\newline % Space before institutions
+	\textsuperscript{1}\institution{Dpto. Tecnología y Administración, Ingeniería Informática, Universidad Nacional de Avellaneda, Argentina}\\ % Institution 1
+	\textsuperscript{2}\institution{Dpto. de Matemática, FCEyN, Universidad de Buenos Aires, Argentina}
+}
+
+% Example of a one line author/institution relationship
+%\author{\newauthor{John Marston} \newinstitution{Universidad Nacional Autónoma de México, Mexico City, Mexico}}
+
+\date{\today} % Add a date here if you would like one to appear underneath the title block, use \today for the current date, leave empty for no date
+
+%----------------------------------------------------------------------------------------
 
 \begin{document}
-\textbf{Una Metaheurística GRASP para Integración No Orientada en Grafos}
 
-\bigskip
+\maketitle % Print the title
 
-\textbf{Abstract}
- 
-\bigskip
+\thispagestyle{firstpage} % Apply the page style for the first page (no headers and footers)
 
+%----------------------------------------------------------------------------------------
+%	ABSTRACT
+%----------------------------------------------------------------------------------------
+
+\begin{abstract}
 Dado un grafo conexo $G=(V,E)$ y una función de pesos en los nodos $x: V 
 \rightarrow \mathbb{R}$, definimos el \textit{diferencial no orientado} 
 $dx: E \rightarrow \mathbb{R}^+$ en cada eje $e=(v,w)$ como $dx(e) = 
-|x(v) - x(w)|$.
+|x(v) - x(w)|$. En el presente trabajo abordamos el siguiente problema: 
+dado un grafo $G=(V,E)$ y una función de pesos en los ejes $f: E 
+\rightarrow \mathbb{R}^+$, se trata de encontrar la función de pesos en 
+los nodos $x: V \rightarrow \mathbb{R}$ cuyo \textit{diferencial no 
+orientado} ajuste del mejor modo posible (en términos de cuadrados 
+mínimos) los pesos de los ejes dados por $f$. Para ello presentamos un 
+algoritmo basado en la metaheurística GRASP cuya simplicidad permite 
+paralelizarlo para procesar instancias de tamaño arbitrario.
+\end{abstract}
 
-\smallskip
+%----------------------------------------------------------------------------------------
+%	ARTICLE CONTENTS
+%----------------------------------------------------------------------------------------
 
-En el presente trabajo abordamos el siguiente problema: dado un grafo 
-$G=(V,E)$ y una función de pesos en los ejes $f: E \rightarrow 
-\mathbb{R}^+$, se trata de encontrar la función de pesos en los nodos 
-$x: V \rightarrow \mathbb{R}$ cuyo \textit{diferencial no orientado} 
-ajuste del mejor modo posible (en términos de cuadrados mínimos) los 
-pesos de los ejes dados por $f$.
+\section{Introducción}
 
-\smallskip
-
-Para ello presentamos un algoritmo basado en la metaheurística GRASP 
-cuya simplicidad permite paralelizarlo para procesar instancias de 
-tamaño arbitrario.
-
-\bigskip
-
-\textbf{Introducción}
-
-\bigskip
+\subsection{Descripción del problema}
 
 En esta sección se presenta el problema que abordaremos en el trabajo. 
 De acuerdo a nuestro entendimiento, se trata de una formulación 
 novedosa, por lo tanto no hay antecedentes a los cuales podamos 
 remitirnos.
 
-\bigskip
+\smallskip
 
 Dado un grafo conexo $G=(V,E)$ y una función de pesos en los ejes 
 $f: E \rightarrow \mathbb{R}^+$, queremos hallar una función de pesos 
@@ -86,7 +94,7 @@ donde $dx: E \rightarrow \mathbb{R}^+$ es el \textit{diferencial
 no orientado} de $x$ y se define en cada eje $e=(v,w)$ como $dx(e) = 
 |x(v) - x(w)|$.
 
-\bigskip
+\smallskip
 
 Por otro lado, es posible definir en un grafo dirigido una noción de 
 \textit{diferencial orientado} del siguiente modo: dado un grafo 
@@ -95,8 +103,6 @@ $\vec x: \vec V \rightarrow \mathbb{R}$, se define el
 \textit{diferencial orientado} $\vec{dx}: \vec E \rightarrow \mathbb{R}$ 
 en cada eje $e=v \rightarrow w$ como $\vec{dx}(e) = \vec x(w) - 
 \vec x(v)$.
-
-\bigskip
 
 Es importante notar que un \textit{diferencial no orientado} induce 
 naturalmente un \textit{diferencial orientado}, informalmente: hay que 
@@ -127,42 +133,28 @@ $$
 \end{bmatrix}
 $$
 
-\bigskip
-
 El algoritmo que proponemos justamente explora el espacio de todas las 
 orientaciones posibles del grafo original.
 
-\bigskip
-
-\newpage
-
-\textbf{Aplicaciones}
-
-\bigskip
+\subsection{Aplicaciones}
 
 Las aplicaciones son aquellas en las cuales necesitamos construir una 
 función de los nodos que respete ciertas restricciones diferenciales.
-
-\bigskip
 
 Por ejemplo, supongamos que los nodos representan regiones geográficas 
 y queremos construir un mapa topográfico basado en ciertas relaciones 
 diferenciales de altura entre algunas regiones.
 
-\bigskip
-
 Otro ejemplo podría ser el de ordenar cronológicamente ciertos eventos 
 en base a algunas relaciones diferenciales entre ellos.
 
-\bigskip
+%------------------------------------------------
 
-\textbf{Preliminares}
+\section{Preliminares}
 
-\bigskip
+\textbf{La \textit{matriz de incidencia dirigida}}
 
-\underline{La \textit{matriz de incidencia dirigida}}
-
-\bigskip
+\smallskip
 
 La \textit{matriz de incidencia dirigida} ($D$) de un grafo dirigido 
 $\vec G = (\vec V, \vec E)$ es una matriz de $m \times n$ (donde $|\vec
@@ -170,7 +162,7 @@ $\vec G = (\vec V, \vec E)$ es una matriz de $m \times n$ (donde $|\vec
 $e_k=v_i \rightarrow v_j$: $D_{ki} = -1$, $D_{kj} = 1$ y vale $0$ en 
 las demás entradas de la fila $k$.
 
-\bigskip
+\smallskip
 
 En otros términos, una matriz de incidencia dirigida representa una 
 posible orientación de los ejes de un grafo no dirigido $G$. Y el 
@@ -179,33 +171,26 @@ equivale al espacio de todas las orientaciones posibles de $G$.
 
 \bigskip
 
-\underline{La \textit{matriz laplaciana}}
-
-\bigskip
+\noindent{\textbf{La \textit{matriz laplaciana}}}
 
 La \textit{matriz laplaciana} ($L$) de un grafo $G$ es una matriz de 
 $n \times n$ definida del siguiente modo:
 
-\bigskip
-
-\begin{equation}
+$$
+	L_{ii} =
 	\begin{cases}
-	deg(v_i) & \text{en $L_{ii}$} \\
-	-1 & \text{en $L_{ij}$ si existe el eje $(v_i,v_j)$} \\
+	deg(v_i) & \text{si $i = j$} \\
+	-1 & \text{si existe el eje $(v_i,v_j)$} \\
 	0 & \text{en otro caso} 
 	\end{cases}
-\end{equation}
-
-\bigskip
+$$
 
 El rango de $L$ es $n-c$ donde $c$ es la cantidad de componentes 
 conexas. En particular si $G$ es conexo, el rango de $L$ es $n-1$
 
 \bigskip
 
-\underline{Relación entre las matrices $L$ y $D$}
-
-\bigskip
+\noindent{\textbf{Relación entre las matrices $L$ y $D$}}
 
 Es fácil verificar que las matrices $L$ y $D$ se relacionan de acuerdo
 a la expresión:
@@ -218,9 +203,7 @@ $L$. Como en nuestro caso $G$ es conexo el rango de $D$ es $n-1$.
 
 \bigskip
 
-\underline{Sistema lineal inducido por $D$}
-
-\bigskip
+\noindent{\textbf{Sistema lineal inducido por $D$}}
 
 Recordemos que el problema que queremos resolver es encontrar la matriz 
 de incidencia dirigida $D$, es decir la ``mejor" orientación de los ejes 
@@ -243,7 +226,11 @@ $$D^tDx = Lx = D^tv$$
 Como el rango de $L$ es $n-1$, el sistema puede no tener solución. 
 Mediante métodos iterativos es posible converger al punto más cercano a 
 una solución. Específicamente en este trabajo emplearemos el método de 
-\textit{Gradiente Conjugado}. Es importante mencionar que en el último 
+\textit{Gradiente Conjugado}.
+
+\smallskip
+
+Es importante mencionar que en el último 
 tiempo ha habido grandes avances en la creación de nuevos métodos 
 iterativos para resolver esta clase particular de sistemas lineales 
 (aquellos que involucran una matriz laplaciana) denominados 
@@ -251,9 +238,7 @@ iterativos para resolver esta clase particular de sistemas lineales
 
 \bigskip
 
-\underline{Norma de la proyección ortogonal}
-
-\bigskip
+\noindent{\textbf{Norma de la proyección ortogonal}}
 
 Para elaborar el criterio que nos permita comparar dos matrices de 
 incidencia dirigida y decidir cuál es mejor en el contexto del problema 
@@ -261,7 +246,7 @@ que queremos resolver, vamos a referirnos a nociones básicas de
 proyección ortogonal de un vector sobre un subespacio de un espacio 
 vectorial.
 
-\bigskip
+\smallskip
 
 Sean $v,w \in \mathbb{R}^n$, notamos $p_v(w)$ a la proyección de $w$ 
 sobre $v$. Mediante relaciones trigonométricas básicas podemos 
@@ -269,8 +254,6 @@ calcular $||p_v(w)||$ (la norma de $p_v(w)$):
 
 $$\frac{v w}{||w||} = \frac{cos(\alpha) \ ||v|| \ ||w||}{||w||} = 
 cos(\alpha) \ ||v|| = ||p_v(w)||$$
-
-\bigskip
 
 De modo más general, notamos $p_S(w)$ a la proyección ortogonal de $w$
 sobre un subespacio $S \subset \mathbb{R}^n$ generado por una base 
@@ -285,7 +268,7 @@ $$
 \end{bmatrix}||
 $$
 
-\bigskip
+\smallskip
 
 Para dar una intuición geométrica del hecho precedente, supongamos (sin 
 pérdida de generalidad) que $S = <e_1, \dots, e_k>$ está dada por los 
@@ -317,16 +300,14 @@ $$
 \end{bmatrix}||
 $$
 
-\bigskip
+\smallskip
 
 Informalmente, el caso general se puede reducir a este caso simple 
 mediante una matriz rotación, que preserva las normas.
 
 \bigskip
 
-\underline{Metaheurísticas GRASP}
-
-\bigskip
+\noindent{\textbf{Metaheurísticas GRASP}}
 
 En el contexto del tratamiento de problemas de complejidad $NP$, el 
 enfoque metaheurístico procura encontrar buenas soluciones (no 
@@ -345,7 +326,7 @@ Encontrar la metaheurística más adecuada depende del problema que se
 quiera resolver y debe ser contrastada empíricamente con los resultados 
 obtenidos por otras metaheurísticas.
 
-\bigskip
+\smallskip
 
 Específicamente una metaheurística de tipo \textit{GRASP} combina dos 
 aspectos. Por un lado, requiere cierto tipo de búsqueda local, es decir: 
@@ -358,26 +339,18 @@ la siguiente iteración; esto busca impedir que el algoritmo se
 estabilice entorno a un mínimo local (no necesariamente un mínimo 
 global). 
 
-\bigskip
+\smallskip
 
 En la próxima sección se presentará el algoritmo y se describirán las 
 particularidades de la implementación de una metaheurística GRASP en el 
 contexto del problema que queremos resolver.
 
-\bigskip
-
-\textbf{Implementación}
-
-\bigskip
+\section{Implementación}
 
 En esta sección describiremos el algoritmo y los detalles de la 
 implementación.
 
-\bigskip
-
-\textbf{La ``mejor" matriz de incidencia dirigida}
-
-\bigskip
+\subsection{La ``mejor" matriz de incidencia dirigida}
 
 El primer paso de la estrategia que vamos a desarrollar es tratar de 
 encontrar la ``mejor" matriz de incidencia dirigida, o dicho en otros 
@@ -393,9 +366,7 @@ en construir un algoritmo que devuelva la ``mejor solución posible".
 
 \bigskip
 
-\underline{Preprocesamiento de las hojas del grafo}
-
-\bigskip
+\noindent{\textbf{Preprocesamiento de las hojas del grafo}}
 
 Recordemos la formulación inicial del problema: queremos hallar una 
 función de pesos en los nodos $x: V \rightarrow \mathbb{R}$ de modo de 
@@ -403,20 +374,16 @@ minimizar el error:
 
 $$E(x) := \sum_{e \in E} (dx(e) - f(e))^2$$
 
-\bigskip
-
 Consideremos una hoja $v$ de $G$ (un nodo de grado 1), a su único 
 vecino $w$ y al eje que los liga $e=(v,w)$. De acuerdo a la formulación, 
 surge que $x(v) = x(w) \pm f(e)$, es decir que $x(v)$ queda 
 determinado por $x(w)$, $f(e)$ y la elección de una orientación de $e$.
 
-\bigskip
+\smallskip
 
 Por lo tanto, es posible reducir el grafo original $G$, eliminando 
 recursivamente sus  hojas de modo de obtener una grafo más simple (un 
 grafo con menos ejes y nodos):
-
-\bigskip
 
 \begin{verbatim}
          while (G has leaves) {
@@ -428,16 +395,14 @@ Un corolario es que si $G$ es un árbol, entonces $x: V
 \rightarrow \mathbb{R}$ queda determinada por alguna orientación de 
 los ejes y por $x(v)$ para un nodo $v$.
 
-\bigskip
+\smallskip
 
 De ahora en adelante consideraremos que el grado de los nodos de $G$ es 
 al menos 2.
  
 \bigskip
 
-\underline{Una base semi-ortogonal}
-
-\bigskip
+\noindent{\textbf{Una base semi-ortogonal}}
 
 Un hecho simple que se deriva de la expresión que vincula a las matrices 
 $L$ y $D$:
@@ -449,7 +414,7 @@ incidencia orientada vale $-1$ o $0$ dependiendo de si existe un eje
 entre los nodos asociados a dichas columnas o no. Notar el hecho 
 evidente de que si el producto es $0$, las columnas son ortogonales.
 
-\bigskip
+\smallskip
 
 Ahora notemos lo siguiente: si G es conexo, el ángulo entre dos 
 columnas $d_i$ y $d_j$ de $D$ está contenido en el rango 
@@ -468,17 +433,17 @@ El módulo de esta fracción se maximiza cuando las normas de las columnas
 
 $$cos \ \alpha = \frac{d_i d_j}{||d_i|| \ ||d_j||} = \frac{-1}{2}$$
 
-\bigskip
+\smallskip
 
 Implicando que $\alpha$ es a lo sumo $\frac{2\pi}{3}$.
 
-\bigskip
+\smallskip
 
 Denotaremos base \textit{semi-ortogonal} a una base (de un 
 $\mathbb{R}$-espacio vectorial) tal que el ángulo entre cualquier par de 
 generadores está en el rango $[\frac{\pi}{2},\frac{2\pi}{3}]$.
 
-\bigskip
+\smallskip
 
 El hecho de que las columnas de una matriz de incidencia dirigida 
 definan una base semi-ortogonal va a justificar el criterio que 
@@ -486,10 +451,8 @@ emplearemos para compararlas.
 
 \bigskip
 
-\underline{La \textit{pseudo-norma}. Un criterio para comparar matrices 
-de incidencia dirigida}
-
-\bigskip
+\noindent{\textbf{La \textit{pseudo-norma}. Un criterio para comparar matrices 
+de incidencia dirigida}}
 
 Una interpretación geométrica del problema $argmin_D||D \bm x- \bm f
 ||^2$ es la siguiente: encontrar la ``mejor" matriz de incidencia 
@@ -499,7 +462,7 @@ el vector $f$ esté contenido en el subespacio, entonces el problema
 tiene solución exacta, es decir: el sistema lineal $Dx = f$ tiene 
 solución.
 
-\bigskip
+\smallskip
 
 Para resolver el problema, necesitamos un criterio para comparar  
 matrices de incidencia dirigida asociadas al grafo $G$. Como las 
@@ -511,7 +474,7 @@ ortogonales y denotaremos a esta aproximación \textit{pseudo-norma}.
  $\bar{D}$ nuestro criterio será optar por aquella con mayor 
  pseudo-norma. 
 
-\bigskip
+\smallskip
 
 La pseudo-norma se puede calcular en dos pasos. El paso inicial sería 
 calcular el producto interno de $f$ con las columnas de $D$:
@@ -524,15 +487,16 @@ D^t f = \begin{bmatrix}
 \end{bmatrix}
 $$
 
-\bigskip
+\smallskip
 
 Y luego dividir cada componente por la norma correspondiente:
 
 $$
-pseudoNorm_f(D) = \begin{bmatrix}
-	\frac{cos(\alpha_1) \ ||d_1|| \ ||f||}{||d_1||}\\
+pseudoNorm_f(D) = D^t f
+\begin{bmatrix}
+	||d_1||^{-1}\\
 	\dots \\
-	\frac{cos(\alpha_n) \ ||d_n|| \ ||f||}{||d_n||}
+	||d_n||^{-1}
 \end{bmatrix} = \begin{bmatrix}
 	cos(\alpha_1) \ ||f||\\
 	\dots \\
@@ -540,7 +504,7 @@ pseudoNorm_f(D) = \begin{bmatrix}
 \end{bmatrix}
 $$
 
-\bigskip
+\smallskip
 
 Notemos que para cambiar la dirección de un eje en una matriz de 
 orientación dirigida $D$, hay que invertir la fila correspondiente al 
@@ -550,14 +514,13 @@ se puede calcular del siguiente modo:
 
 $$\bar{D} = \bar{I} D$$
 
-\bigskip
+\smallskip
 
 donde $\bar{I}$ es la matriz diagonal de $m \times m$ que tiene un $-1$ 
 en cada fila asociada a cada eje que queremos invertir y $1$ en el resto 
 de sus componentes.
 
-\bigskip
-
+\smallskip
 
 Notemos que la norma de las columnas de $D$ y $\bar{D}$ son iguales 
 porque sólo difieren en el signo de algunas componentes. Por lo tanto, 
@@ -566,25 +529,19 @@ calularse una sola vez.
 
 \bigskip
 
-\textbf{El enfoque metaheurístico}
-
-\bigskip
-
-El problema que debemos precisar ahora es cómo hacer para explorar el 
-espacio de matrices de incidencia dirigida asociado a $G = (V,E)$. 
-
-\bigskip
+\subsection{El enfoque metaheurístico}
 
 Recordemos que el problema que queremos resolver es el de encontrar una 
 matriz de incidencia dirigida $D$ que maximice $pseudoNorm_f(D)$. 
 Cabe aclarar que según nuestro entendimiento, no es posible resolverlo 
-por métodos exactos porque el tamaño del espacio es $2^m$  (donde 
+por métodos exactos porque el tamaño del espacio de matrices de 
+incidencia dirigida es $2^m$  (donde 
 $|E|=m$). Este espacio es extremadamente grande incluso para grafos 
 pequeños. Por lo tanto, el problema requiere un enfoque metaheurístico 
 que nos permita encontrar una solución ``buena" (aunque no 
 necesariamente la mejor).
 
-\bigskip
+\smallskip
 
 Como ya mencionamos, las metaheurísticas \textit{GRASP} combinan azar y 
 búsqueda local. La búsqueda local se refiere a la exploración de 
@@ -592,106 +549,76 @@ una vecindad de un punto del espacio. En nuestro caso el espacio es el
 conjunto de matrices de incidencia dirigida asociadas a $G$. Una 
 definición obvia de vecindad de una matriz de incidencia dirigida $D$ es 
 el conjunto de matrices que difieren en la dirección de un eje, o sea 
-aquellas que tienen una fila invertida con respecto a $D$. 
+aquellas que tienen una fila invertida con respecto a $D$. Cada vez que 
+se encuentra un mínimo (o máximo), lo conservamos. La sencillez de 
+GRASP y la posibilidad de paralelizarlo de un modo natural, lo 
+convierten en una alternativa razonable para nuestro problema.
+
+\subsection{El algoritmo}
+
+La estrategia que presenta nuestro algoritmo es una variante en la que 
+invertimos los aspectos de azar y búsqueda local de \textit{GRASP}: 
+primero elegimos al azar un conjunto de vecinos y luego definimos como 
+nuevo punto a explorar al mejor de ellos (el que tenga mayor 
+pseudo-norma). 
+
+\smallskip
+
+El algoritmo está controlado por dos parámetros:
+
+\begin{itemize}
+	\item La vecindad de un punto está determinada por el parámetro 
+	$\alpha$, que establece la cantidad de ejes del punto que deben 
+	modificarse al azar para construir un vecino.
+	\item La cantidad de vecinos del punto que debemos explorar en cada 
+	iteración está dada por el parámetro $\beta$
+\end{itemize}
+
+A continaución presentamos el pseudo-código del algoritmo y luego 
+comentamos las funciones auxiliares.
+
+\begin{algorithm}
+    \caption{Integrate($G,f,\alpha,\beta$)}
+	\begin{algorithmic}
+		\State $currentPoint \gets Initialize(G)$
+		\State $bestPoint \gets currentPoint$
+		\While{True}
+			\State $\Omega \gets Neighbors(currentPoint)$
+			\State $bestNeighbor \gets BestNeighbor(\Omega)$
+			\If{PN(bestNeighbor,f) > PN(bestPoint,f)}
+				\State $bestPoint \gets bestNeighbor$
+			\EndIf
+			\State $currentPoint \gets bestNeighbor$
+		\EndWhile
+	\end{algorithmic}
+\end{algorithm}
+
+\newpage
+La función \textbf{Initialize(G)} se encarga de la fase de 
+inicialización, que esencialmente consiste en construir 
+una matriz de incidencia dirigida. En nuestro caso, orientamos los ejes 
+del nodo menor al mayor de acuerdo a un etiquetado previo de los nodos 
+del grafo. 
 
 
-with randomness. Local search refers to exploring some neighborhood of 
-the of the current ``point". In our case a ``point" is some choice of 
-directions for the edges of G, or in more practical terms: is a 
-concrete matrix $D$ with 1's and -1's fixed. The neighborhood of a 
-point can be defined in different ways, an obvious defintion is to 
-change the direction of one edge (switching the corresponding pair of 
-(1,-1) in $D$). The random part refers to choosing as the ``new" point 
-to explore a random neighbor among the ``best" ones. Every time a global 
-maximum is found, it replaces the previous one. The simplicity of 
-\textit{GRASP} and the fact tvec it can be parallelized in a natural 
-way makes it an interesting choice.
+\section{Resultados}
 
-\bigskip
+\section{Trabajo futuro}
 
-Our strategy is a variant of \textit{GRASP} tvec inverts the local and 
-random parts: we choose random neighbors and set the best of them as 
-our new point. It will be as follows:
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
 
-\begin{enumerate}
-	\item Initialization: an arbitrary directed incidence matrix $D$ 
-	will be generated based on the labels of the nodes of $G$. Each edge 
-	will be oriented from the lower label node to the higher one. 
-	\item Set the parameters of the algorithm
-	\begin{enumerate}
-		\item $\alpha$: the number of edges of the current point to 
-		modify to obtain a neighbor
-		\item $\beta$: the number of neighbors to consider in each 
-		iteration
-	\end{enumerate}
-	\item Iterate for a while. In each iteration.
-	\begin{enumerate}
-		\item Choose $\beta$ $\alpha$-tuples as the neighbors of the
-		current point
-		\item Set as the new point the ``best" neighbor, the one tvec 
-		maximizes $pseudoNorm_f$
- 	\end{enumerate}
-	\item After some predefined number of iterations (or time lapse) a  
-	global candidate $D$ is obtained. To calculate the integration 
-	problem associated to $D$, solve by \textit{Conjugate Gradient} 
-	the linear system:
-	$$L x = D^t f$$
-\end{enumerate}
+\begin{thebibliography}{99} % Bibliography - this is intentionally simple in this template
 
-\bigskip
+\bibitem[Figueredo and Wolf, 2009]{Figueredo:2009dg}
+Figueredo, A.~J. and Wolf, P. S.~A. (2009).
+\newblock Assortative pairing and life history strategy - a cross-cultural
+  study.
+\newblock {\em Human Nature}, 20:317--330.
+ 
+\end{thebibliography}
 
-\textbf{Implementation}
-
-\bigskip
-
-\emph{Some calculation remarks}
-
-\bigskip
-
-*To calculate $||D^t f||_2$ it is not neccessary to do it explicitly.
-
-*Laplacian matrix implementation
-
-\bigskip
-
-\emph{Interesting facts}
-
-\bigskip
-
-For dense-edge graphs, the chance of improving the maximization 
-condition for a random neighbor decreases with an increasing $\alpha$. 
-This fact was noted while adjusting parameters for an input mid-size 
-complete graph (100 nodes). 
-
-\bigskip
-
-To illustrate the situation, consider a matrix $D$ and a neighbor 
-$\bar{D}$. As mentioned above they are related via some diagonal matrix 
-$\bar{I}$ with values $1,-1$ in the diagonal:
-
-$$\bar{D} = \bar{I} D$$
-
-Note tvec the maximization condition for the neighbor $\bar{D}$ uncovers 
-a new point of view of the problem:
-
-$$||\bar{D}^tf||_2 = ||(\bar{I} D)^t f||_2 = ||D^t (\bar{I} f)||_2 = 
-||D^t \bar{f}||_2$$
-
-Our problem can be stated as: find the ``closest" point $\bar{f}$ to 
-the subspace generated by $D$. Where $f$ and $\bar{f}$, differ in the 
-sign of exactly $\alpha$ components.
-
-\bigskip
-
-So informally, as the span of $D$ has dimension $n-1$, and as $\alpha$ 
-increases, any random point $\bar{f}$ will tend to diverge from tvec 
-subspace in dense-edge graphs ($m \approx O(n^2)$).
-
-\bigskip
-
-\emph{Parameter adjustment}
-
-\bigskip
-
+%----------------------------------------------------------------------------------------
 
 \end{document}
