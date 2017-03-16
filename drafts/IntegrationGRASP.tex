@@ -574,7 +574,7 @@ El algoritmo está controlado por dos parámetros:
 	iteración está dada por el parámetro $\beta$
 \end{itemize}
 
-A continaución presentamos el pseudo-código del algoritmo y luego 
+A continuación presentamos el pseudo-código del algoritmo y luego 
 comentamos las funciones auxiliares.
 
 \begin{algorithm}
@@ -582,9 +582,9 @@ comentamos las funciones auxiliares.
 	\begin{algorithmic}
 		\State $currentPoint \gets Initialize(G)$
 		\State $bestPoint \gets currentPoint$
-		\While{True}
+		\While{p}
 			\State $\Omega \gets Neighbors(currentPoint)$
-			\State $bestNeighbor \gets BestNeighbor(\Omega)$
+			\State $bestNeighbor \gets BestNeighbor(\Omega,f)$
 			\If{PN(bestNeighbor,f) > PN(bestPoint,f)}
 				\State $bestPoint \gets bestNeighbor$
 			\EndIf
@@ -594,12 +594,35 @@ comentamos las funciones auxiliares.
 \end{algorithm}
 
 \newpage
-La función \textbf{Initialize(G)} se encarga de la fase de 
-inicialización, que esencialmente consiste en construir 
-una matriz de incidencia dirigida. En nuestro caso, orientamos los ejes 
-del nodo menor al mayor de acuerdo a un etiquetado previo de los nodos 
-del grafo. 
 
+La función \textbf{Initialize(G)} se encarga de construir 
+una matriz de incidencia dirigida inicial. Concretamente la orientación 
+de los ejes de esa matriz se define desde el nodo con menor 
+etiqueta al de mayor a partir de un etiquetado previo de los nodos del 
+grafo. 
+
+\smallskip
+
+La función \textbf{Neighbors(currentPoint)} devuelve un conjunto de 
+vecinos del punto que se está explorando en la iteración. El conjunto 
+de vecinos se arma en base a los parámetros $\alpha$ y $\beta$. El 
+resultado es un conjunto de $\beta$ vecinos cada uno de los cuales 
+difiere en la dirección de exactamente $\alpha$ ejes (elegidos al azar) 
+con respecto $currentPoint$.
+
+\smallskip
+
+La función $BestNeighbor(\Omega,f)$ devuelve el mejor vecino del conjunto 
+de entrada. O sea, aquel que tiene mayor $pseudo-norma$. Y por último, 
+la función $PN(bestNeighbor,f)$ calcula la $pseudo-norma$ de la matriz 
+de incidencia de entrada.
+
+\smallskip
+
+La condición de corte del $While$ es un predicado ($p$) que permite 
+terminar la ejecución por criterios distintos: cantidad de iteraciones, 
+tiempo de ejecución transcurrido, margen de error de la mejor solución 
+encontrada dentro de un rango de aceptación.
 
 \section{Resultados}
 

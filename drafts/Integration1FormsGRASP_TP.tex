@@ -693,5 +693,26 @@ subspace in dense-edge graphs ($m \approx O(n^2)$).
 
 \bigskip
 
+La función \textbf{Initialize(G)} se encarga de construir 
+una matriz de incidencia dirigida inicial. Concretamente la orientación 
+de los ejes de esa matriz se define desde el nodo con menor 
+etiqueta al de mayor a partir de un etiquetado previo de los nodos del 
+grafo. 
+
+\smallskip
+
+La función \textbf{Neighbors(currentPoint)} devuelve un conjunto de 
+vecinos del punto que se está explorando en la iteración. El conjunto 
+de vecinos se arma en base a los parámetro $\alpha$ y $\beta$. El 
+resultado es un conjunto de $\beta$ vecinos cada uno de los cuales 
+difiere en la dirección de exactamente $\alpha$ ejes con respecto 
+$currentPoint$.
+
+\smallskip
+
+La función $BestNeighbor(\Omega,f)$ devuelve el mejor vecino del conjunto 
+de entrada. O sea, aquel que tiene mayor $pseudo-norma$. Y por último, 
+la función $PN(bestNeighbor,f)$ calcula la $pseudo-norma$ de la matriz 
+de incidencia de entrada.
 
 \end{document}
