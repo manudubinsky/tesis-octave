@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Wenneker Article
 % LaTeX Template
-% Version 2.0 (28/2/17)
+% Version 2.0
 %
 % This template was downloaded from:
 % http://www.LaTeXTemplates.com
@@ -166,7 +166,7 @@ las demás entradas de la fila $k$.
 
 En otros términos, una matriz de incidencia dirigida representa una 
 posible orientación de los ejes de un grafo no dirigido $G$. Y el 
-espacio de matrices de incidencia dirigida asociadas a $G$ 
+espacio de matrices de incidencia dirigida asociado a $G$ 
 equivale al espacio de todas las orientaciones posibles de $G$.
 
 \bigskip
@@ -177,7 +177,7 @@ La \textit{matriz laplaciana} ($L$) de un grafo $G$ es una matriz de
 $n \times n$ definida del siguiente modo:
 
 $$
-	L_{ii} =
+	L_{ij} =
 	\begin{cases}
 	deg(v_i) & \text{si $i = j$} \\
 	-1 & \text{si existe el eje $(v_i,v_j)$} \\
@@ -212,7 +212,7 @@ del grafo $G$, de modo de minimizar la expresión:
 $$E(x) = ||D\bm{x}-\bm{f}||^2$$
 
 Para eso será preciso explorar el espacio de matrices de 
-incidencia dirigida asociadas a $G$. Una vez que conseguimos una 
+incidencia dirigida asociado a $G$. Una vez que conseguimos una 
 matriz candidata, el problema de minimización es equivalente a encontrar
 dónde se anula el gradiente de $E(x)$:
  
@@ -333,7 +333,7 @@ aspectos. Por un lado, requiere cierto tipo de búsqueda local, es decir:
 explorar un entorno de la solución de la iteración actual, para lo cual 
 es preciso definir una noción de vecindad en el espacio; en nuestro caso 
 se tratará de definir una noción de vecindad en el espacio de matrices 
-de incidencia dirigida asociadas a un grafo. Y por otro lado, GRASP 
+de incidencia dirigida asociado a un grafo. Y por otro lado, GRASP 
 requiere cierto grado de azar en la elección del vecino a explorar en 
 la siguiente iteración; esto busca impedir que el algoritmo se 
 estabilice entorno a un mínimo local (no necesariamente un mínimo 
@@ -359,7 +359,7 @@ minimizar el error:
 
 $$E(x) = ||D\bm{x}-\bm{f}||^2$$
  
-Como el espacio matrices de incidencia dirigida asociadas a $G$ es un 
+Como el espacio matrices de incidencia dirigida asociado a $G$ es un 
 espacio de tamaño exponencial respecto a la cantidad de ejes, dado que 
 cada eje puede tener dos orientaciones, nuestra propuesta está centrada 
 en construir un algoritmo que devuelva la ``mejor solución posible".
@@ -412,7 +412,8 @@ $$L = D^t D$$
 es que el producto interno de dos columnas distintas de una matriz de 
 incidencia orientada vale $-1$ o $0$ dependiendo de si existe un eje 
 entre los nodos asociados a dichas columnas o no. Notar el hecho 
-evidente de que si el producto es $0$, las columnas son ortogonales.
+evidente de que si el producto es $0$, las columnas son
+ ortogonales.
 
 \smallskip
 
@@ -532,7 +533,7 @@ calularse una sola vez.
 \subsection{El enfoque metaheurístico}
 
 Recordemos que el problema que queremos resolver es el de encontrar una 
-matriz de incidencia dirigida $D$ que maximice $pseudoNorm_f(D)$. 
+matriz de incidencia dirigida $D$ que maximice la $pseudo-norma$ de $f$. 
 Cabe aclarar que según nuestro entendimiento, no es posible resolverlo 
 por métodos exactos porque el tamaño del espacio de matrices de 
 incidencia dirigida es $2^m$  (donde 
@@ -546,7 +547,7 @@ necesariamente la mejor).
 Como ya mencionamos, las metaheurísticas \textit{GRASP} combinan azar y 
 búsqueda local. La búsqueda local se refiere a la exploración de 
 una vecindad de un punto del espacio. En nuestro caso el espacio es el 
-conjunto de matrices de incidencia dirigida asociadas a $G$. Una 
+conjunto de matrices de incidencia dirigida asociado a $G$. Una 
 definición obvia de vecindad de una matriz de incidencia dirigida $D$ es 
 el conjunto de matrices que difieren en la dirección de un eje, o sea 
 aquellas que tienen una fila invertida con respecto a $D$. Cada vez que 
@@ -590,7 +591,10 @@ comentamos las funciones auxiliares.
 			\EndIf
 			\State $currentPoint \gets bestNeighbor$
 		\EndWhile
+		\State Solve laplacian system $L x = D^t f$ \\
+		\Return $x$
 	\end{algorithmic}
+	\label{alg:alg1}
 \end{algorithm}
 
 \newpage
@@ -624,7 +628,209 @@ terminar la ejecución por criterios distintos: cantidad de iteraciones,
 tiempo de ejecución transcurrido, margen de error de la mejor solución 
 encontrada dentro de un rango de aceptación.
 
+\smallskip
+
+Y por último, el sistema laplaciano ($Lx = D^t f$) se resuelve mediante 
+el método iterativo de \emph{Gradiente Conjugado}.
+
 \section{Resultados}
+
+En esta sección describimos los resultados obtenidos. Primero 
+comentamos el criterio que adoptamos para determinar los valores de los 
+parámetros $\alpha$ y $\beta$. Y posteriormente nos enfocamos en el 
+análisis del algoritmo evaluado sobre tres familias de grafos: 
+
+\begin{itemize}
+	\item \emph{Grafos completos}: son aquellos en los que todos los 
+	nodos están ligados por un eje.
+	\item \emph{Ciclos simples}: grafo que define un ciclo sin ciclos 
+	propios; se puede pensar en un polígono simple como modelo 
+	geométrico.
+	\item \emph{Mallas 3D}: son representaciones de superficies 
+	inmersas en el espacio tridimensional; tienen más estructura que un 
+	grafo porque los nodos tienen asociada una posición en el espacio.
+\end{itemize}
+
+La elección de las dos primeras familias está justificada por el hecho 
+de que los grafos completos y los ciclos simples determinan los casos 
+extremos en términos del grado de sus nodos: los grafos completos 
+maximizan el grado, mientras que los ciclos simples lo minimizan. 
+Recordar que el grado de los nodos es por los menos $2$. Y los grafos 
+asociados a mallas $3D$ son aquellos en los que inicialmente se planteó 
+el problema que analizamos en este trabajo.
+
+\smallskip
+
+Es importante notar que las instancias de input del algoritmo $(G,f)$ 
+donde $G=(V,E)$ es un grafo y $f: E \rightarrow \mathbb{R}$ es una 
+función de pesos, se construyeron de modo tal de que exista una 
+solución exacta. Es decir, que en cada caso existe una función de pesos 
+en los nodos $x: V \rightarrow \mathbb{R}$ cuyo \textit{diferencial no 
+orientado} ajusta exactamente a $f$. En este contexto medimos el error 
+del siguiente modo:
+
+$$error(D) = \frac{||Dx-f||}{||f||}$$
+
+donde $D$ es la matriz de incidencia dirigida y $x$ es la función de 
+pesos en los nodos que devuelve el algoritmo. Por lo tanto, el error 
+está contenido en el intervalo $[0,1]$
+
+\smallskip
+
+Finalmente, es importante mencionar que los experimentos se limitaron a 
+evaluar la velocidad de convergencia de cada instancia de input. Es 
+decir, a exponer cómo disminuye el error respecto a la cantidad de 
+iteraciones.
+
+\subsection{Ajuste de parámetros}
+
+Recordemos que los parámetros del algoritmo, $\alpha$ y $\beta$ denotan 
+respectivamente la cantidad exacta de ejes en los que difieren los 
+vecinos de la matriz de incidencia (de la iteración actual) y el tamaño 
+del conjunto de vecinos.
+
+\smallskip
+
+Para estimar $\alpha$ y $\beta$ empleamos un grafo completo de 100 
+nodos y consideramos distintos valores posibles de los parámetros: 
+$\alpha \in \{1,2,3,4\}$ y $\beta \in \{2,4,6,8,10\}$. Cada par 
+$(\alpha_i, \beta_j)$ define un test. Para cada test el algoritmo se 
+ejecutó durante $10^4$ iteraciones y se repitió $5$ veces. El resultado 
+del error medio está reflejado en la tabla \ref{tab:ajuste1} y en el 
+heat-map de la figura \ref{fig:ajuste1}. Lo que se confirma 
+inmediatamente es algo razonable: cuanto mayor es el tamaño del 
+conjunto de vecinos ($\beta$), menor es el error del algoritmo. Por 
+otro lado, surge que la mejor elección de $\alpha$ es $2$, o sea 
+conviene considerar vecinos que difieran en exactamente $2$ ejes. Esto 
+último, se pudo confirmar en una prueba más exhaustiva en la cual 
+fijamos $\beta$ en $10$ y ejecutamos $50$ veces cada test durante 
+$2 . 10^4$ iteraciones. El resultado está reflejado en el boxplot de la 
+figura \ref{fig:ajuste2}. En este caso, es interesante notar cómo 
+disminuye la varianza a medida que $\alpha$ aumenta.
+
+\smallskip
+
+En conclusión, consideramos que $\alpha = 2$ y $\beta = 0.1 \ deg(V)$ 
+(donde $deg(V)$ es el grado promedio de los nodos del grafo de input) 
+son valores adecuados de los parámetros. Si bien  el criterio no es 
+exhaustivo, en el sentido de que por ejemplo puede suceder que una 
+instancia de tamaño mayor requiera que $\alpha$ sea mayor para que 
+mejore su velocidad de convergencia, estos son valores de referencia 
+para evaluar el algoritmo en condiciones uniformes.
+
+\begin{table}
+	\caption{Ajuste de parámetros}
+	\centering
+	\begin{tabular}{llr}
+		\toprule
+		\multicolumn{2}{c}{Parámetros} \\
+		\cmidrule(r){1-2}
+		$\alpha$ & $\beta$ & error promedio \\
+		\midrule
+		1 & 2 & $0.5189745$ \\
+		1 & 4 & $0.2568497$ \\
+		1 & 6 & $0.2129859$ \\
+		1 & 8 & $0.1980620$ \\
+		1 & 10 & $0.1767993$ \\
+		2 & 2 & $0.5261091$ \\
+		2 & 4 & $0.3491206$ \\
+		2 & 6 & $0.2365749$ \\
+		2 & 8 & $0.2093766$ \\
+		2 & 10 & $0.1237789$ \\
+		3 & 2 & $0.5261091$ \\
+		3 & 4 & $0.4260077$ \\
+		3 & 6 & $0.2974878$ \\
+		3 & 8 & $0.2450824$ \\
+		3 & 10 & $0.2033154$ \\
+		4 & 2 & $0.5260864$ \\
+		4 & 4 & $0.5029136$ \\
+		4 & 6 & $0.3957194$ \\
+		4 & 8 & $0.3118229$ \\
+		4 & 10 & $0.2619005$ \\
+		\bottomrule
+		\label{tab:ajuste1}
+	\end{tabular}
+\end{table}
+
+\begin{figure}
+	\includegraphics[width=\linewidth]{param_adjust.png} % Figure image
+	\caption{Ajuste de parámetros} % Figure caption
+	\label{fig:ajuste1} % Label for referencing with \ref{bear}
+\end{figure}
+
+%\begin{figure}
+	%\includegraphics[width=\linewidth]{calibrate_complete_beta10_iter10000_tests50.png} % Figure image
+	%\caption{Ajuste de parámetros} % Figure caption
+	%\label{Texto2} % Label for referencing with \ref{bear}
+%\end{figure}
+
+\begin{figure}
+	\includegraphics[width=\linewidth]{calibrate_complete_beta10_iter20000_tests50.png} % Figure image
+	\caption{Ajuste de parámetros} % Figure caption
+	\label{fig:ajuste2} % Label for referencing with \ref{bear}
+\end{figure}
+
+\newpage
+
+\subsection{Grafos completos}
+
+Los grafos completos son aquellos en los que todo par de nodos está 
+conectado por un eje. Esta familia es importante en el contexto del 
+problema que estamos analizando porque a medida que crece el tamaño de 
+la instancia del grafo de input, la \emph{pseudo-norma} estima mejor a 
+la proyección ortogonal de $f$ sobre el subespacio generado por las 
+columnas de las matrices incidencia dirigida. Más específicamente, el 
+ángulo entre dos columnas de una matriz de incidencia dirigida puede 
+calcularse mediante la expresión:
+
+$$cos(d_i,d_j) = \frac{d_i d_j}{||d_i|| \ ||d_j||} = 
+\frac{d_i d_j}{deg(v_i) \ deg(v_j)}$$
+
+donde $cos(d_i,d_j)$ es el coseno del ángulo entre las columnas de $D$ 
+correspondientes a los nodos $v_i$ y $v_j$ del grafo. A medida que el 
+grado de los nodos crece, el coseno tiende a $0$, o sea: las 
+columnas de $D$ se van volviendo más ortogonales.
+
+\smallskip
+
+En este caso, consideramos tres tipos de instancias de grafos 
+completos: de 100, 200 y 400 nodos. Para cada tipo de instancia, se 
+hicieron 20 experimentos, cada uno de los cuales se ejecutó durante 
+$4 . 10^4$ iteraciones. Es importante notar que la cantidad de ejes de 
+un grafo completo es del orden de $n^2$ (donde $|V| = n$).  La figura 
+\ref{fig:complete} muestra la media del error en función de la cantidad 
+de iteraciones para cada tipo de instancia. Se observa una velocidad de 
+convergencia aceptable. Como el parámetro $\alpha$ fue ajustado en 
+base a grafos completos de 100 nodos, es esperable que el rendimiento 
+del algoritmo mejore en ese caso.
+
+
+\begin{figure}
+	\includegraphics[width=\linewidth]{complete_graphs.png} % Figure image
+	\caption{Grafos completos} % Figure caption
+	\label{fig:complete} % Label for referencing with \ref{bear}
+\end{figure}
+
+\subsection{Ciclos simples}
+
+Los grafos que definen ciclos simples también representan una familia 
+de interés. En este caso, como cada nodo tiene solamente dos vecinos, 
+la columna de una matriz de incidencia dirigida asociada a un cierto 
+nodo, es ortogonal a todas las demás columnas excepto a las asociadas a 
+los dos nodos vecinos. En ese caso, el ángulo que forman dos columnas
+asociadas a dos nodos vecinos es $\frac{2\pi}{3}$. En esta familia de 
+grafos la cantidad de ejes es del orden de $n$.
+
+\smallskip
+
+Es importante mencionar que en este caso, la limitación que existe para 
+procesar instancias con una mayor cantidad de ejes es la resolución del 
+sistema laplaciano $Lx = D^t f$. La matriz $L$ es de tamaño $n \times 
+n$, eso impone un límite a esta implementación. Una implementación 
+paralelizada de la resolución del sistema lineal permitiría que el 
+algoritmo escale sin limitaciones.
+
+\subsection{Mallas 3D}
 
 \section{Trabajo futuro}
 
