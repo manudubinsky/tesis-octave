@@ -30,12 +30,11 @@
 \title{Una Metaheurística GRASP para Integración No Orientada en Grafos} % The article title
 
 \author{
-	\authorstyle{Gabriel Taubin\textsuperscript{1}, Manuel Dubinsky\textsuperscript{2}, 
-	César Massri\textsuperscript{3}, Fernando Asteasuain\textsuperscript{2}} % Authors
+	\authorstyle{Manuel Dubinsky\textsuperscript{1}, 
+	César Massri\textsuperscript{2}, Fernando Asteasuain\textsuperscript{1}} % Authors
 	\newline\newline % Space before institutions
-	\textsuperscript{1}\institution{Engineering Dept., Brown University, Providence, USA} \\
-	\textsuperscript{2}\institution{Dpto. Tecnología y Administración, Ingeniería Informática, Universidad Nacional de Avellaneda, Argentina}\\ % Institution 1
-	\textsuperscript{3}\institution{Dpto. de Matemática, FCEyN, Universidad de Buenos Aires, Argentina}
+	\textsuperscript{1}\institution{Dpto. Tecnología y Administración, Ingeniería Informática, Universidad Nacional de Avellaneda, Argentina}\\ % Institution 1
+	\textsuperscript{2}\institution{Dpto. de Matemática, FCEyN, Universidad de Buenos Aires, Argentina}
 }
 
 % Example of a one line author/institution relationship
@@ -227,7 +226,7 @@ $$D^tDx = Lx = D^tv$$
 Como el rango de $L$ es $n-1$, el sistema puede no tener solución. 
 Mediante métodos iterativos es posible converger al punto más cercano a 
 una solución. Específicamente en este trabajo emplearemos el método de 
-\textit{Gradiente Conjugado}.
+\textit{Gradiente Conjugado} \cite{Saad:2007}.
 
 \smallskip
 
@@ -235,7 +234,8 @@ Es importante mencionar que en el último
 tiempo ha habido grandes avances en la creación de nuevos métodos 
 iterativos para resolver esta clase particular de sistemas lineales 
 (aquellos que involucran una matriz laplaciana) denominados 
-\textit{sistemas laplacianos}.
+\textit{sistemas laplacianos} \cite{KMP:2010,Spielman:2010,ST:2004,
+Teng:2010}.
 
 \bigskip
 
@@ -311,7 +311,7 @@ mediante una matriz rotación, que preserva las normas.
 \noindent{\textbf{Metaheurísticas GRASP}}
 
 En el contexto del tratamiento de problemas de complejidad $NP$, el 
-enfoque metaheurístico procura encontrar buenas soluciones (no 
+enfoque metaheurístico \cite{GP:2010,Talbi:2009} procura encontrar buenas soluciones (no 
 necesariamente las mejores) en tiempo polinomial. Algunas 
 metaheurísticas son:
 
@@ -411,7 +411,7 @@ $L$ y $D$:
 $$L = D^t D$$
 
 es que el producto interno de dos columnas distintas de una matriz de 
-incidencia orientada vale $-1$ o $0$ dependiendo de si existe un eje 
+incidencia dirigida vale $-1$ o $0$ dependiendo de si existe un eje 
 entre los nodos asociados a dichas columnas o no. Notar el hecho 
 evidente de que si el producto es $0$, las columnas son
  ortogonales.
@@ -453,8 +453,8 @@ emplearemos para compararlas.
 
 \bigskip
 
-\noindent{\textbf{La \textit{pseudo-norma}. Un criterio para comparar matrices 
-de incidencia dirigida}}
+\noindent{\textbf{La \textit{pseudo-norma}. Un criterio para comparar 
+matrices de incidencia dirigida}}
 
 Una interpretación geométrica del problema $argmin_D||D \bm x- \bm f
 ||^2$ es la siguiente: encontrar la ``mejor" matriz de incidencia 
@@ -509,7 +509,7 @@ $$
 \smallskip
 
 Notemos que para cambiar la dirección de un eje en una matriz de 
-orientación dirigida $D$, hay que invertir la fila correspondiente al 
+incidencia dirigida $D$, hay que invertir la fila correspondiente al 
 eje que se quiere modificar. Y de modo más general, si queremos cambiar 
 la dirección de varios ejes simultáneamente la nueva matriz $\bar{D}$
 se puede calcular del siguiente modo:
@@ -527,21 +527,20 @@ de sus componentes.
 Notemos que la norma de las columnas de $D$ y $\bar{D}$ son iguales 
 porque sólo difieren en el signo de algunas componentes. Por lo tanto, 
 la norma de las columnas de las matrices de incidencia dirigida puede 
-calularse una sola vez.
+calcularse una sola vez.
 
 \bigskip
 
 \subsection{El enfoque metaheurístico}
 
-Recordemos que el problema que queremos resolver es el de encontrar una 
-matriz de incidencia dirigida $D$ que maximice la $pseudo-norma$ de $f$. 
+El problema que queremos resolver es el de encontrar una matriz de 
+incidencia dirigida $D$ que maximice la $pseudo-norma$ de $f$. 
 Cabe aclarar que según nuestro entendimiento, no es posible resolverlo 
 por métodos exactos porque el tamaño del espacio de matrices de 
-incidencia dirigida es $2^m$  (donde 
-$|E|=m$). Este espacio es extremadamente grande incluso para grafos 
-pequeños. Por lo tanto, el problema requiere un enfoque metaheurístico 
-que nos permita encontrar una solución ``buena" (aunque no 
-necesariamente la mejor).
+incidencia dirigida es $2^m$  (donde $|E|=m$). Este espacio es 
+extremadamente grande incluso para grafos pequeños. Por lo tanto, el 
+problema requiere un enfoque metaheurístico que nos permita encontrar 
+una solución ``buena" (aunque no necesariamente la mejor).
 
 \smallskip
 
@@ -686,8 +685,8 @@ cómo disminuye el error respecto a la cantidad de iteraciones.
 
 Recordemos que los parámetros del algoritmo, $\alpha$ y $\beta$ denotan 
 respectivamente la cantidad exacta de ejes en los que difieren los 
-vecinos de la matriz de incidencia (de la iteración actual) y el tamaño 
-del conjunto de vecinos.
+vecinos de la matriz de incidencia dirigida (de la iteración actual) y 
+el tamaño del conjunto de vecinos.
 
 \smallskip
 
@@ -785,8 +784,8 @@ conectado por un eje. Esta familia es importante en el contexto del
 problema que estamos analizando porque a medida que crece el tamaño de 
 la instancia del grafo de input, la \emph{pseudo-norma} estima mejor a 
 la proyección ortogonal de $f$ sobre el subespacio generado por las 
-columnas de las matrices incidencia dirigida. Más específicamente, el 
-ángulo entre dos columnas de una matriz de incidencia dirigida puede 
+columnas de las matrices de incidencia dirigida. Más específicamente, 
+el ángulo entre dos columnas de una matriz de incidencia dirigida puede 
 calcularse mediante la expresión:
 
 $$cos(d_i,d_j) = \frac{d_i d_j}{||d_i|| \ ||d_j||} = 
@@ -794,8 +793,8 @@ $$cos(d_i,d_j) = \frac{d_i d_j}{||d_i|| \ ||d_j||} =
 
 donde $cos(d_i,d_j)$ es el coseno del ángulo entre las columnas de $D$ 
 correspondientes a los nodos $v_i$ y $v_j$ del grafo. A medida que el 
-grado de los nodos crece, el coseno tiende a $0$, o sea: las 
-columnas de $D$ se van volviendo más ortogonales.
+grado de los nodos crece, el coseno tiende a $0$, o sea: las columnas 
+de $D$ se van volviendo más ortogonales.
 
 \smallskip
 
@@ -889,7 +888,7 @@ observa una velocidad de convergencia aceptable.
 
 
 Las mallas poligonales permiten representar superficies inmersas en el 
-espacio tridimensional. Son objetos de estudio en el área de 
+espacio tridimensional \cite{BKPAL:2010}. Son objetos de estudio en el área de 
 computación gráfica. Las caras son aproximaciones lineales de pequeñas 
 vecindades de la superficie. El grafo subyacente de una malla decribe 
 los bordes de las caras. En nuestro caso empleamos dos superficies 
@@ -948,7 +947,7 @@ de procesamiento distribuido (ej.: \emph{map-reduce}).
 En la implementación que presentamos, la mayor limitación está 
 relacionada a la resolución de \emph{sistemas laplacianos}, es decir: 
 sistemas lineales $Lx=b$ en los que $L$ es una \emph{matriz 
-laplaciana}. Actualmente hay importantes lineas de trabajo abordando 
+laplaciana}. Actualmente hay importantes líneas de trabajo abordando 
 nuevas metodologías iterativas que reducen el tiempo de 
 procesamiento de este tipo de sistemas. En una a futura implementación
  sería importante incorporar estos enfoques. 
@@ -959,12 +958,53 @@ procesamiento de este tipo de sistemas. En una a futura implementación
 
 \begin{thebibliography}{99} % Bibliography - this is intentionally simple in this template
 
-\bibitem[Figueredo and Wolf, 2009]{Figueredo:2009dg}
-Figueredo, A.~J. and Wolf, P. S.~A. (2009).
-\newblock Assortative pairing and life history strategy - a cross-cultural
-  study.
-\newblock {\em Human Nature}, 20:317--330.
- 
+\bibitem[Koutis, Miller and Peng, 2010]{KMP:2010}
+Koutis I., Miller G. L. and Peng R., 
+\newblock \textit{Approaching optimality for solving sdd linear systems}, 
+\newblock 51st Annual Symposium on Foundations of Computer Science, IEEE, 
+2010, pp. 235-244
+
+\bibitem[Spielman, 2010]{Spielman:2010}
+Spielman D. A.,
+\newblock \textit{Algorithms, graph theory, and linear equations in laplacian 
+matrices}, 
+\newblock Proceedings of the International Congress of Mathematicians, vol. 4, 
+2010, pp. 2698-2722
+
+\bibitem[Spielman and Teng, 2004]{ST:2004}
+Spielman D. A. and Shang-Hua Teng,
+\newblock \textit{Nearly-linear time algorithms for graph partitioning, graph 
+sparsification, and solving linear systems}, 
+\newblock Proceedings of the thirty-sixth annual ACM symposium on Theory of 
+Computing, ACM, 2004, pp. 81-90
+
+\bibitem[Teng, 2010]{Teng:2010}
+Shang-Hua Teng,
+\newblock \textit{The laplacian paradigm: Emerging algorithms for massive 
+graphs}, 
+\newblock Theory and Applications of Models of Computation, Lecture Notes in 
+Computer Science, vol. 6108, 2010, pp. 2-14
+
+\bibitem[Gendrau, Potvin, 2010]{GP:2010}
+Gendreau M. and Potvin J., 
+\newblock \textit{Handbook of Metaheuristics}, 
+\newblock Springer, 2010
+
+\bibitem[Talbi, 2009]{Talbi:2009}
+Talbi E.G., 
+\newblock \textit{Metaheuristics: from design to implementation}, 
+\newblock Wiley, 2009.
+
+\bibitem[Saad, 2007]{Saad:2007}
+Saad Y., 
+\newblock \textit{Iterative methods for sparse linear systems}, 
+\newblock SIAM, 2007.
+
+\bibitem[Botsch, Kobbelt, Pauly, Alliez, Lévy , 2010]{BKPAL:2010}
+Botsch M., Kobbelt L., Pauly M., Alliez P., Lévy B.,
+\newblock \textit{Polygon Mesh Processing}
+\newblock A. K. Peters, 2010
+
 \end{thebibliography}
 
 %----------------------------------------------------------------------------------------
