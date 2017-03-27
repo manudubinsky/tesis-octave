@@ -30,11 +30,12 @@
 \title{Una Metaheurística GRASP para Integración No Orientada en Grafos} % The article title
 
 \author{
-	\authorstyle{Manuel Dubinsky\textsuperscript{1}, 
-	César Massri\textsuperscript{2}, Fernando Asteasuain\textsuperscript{1}} % Authors
+	\authorstyle{Gabriel Taubin\textsuperscript{1}, Manuel Dubinsky\textsuperscript{2}, 
+	César Massri\textsuperscript{3}, Fernando Asteasuain\textsuperscript{2}} % Authors
 	\newline\newline % Space before institutions
-	\textsuperscript{1}\institution{Dpto. Tecnología y Administración, Ingeniería Informática, Universidad Nacional de Avellaneda, Argentina}\\ % Institution 1
-	\textsuperscript{2}\institution{Dpto. de Matemática, FCEyN, Universidad de Buenos Aires, Argentina}
+	\textsuperscript{1}\institution{Engineering Dept., Brown University, Providence, USA} \\
+	\textsuperscript{2}\institution{Dpto. Tecnología y Administración, Ingeniería Informática, Universidad Nacional de Avellaneda, Argentina}\\ % Institution 1
+	\textsuperscript{3}\institution{Dpto. de Matemática, FCEyN, Universidad de Buenos Aires, Argentina}
 }
 
 % Example of a one line author/institution relationship
@@ -599,7 +600,7 @@ comentamos las funciones auxiliares.
 
 \newpage
 
-La función \textbf{Initialize(G)} se encarga de construir 
+La función \emph{Initialize(G)} se encarga de construir 
 una matriz de incidencia dirigida inicial. Concretamente la orientación 
 de los ejes de esa matriz se define desde el nodo con menor 
 etiqueta al de mayor a partir de un etiquetado previo de los nodos del 
@@ -607,7 +608,7 @@ grafo.
 
 \smallskip
 
-La función \textbf{Neighbors(currentPoint)} devuelve un conjunto de 
+La función \emph{Neighbors(currentPoint)} devuelve un conjunto de 
 vecinos del punto que se está explorando en la iteración. El conjunto 
 de vecinos se arma en base a los parámetros $\alpha$ y $\beta$. El 
 resultado es un conjunto de $\beta$ vecinos cada uno de los cuales 
@@ -641,8 +642,8 @@ parámetros $\alpha$ y $\beta$. Y posteriormente nos enfocamos en el
 análisis del algoritmo evaluado sobre tres familias de grafos: 
 
 \begin{itemize}
-	\item \emph{Grafos completos}: son aquellos en los que todos los 
-	nodos están ligados por un eje.
+	\item \emph{Grafos completos}: son aquellos en los que todo par de  
+	nodos está ligado por un eje.
 	\item \emph{Ciclos simples}: grafo que define un ciclo sin ciclos 
 	propios; se puede pensar en un polígono simple como modelo 
 	geométrico.
@@ -678,9 +679,8 @@ está contenido en el intervalo $[0,1]$
 \smallskip
 
 Finalmente, es importante mencionar que los experimentos se limitaron a 
-evaluar la velocidad de convergencia de cada instancia de input. Es 
-decir, a exponer cómo disminuye el error respecto a la cantidad de 
-iteraciones.
+evaluar la convergencia de cada instancia de input. Es decir, a exponer 
+cómo disminuye el error respecto a la cantidad de iteraciones.
 
 \subsection{Ajuste de parámetros}
 
@@ -710,13 +710,19 @@ disminuye la varianza a medida que $\alpha$ aumenta.
 
 \smallskip
 
-En conclusión, consideramos que $\alpha = 2$ y $\beta = 0.1 \ deg(V)$ 
-(donde $deg(V)$ es el grado promedio de los nodos del grafo de input) 
-son valores adecuados de los parámetros. Si bien  el criterio no es 
-exhaustivo, en el sentido de que por ejemplo puede suceder que una 
-instancia de tamaño mayor requiera que $\alpha$ sea mayor para que 
-mejore su velocidad de convergencia, estos son valores de referencia 
-para evaluar el algoritmo en condiciones uniformes.
+En base a estos resultados y al tamaño de las instancias que utilizamos 
+en los experimentos, el criterio que adoptamos para ajustar los 
+parámetros es el siguiente:
+
+\begin{itemize}
+	\item $\alpha = 2$
+	\item $\beta = 10^{-2} |E|$: esta proporción de vecinos permite 
+	procesar instancias de grafos de mayor tamaño.
+\end{itemize}
+
+Tenemos que aclarar que si bien el criterio no es exhaustivo, estos son 
+valores de referencia para evaluar el algoritmo en condiciones 
+uniformes.
 
 \begin{table}
 	\caption{Ajuste de parámetros}
@@ -796,13 +802,11 @@ columnas de $D$ se van volviendo más ortogonales.
 En este caso, consideramos tres tipos de instancias de grafos 
 completos: de 100, 200 y 400 nodos. Para cada tipo de instancia, se 
 hicieron 20 experimentos, cada uno de los cuales se ejecutó durante 
-$4 . 10^4$ iteraciones. Es importante notar que la cantidad de ejes de 
+$2 . 10^4$ iteraciones. Es importante notar que la cantidad de ejes de 
 un grafo completo es del orden de $n^2$ (donde $|V| = n$).  La figura 
 \ref{fig:complete} muestra la media del error en función de la cantidad 
 de iteraciones para cada tipo de instancia. Se observa una velocidad de 
-convergencia aceptable. Como el parámetro $\alpha$ fue ajustado en 
-base a grafos completos de 100 nodos, es esperable que el rendimiento 
-del algoritmo mejore en ese caso.
+convergencia aceptable.
 
 
 \begin{figure}
@@ -819,7 +823,7 @@ la columna de una matriz de incidencia dirigida asociada a un cierto
 nodo, es ortogonal a todas las demás columnas excepto a las asociadas a 
 los dos nodos vecinos. En ese caso, el ángulo que forman dos columnas
 asociadas a dos nodos vecinos es $\frac{2\pi}{3}$. En esta familia de 
-grafos la cantidad de ejes es del orden de $n$.
+grafos la cantidad de ejes es del orden de $|V| = n$.
 
 \smallskip
 
@@ -830,9 +834,124 @@ n$, eso impone un límite a esta implementación. Una implementación
 paralelizada de la resolución del sistema lineal permitiría que el 
 algoritmo escale sin limitaciones.
 
+\smallskip
+
+Consideramos tres tipos de instancias de ciclos simples: de 1000, 2000 
+y 4000 nodos. Para cada tipo de instancia, se hicieron 20 experimentos, 
+cada uno de los cuales se ejecutó durante 500 iteraciones. La figura 
+\ref{fig:cycle} muestra la media del error en función de la cantidad 
+de iteraciones para cada tipo de instancia. También en este caso, se 
+observa una velocidad de convergencia aceptable.
+
+\begin{figure}
+	\includegraphics[width=\linewidth]{cycle_graphs.png} % Figure image
+	\caption{Ciclos simples} % Figure caption
+	\label{fig:cycle} % Label for referencing with \ref{bear}
+\end{figure}
+
+\newpage
+
 \subsection{Mallas 3D}
 
-\section{Trabajo futuro}
+\begin{figure}
+	\includegraphics[scale=.21]{venusv_solid.jpg} % Figure image
+	\includegraphics[scale=.21]{venusv_graph.jpg} % Figure image
+	\caption{Malla 3D y su grafo subyacente}% Figure caption
+	\label{fig:venus} % Label for referencing with \ref{bear}
+\end{figure}
+
+\begin{figure}
+	\includegraphics[scale=.21]{elephav_solid.jpg} % Figure image
+	\includegraphics[scale=.21]{elephav_graph.jpg} % Figure image
+	\caption{Malla 3D y su grafo subyacente}% Figure caption
+	\label{fig:elephant} % Label for referencing with \ref{bear}
+\end{figure}
+
+\begin{figure}
+	\includegraphics[width=\linewidth]{3dmeshes.png} % Figure image
+	\caption{Mallas 3D}% Figure caption
+	\label{fig:meshes} % Label for referencing with \ref{bear}
+\end{figure}
+
+\begin{table}
+	\caption{Mallas 3D}
+	\centering
+	\begin{tabular}{llr}
+		\toprule
+		malla & |V| & |E| \\
+		\midrule
+		venus & 819 & 2452 \\
+		elephant & 623 & 1759 \\
+		\bottomrule
+		\label{tab:meshes}
+	\end{tabular}
+\end{table}
+
+
+Las mallas poligonales permiten representar superficies inmersas en el 
+espacio tridimensional. Son objetos de estudio en el área de 
+computación gráfica. Las caras son aproximaciones lineales de pequeñas 
+vecindades de la superficie. El grafo subyacente de una malla decribe 
+los bordes de las caras. En nuestro caso empleamos dos superficies 
+compactas para evaluar el algoritmo: \emph{venus} (figura 
+\ref{fig:venus}) y \emph{elephant} (figura \ref{fig:elephant}). 
+La tabla \ref{tab:meshes} detalla la información de los grafos 
+($G=(V,E)$) de ambas mallas.
+
+\smallskip
+
+Para cada malla se hicieron 20 experimentos, cada uno de los cuales se 
+ejecutó durante $2.10^4$ iteraciones. La figura \ref{fig:meshes} 
+muestra la media del error en función de la cantidad de iteraciones. En 
+estos casos observamos que inicialmente la convergencia es muy rápida, 
+pero a partir de una cierto punto se estabiliza. Este hecho da 
+indicios de que esta estrategia debería complementarse con otra que 
+permita refinar la mejor solución encontrada.
+
+%venusv.wrl  -> nV: 819 nE: 2452
+%elephant.wrl -> nV: 623 nE: 1759
+
+\newpage
+
+\section{Conclusiones y Trabajo futuro}
+
+En este trabajo abordamos un problema que denominamos \emph{integración 
+no orientada en grafos} que ``integra" (en términos analíticos) un dato 
+diferencial en los ejes. Este enfoque permite resolver distintos tipos 
+de problemas diferenciales que se modelen con grafos. El algoritmo 
+metaheurístico que planteamos está basado en comparar \emph{matrices 
+de incidencia dirigida} asociadas al grafo de input. Para ello 
+consideramos un criterio que denominamos \emph{pseudo-norma} vinculado 
+a la proyección ortogonal del vector que representa al dato diferencial 
+sobre el subespacio generado por las columnas de las matrices de 
+incidencia dirigida.
+
+\bigskip
+
+Evaluamos el algoritmo en instancias de tres familias de grafos: grafos 
+completos, ciclos simples y mallas 3D. Y observamos que se comporta 
+adecuadamente dado que converge a una solución aproximada del problema 
+en un tiempo razonable. No obstante, hay que remarcar que para ciertas 
+instancias de input, a partir de cierto punto el algoritmo se 
+estabiliza entorno a un error de $0.1$; esto sugiere que la técnica que 
+presentamos en este trabajo debería complementarse con otra para 
+refinar la solución.
+
+\bigskip
+
+El algoritmo es simple, por lo cual es posible paralelizarlo de modo 
+horizontal y procesar instancias de mayor tamaño mediante técnicas 
+de procesamiento distribuido (ej.: \emph{map-reduce}).
+
+\bigskip
+
+En la implementación que presentamos, la mayor limitación está 
+relacionada a la resolución de \emph{sistemas laplacianos}, es decir: 
+sistemas lineales $Lx=b$ en los que $L$ es una \emph{matriz 
+laplaciana}. Actualmente hay importantes lineas de trabajo abordando 
+nuevas metodologías iterativas que reducen el tiempo de 
+procesamiento de este tipo de sistemas. En una a futura implementación
+ sería importante incorporar estos enfoques. 
 
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
