@@ -5,7 +5,7 @@
 %
 % This template was downloaded from:
 % http://www.LaTeXTemplates.com
-%
+%	
 % Authors:
 % Vel (vel@LaTeXTemplates.com)
 % Frits Wenneker
@@ -27,7 +27,7 @@
 %	ARTICLE INFORMATION
 %----------------------------------------------------------------------------------------
 
-\title{Una Metaheurística GRASP para Integración No Orientada en Grafos} % The article title
+\title{Una Metaheurística GRASP para Integración en Grafos} % The article title
 
 \author{
 	\authorstyle{Manuel Dubinsky\textsuperscript{1}, 
@@ -55,17 +55,19 @@
 %----------------------------------------------------------------------------------------
 
 \begin{abstract}
-Dado un grafo conexo $G=(V,E)$ y una función de pesos en los nodos $x: V 
-\rightarrow \mathbb{R}$, definimos el \textit{diferencial no orientado} 
-$dx: E \rightarrow \mathbb{R}^+$ en cada eje $e=(v,w)$ como $dx(e) = 
-|x(v) - x(w)|$. En el presente trabajo abordamos el siguiente problema: 
-dado un grafo $G=(V,E)$ y una función de pesos en los ejes $f: E 
-\rightarrow \mathbb{R}^+$, se trata de encontrar la función de pesos en 
-los nodos $x: V \rightarrow \mathbb{R}$ cuyo \textit{diferencial no 
-orientado} ajuste del mejor modo posible (en términos de cuadrados 
-mínimos) los pesos de los ejes dados por $f$. Para ello presentamos un 
-algoritmo basado en la metaheurística GRASP cuya simplicidad permite 
-paralelizarlo para procesar instancias de tamaño arbitrario.
+Dado un grafo orientado $\vec G=(\vec V,\vec E)$ y una función de pesos 
+en los nodos $x: V \rightarrow \mathbb{R}$, definimos el 
+\textit{diferencial} $dx: E \rightarrow \mathbb{R}$ en cada eje $e=v\to 
+w$ como $dx(e) = x(w) - x(v)$. En el presente trabajo abordamos el 
+siguiente problema: dado un grafo conexo $G=(V,E)$  (no orientado) y 
+una función de pesos en los ejes $f: E \rightarrow \mathbb{R}$, se 
+trata de encontrar la mejor orientación de los ejes de $G$ y la función 
+de pesos en los nodos $x: V \rightarrow \mathbb{R}$ cuyo 
+\textit{diferencial} ajuste del mejor modo posible (en términos de 
+cuadrados mínimos) los pesos de los ejes dados por $f$. Para ello 
+presentamos un algoritmo basado en la metaheurística GRASP cuya 
+simplicidad permite paralelizarlo para procesar instancias de tamaño 
+arbitrario.
 \end{abstract}
 
 %----------------------------------------------------------------------------------------
@@ -76,45 +78,41 @@ paralelizarlo para procesar instancias de tamaño arbitrario.
 
 \subsection{Descripción del problema}
 
-En esta sección se presenta el problema que abordaremos en el trabajo. 
-De acuerdo a nuestro entendimiento, se trata de una formulación 
-novedosa, por lo tanto no hay antecedentes a los cuales podamos 
-remitirnos.
-
-\smallskip
-
-Dado un grafo conexo $G=(V,E)$ y una función de pesos en los ejes 
-$f: E \rightarrow \mathbb{R}^+$, queremos hallar una función de pesos 
-en los nodos $x: V \rightarrow \mathbb{R}$ de modo de minimizar el 
-error:
+Dado un grafo conexo $G=(V,E)$ \cite{Harari:1969} y una función 
+de pesos en los ejes $f: E \rightarrow \mathbb{R}$, queremos hallar 
+una orientacion de los ejes $G$ y una función de pesos en los 
+nodos $x: V \rightarrow \mathbb{R}$ de modo 
+de minimizar el error:
 
 $$E(x) := \sum_{e \in E} (dx(e) - f(e))^2$$
 
-donde $dx: E \rightarrow \mathbb{R}^+$ es el \textit{diferencial 
-no orientado} de $x$ y se define en cada eje $e=(v,w)$ como $dx(e) = 
-|x(v) - x(w)|$.
+donde $dx: E \rightarrow \mathbb{R}$ es el \textit{diferencial} de $x$ 
+(asociado a la orientacion de los ejes) y se define en cada eje 
+$e=v\to w$ como $dx(e) = x(w) - x(v)$.
 
 \smallskip
 
-Por otro lado, es posible definir en un grafo dirigido una noción de 
-\textit{diferencial orientado} del siguiente modo: dado un grafo 
-dirigido $\vec G=(\vec V,\vec E)$ y una función de pesos en los nodos 
-$\vec x: \vec V \rightarrow \mathbb{R}$, se define el 
-\textit{diferencial orientado} $\vec{dx}: \vec E \rightarrow \mathbb{R}$ 
-en cada eje $e=v \rightarrow w$ como $\vec{dx}(e) = \vec x(w) - 
-\vec x(v)$.
+%Por otro lado, es posible definir en un grafo dirigido una noción de 
+%\textit{diferencial orientado} del siguiente modo: dado un grafo 
+%dirigido $\vec G=(\vec V,\vec E)$ y una función de pesos en los nodos 
+%$\vec x: \vec V \rightarrow \mathbb{R}$, se define el 
+%\textit{diferencial orientado} $\vec{dx}: \vec E \rightarrow \mathbb{R}$ 
+%en cada eje $e=v \rightarrow w$ como $\vec{dx}(e) = \vec x(w) - 
+%\vec x(v)$.
 
-Es importante notar que un \textit{diferencial no orientado} induce 
-naturalmente un \textit{diferencial orientado}, informalmente: hay que 
-orientar cada eje del nodo ``menor" al ``mayor". Recíprocamente, si
-se analizan todas las orientaciones posibles del grafo original, es 
-posible resolver el problema propuesto. Concretamente, se trata de 
-encontrar por un lado la ``mejor" \textit{matriz de incidencia 
-dirigida} $D$, y por el otro la mejor función de pesos en 
-los ejes $x: V \rightarrow \mathbb{R}$ de modo de minimizar la 
-expresión:
+%Es importante notar que dado un \textit{diferencial no orientado} es 
+%posible definir una orientacion de los ejes de tal manera que el 
+%diferencial resulte un \textit{diferencial orientado}, informalmente: 
+%hay que orientar cada eje del nodo ``menor" al ``mayor". 
+%Recíprocamente, si se analizan todas las orientaciones asociadas a un 
+%grafo, es posible resolver el problema propuesto. 
 
-$$E(x) = ||D\bm{x}-\bm{f}||^2$$
+Concretamente, se trata de encontrar por un lado la ``mejor" 
+\textit{matriz de incidencia dirigida} $D$, y por el otro la mejor 
+función de pesos en los ejes $x: V \rightarrow \mathbb{R}$ de modo de 
+minimizar la expresión:
+
+$$E(x) = \|D\bm{x}-\bm{f}\|^2$$
 
 donde:
 
@@ -133,8 +131,10 @@ $$
 \end{bmatrix}
 $$
 
-El algoritmo que proponemos justamente explora el espacio de todas las 
+El algoritmo que proponemos explora el espacio de todas las 
 orientaciones posibles del grafo original.
+
+\subsection{Contexto del problema}
 
 \subsection{Aplicaciones}
 
@@ -151,6 +151,8 @@ en base a algunas relaciones diferenciales entre ellos.
 %------------------------------------------------
 
 \section{Preliminares}
+
+\subsection{Álgebra lineal}
 
 \textbf{La \textit{matriz de incidencia dirigida}}
 
@@ -209,7 +211,7 @@ Recordemos que el problema que queremos resolver es encontrar la matriz
 de incidencia dirigida $D$, es decir la ``mejor" orientación de los ejes 
 del grafo $G$, de modo de minimizar la expresión:
 
-$$E(x) = ||D\bm{x}-\bm{f}||^2$$
+$$E(x) = \|D\bm{x}-\bm{f}\|^2$$
 
 Para eso será preciso explorar el espacio de matrices de 
 incidencia dirigida asociado a $G$. Una vez que conseguimos una 
@@ -217,16 +219,16 @@ matriz candidata, el problema de minimización es equivalente a encontrar
 dónde se anula el gradiente de $E(x)$:
  
 $$\nabla E = [\frac{\partial E}{\partial x_1}, \dots, \frac{\partial 
-E}{\partial x_n}] = D^tDx-D^tv=0$$
+E}{\partial x_n}] = D^tDx-D^tf=0$$
 
 Que a su vez es equivalente a resolver el sistema lineal:
 
-$$D^tDx = Lx = D^tv$$
+$$D^tDx = Lx = D^tf$$
 
-Como el rango de $L$ es $n-1$, el sistema puede no tener solución. 
-Mediante métodos iterativos es posible converger al punto más cercano a 
-una solución. Específicamente en este trabajo emplearemos el método de 
-\textit{Gradiente Conjugado} \cite{Saad:2007}.
+Mediante métodos iterativos es posible converger al punto más cercano 
+al vector $D^tf$ contenido en el subespacio generado por $L$ (la 
+proyección ortogonal de $D^tf$). Específicamente en este trabajo 
+emplearemos el método de \textit{Gradiente Conjugado} \cite{Saad:2007}.
 
 \smallskip
 
@@ -244,61 +246,56 @@ Teng:2010}.
 Para elaborar el criterio que nos permita comparar dos matrices de 
 incidencia dirigida y decidir cuál es mejor en el contexto del problema 
 que queremos resolver, vamos a referirnos a nociones básicas de 
-proyección ortogonal de un vector sobre un subespacio de un espacio 
+proyección ortogonal \cite{WK:2009} de un vector sobre un subespacio de un espacio 
 vectorial.
 
 \smallskip
 
 Sean $v,w \in \mathbb{R}^n$, notamos $p_v(w)$ a la proyección de $w$ 
 sobre $v$. Mediante relaciones trigonométricas básicas podemos 
-calcular $||p_v(w)||$ (la norma de $p_v(w)$):
+calcular $\|p_v(w)\|$ (la norma de $p_v(w)$):
 
-$$\frac{v w}{||w||} = \frac{cos(\alpha) \ ||v|| \ ||w||}{||w||} = 
-cos(\alpha) \ ||v|| = ||p_v(w)||$$
+$$\frac{|v w|}{\|w\|} = \frac{|cos(\alpha)| \ \|v\| \ \|w\|}{\|w\|} = 
+|cos(\alpha)| \ \|v\| = \|p_v(w)\|$$
 
 De modo más general, notamos $p_S(w)$ a la proyección ortogonal de $w$
 sobre un subespacio $S \subset \mathbb{R}^n$ generado por una base 
-ortogonal $S = <s_1, \dots, s_k>$. La norma de $p_S(w)$ puede calcularse
+ortogonal $S = \langle s_1, \dots, s_k\rangle $. La norma de $p_S(w)$ puede calcularse
 de modo análogo:
 
 $$
-||p_S(w)|| = ||\begin{bmatrix}
-	||p_{s_1}(w)|| \\
+\|p_S(w)\| = \|\begin{bmatrix}
+	\|p_{s_1}(w)\| \\
 	\dots \\
-	||p_{s_k}(w)||
-\end{bmatrix}||
+	\|p_{s_k}(w)\|
+\end{bmatrix}\|
 $$
 
 \smallskip
 
 Para dar una intuición geométrica del hecho precedente, supongamos (sin 
-pérdida de generalidad) que $S = <e_1, \dots, e_k>$ está dada por los 
+pérdida de generalidad) que $S = \langle e_1, \dots, e_k\rangle $ está dada por los 
 primeros $k$ vectores canónicos y $w = (w_1, \dots, w_n)$. 
 Claramente la proyección ortogonal de $w$ sobre $S$ es 
 $(w_1, \dots, w_k)$ (las primeras $k$ componentes de $w$). Entonces 
 verifiquemos la expresión anterior:
 
 $$
-||\begin{bmatrix}
-	||p_{s_1}(w)|| \\	
+\|\begin{bmatrix}
+	\|p_{s_1}(w)\| \\	
 	\dots \\
-	||p_{s_k}(w)||
-\end{bmatrix}|| = 
-||\begin{bmatrix}
-	cos(\alpha_1) \ ||w|| \\
+	\|p_{s_k}(w)\|
+\end{bmatrix}\| = 
+\|\begin{bmatrix}
+	|cos(\alpha_1)| \ \|w\| \\
 	\dots \\
-	cos(\alpha_k) \ ||w||
-\end{bmatrix}|| = 
-||\begin{bmatrix}
-	w \ e_1 \\
-	\dots \\
-	w \ e_k
-\end{bmatrix}|| =  
-||\begin{bmatrix}
+	|cos(\alpha_k)| \ \|w\|
+\end{bmatrix}\| = 
+\|\begin{bmatrix}
 	w_1 \\
 	\dots \\
 	w_k
-\end{bmatrix}||
+\end{bmatrix}\|
 $$
 
 \smallskip
@@ -306,9 +303,7 @@ $$
 Informalmente, el caso general se puede reducir a este caso simple 
 mediante una matriz rotación, que preserva las normas.
 
-\bigskip
-
-\noindent{\textbf{Metaheurísticas GRASP}}
+\subsection{Metaheurísticas}
 
 En el contexto del tratamiento de problemas de complejidad $NP$, el 
 enfoque metaheurístico \cite{GP:2010,Talbi:2009} procura encontrar buenas soluciones (no 
@@ -346,6 +341,8 @@ En la próxima sección se presentará el algoritmo y se describirán las
 particularidades de la implementación de una metaheurística GRASP en el 
 contexto del problema que queremos resolver.
 
+\subsection{Mallas 3D}
+
 \section{Implementación}
 
 En esta sección describiremos el algoritmo y los detalles de la 
@@ -358,9 +355,9 @@ encontrar la ``mejor" matriz de incidencia dirigida, o dicho en otros
 términos: de orientar los ejes del grafo $G$ del mejor modo posible para 
 minimizar el error:
 
-$$E(x) = ||D\bm{x}-\bm{f}||^2$$
+$$E(x) = \|D\bm{x}-\bm{f}\|^2$$
  
-Como el espacio matrices de incidencia dirigida asociado a $G$ es un 
+Como el espacio de matrices de incidencia dirigida asociado a $G$ es un 
 espacio de tamaño exponencial respecto a la cantidad de ejes, dado que 
 cada eje puede tener dos orientaciones, nuestra propuesta está centrada 
 en construir un algoritmo que devuelva la ``mejor solución posible".
@@ -383,7 +380,7 @@ determinado por $x(w)$, $f(e)$ y la elección de una orientación de $e$.
 \smallskip
 
 Por lo tanto, es posible reducir el grafo original $G$, eliminando 
-recursivamente sus  hojas de modo de obtener una grafo más simple (un 
+recursivamente sus  hojas de modo de obtener un grafo más simple (un 
 grafo con menos ejes y nodos):
 
 \begin{verbatim}
@@ -424,20 +421,22 @@ $[\frac{\pi}{2},\frac{2\pi}{3}]$. Para ver esto, supongamos que existe
 un eje entre los nodos $v_i$ y $v_j$ asociados a dichas columnas. 
 El ángulo puede medirse de este modo:
 
-$$cos(\alpha) \ ||d_i|| \ ||d_j||= d_i  d_j \implies cos(\alpha) = 
-\frac{d_i d_j}{||d_i|| \ ||d_j||}$$
+$$cos(\alpha) \ \|d_i\| \ \|d_j\|= d_i  d_j \implies cos(\alpha) = 
+\frac{d_i d_j}{\|d_i\| \ \|d_j\|}$$
 
-El módulo de esta fracción se maximiza cuando las normas de las columnas
- son más pequeñas o de modo equivalente: cuando los grados de los nodos 
- correspondientes se minimizan. Recordemos que el grado de cada nodo de 
- $G$, luego de preprocesar las hojas, es a lo sumo 2. Supongamos que  
- $deg(v_i) = deg(v_j) = 2$. Entonces resulta que:
+El módulo de esta fracción se maximiza cuando las normas de las 
+columnas son más pequeñas o de modo equivalente: cuando los grados de 
+los nodos correspondientes se minimizan. Cabe aclarar que la norma de 
+cada columna de $D$ es igual al grado del nodo asociado a esa columna, 
+esto se deduce de la diagonal de $L = D^t D$. Recordemos que 
+el grado de cada nodo de  $G$, luego de preprocesar las hojas, es al 
+menos 2. Entonces resulta que:
 
-$$cos \ \alpha = \frac{d_i d_j}{||d_i|| \ ||d_j||} = \frac{-1}{2}$$
+$$0\le cos \ \alpha = \frac{d_i d_j}{\|d_i\| \ \|d_j\|} \le -\frac{1}{2}$$
 
 \smallskip
 
-Implicando que $\alpha$ es a lo sumo $\frac{2\pi}{3}$.
+Implicando que $\frac{\pi}{2}\le\alpha \leq \frac{2\pi}{3}$.
 
 \smallskip
 
@@ -453,11 +452,11 @@ emplearemos para compararlas.
 
 \bigskip
 
-\noindent{\textbf{La \textit{pseudo-norma}. Un criterio para comparar 
+\noindent{\textbf{La \textit{$\alpha$-norma}. Un criterio para comparar 
 matrices de incidencia dirigida}}
 
-Una interpretación geométrica del problema $argmin_D||D \bm x- \bm f
-||^2$ es la siguiente: encontrar la ``mejor" matriz de incidencia 
+Una interpretación geométrica del problema $argmin_D\|D \bm x- \bm f
+\|^2$ es la siguiente: encontrar la ``mejor" matriz de incidencia 
 dirigida $D$ tal que la proyección ortogonal de $f$ sobre el subespacio 
 generado por las columnas de $D$ tenga norma máxima. En el caso de que 
 el vector $f$ esté contenido en el subespacio, entonces el problema 
@@ -471,21 +470,21 @@ matrices de incidencia dirigida asociadas al grafo $G$. Como las
 columnas de una matriz de incidencia dirigida $D$ definen una base 
 semi-ortogonal, aproximaremos la norma de la proyección 
 ortogonal de $f$ sobre $D$ como si las columnas de $D$ fueran 
-ortogonales y denotaremos a esta aproximación \textit{pseudo-norma}.
+ortogonales y denotaremos a esta aproximación \textit{$\alpha$-norma}.
  De este modo, entre dos matrices de incidencia dirigida $D$ y 
  $\bar{D}$ nuestro criterio será optar por aquella con mayor 
- pseudo-norma. 
+ $\alpha$-norma. 
 
 \smallskip
 
-La pseudo-norma se puede calcular en dos pasos. El paso inicial sería 
+La $\alpha$-norma se puede calcular en dos pasos. El paso inicial sería 
 calcular el producto interno de $f$ con las columnas de $D$:
 
 $$
 D^t f = \begin{bmatrix}
-	cos(\alpha_1) \ ||d_1|| \ ||f||\\
+	cos(\alpha_1) \ \|d_1\| \ \|f\|\\
 	\dots \\
-	cos(\alpha_n) \ ||d_n|| \ ||f||
+	cos(\alpha_n) \ \|d_n\| \ \|f\|
 \end{bmatrix}
 $$
 
@@ -494,15 +493,15 @@ $$
 Y luego dividir cada componente por la norma correspondiente:
 
 $$
-pseudoNorm_f(D) = D^t f
+\alpha-norm_f(D) = D^t f
 \begin{bmatrix}
-	||d_1||^{-1}\\
+	\|d_1\|^{-1}\\
 	\dots \\
-	||d_n||^{-1}
+	\|d_n\|^{-1}
 \end{bmatrix} = \begin{bmatrix}
-	cos(\alpha_1) \ ||f||\\
+	cos(\alpha_1) \ \|f\|\\
 	\dots \\
-	cos(\alpha_n) \ ||f||
+	cos(\alpha_n) \ \|f\|
 \end{bmatrix}
 $$
 
@@ -533,11 +532,12 @@ calcularse una sola vez.
 
 \subsection{El enfoque metaheurístico}
 
-El problema que queremos resolver es el de encontrar una matriz de 
-incidencia dirigida $D$ que maximice la $pseudo-norma$ de $f$. 
-Cabe aclarar que según nuestro entendimiento, no es posible resolverlo 
-por métodos exactos porque el tamaño del espacio de matrices de 
-incidencia dirigida es $2^m$  (donde $|E|=m$). Este espacio es 
+El problema que queremos resolver se traduce en encontrar una matriz de 
+incidencia dirigida $D$ que maximice la $\alpha$-norma de $f$. 
+Dado que el tamaño del espacio de matrices de 
+incidencia dirigida es $2^m$  (donde $|E|=m$), computar el problema
+para grafos de tamaño grande es dificil de resolver. 
+Este espacio es 
 extremadamente grande incluso para grafos pequeños. Por lo tanto, el 
 problema requiere un enfoque metaheurístico que nos permita encontrar 
 una solución ``buena" (aunque no necesariamente la mejor).
@@ -561,7 +561,7 @@ La estrategia que presenta nuestro algoritmo es una variante en la que
 invertimos los aspectos de azar y búsqueda local de \textit{GRASP}: 
 primero elegimos al azar un conjunto de vecinos y luego definimos como 
 nuevo punto a explorar al mejor de ellos (el que tenga mayor 
-pseudo-norma). 
+$\alpha$-norma). 
 
 \smallskip
 
@@ -569,24 +569,24 @@ El algoritmo está controlado por dos parámetros:
 
 \begin{itemize}
 	\item La vecindad de un punto está determinada por el parámetro 
-	$\alpha$, que establece la cantidad de ejes del punto que deben 
+	$\phi$, que establece la cantidad de ejes del punto que deben 
 	modificarse al azar para construir un vecino.
 	\item La cantidad de vecinos del punto que debemos explorar en cada 
-	iteración está dada por el parámetro $\beta$
+	iteración está dada por el parámetro $\psi$
 \end{itemize}
 
-A continuación presentamos el pseudo-código del algoritmo y luego 
+A continuación presentamos el pseudocódigo del algoritmo y luego 
 comentamos las funciones auxiliares.
 
 \begin{algorithm}
-    \caption{Integrate($G,f,\alpha,\beta$)}
+    \caption{Integrate($G,f,\phi,\psi$)}
 	\begin{algorithmic}
 		\State $currentPoint \gets Initialize(G)$
 		\State $bestPoint \gets currentPoint$
 		\While{p}
 			\State $\Omega \gets Neighbors(currentPoint)$
 			\State $bestNeighbor \gets BestNeighbor(\Omega,f)$
-			\If{PN(bestNeighbor,f) > PN(bestPoint,f)}
+			\If{$\alpha$(bestNeighbor,f) > $\alpha$(bestPoint,f)}
 				\State $bestPoint \gets bestNeighbor$
 			\EndIf
 			\State $currentPoint \gets bestNeighbor$
@@ -597,7 +597,6 @@ comentamos las funciones auxiliares.
 	\label{alg:alg1}
 \end{algorithm}
 
-\newpage
 
 La función \emph{Initialize(G)} se encarga de construir 
 una matriz de incidencia dirigida inicial. Concretamente la orientación 
@@ -609,16 +608,16 @@ grafo.
 
 La función \emph{Neighbors(currentPoint)} devuelve un conjunto de 
 vecinos del punto que se está explorando en la iteración. El conjunto 
-de vecinos se arma en base a los parámetros $\alpha$ y $\beta$. El 
-resultado es un conjunto de $\beta$ vecinos cada uno de los cuales 
-difiere en la dirección de exactamente $\alpha$ ejes (elegidos al azar) 
+de vecinos se arma en base a los parámetros $\phi$ y $\psi$. El 
+resultado es un conjunto de $\psi$ vecinos cada uno de los cuales 
+difiere en la dirección de exactamente $\phi$ ejes (elegidos al azar) 
 con respecto $currentPoint$.
 
 \smallskip
 
 La función $BestNeighbor(\Omega,f)$ devuelve el mejor vecino del conjunto 
-de entrada. O sea, aquel que tiene mayor $pseudo-norma$. Y por último, 
-la función $PN(bestNeighbor,f)$ calcula la $pseudo-norma$ de la matriz 
+de entrada. O sea, aquel que tiene mayor $\alpha$-norma. Y por último, 
+la función $\alpha(bestNeighbor,f)$ calcula la $\alpha$-norma de la matriz 
 de incidencia de entrada.
 
 \smallskip
@@ -631,13 +630,13 @@ encontrada dentro de un rango de aceptación.
 \smallskip
 
 Y por último, el sistema laplaciano ($Lx = D^t f$) se resuelve mediante 
-el método iterativo de \emph{Gradiente Conjugado}.
+el método de \emph{Gradiente Conjugado}.
 
 \section{Resultados}
 
 En esta sección describimos los resultados obtenidos. Primero 
 comentamos el criterio que adoptamos para determinar los valores de los 
-parámetros $\alpha$ y $\beta$. Y posteriormente nos enfocamos en el 
+parámetros $\phi$ y $\psi$. Y posteriormente nos enfocamos en el 
 análisis del algoritmo evaluado sobre tres familias de grafos: 
 
 \begin{itemize}
@@ -669,7 +668,7 @@ en los nodos $x: V \rightarrow \mathbb{R}$ cuyo \textit{diferencial no
 orientado} ajusta exactamente a $f$. En este contexto medimos el error 
 del siguiente modo:
 
-$$error(D) = \frac{||Dx-f||}{||f||}$$
+$$error(D) = \frac{\|Dx-f\|}{\|f\|}$$
 
 donde $D$ es la matriz de incidencia dirigida y $x$ es la función de 
 pesos en los nodos que devuelve el algoritmo. Por lo tanto, el error 
@@ -683,29 +682,29 @@ cómo disminuye el error respecto a la cantidad de iteraciones.
 
 \subsection{Ajuste de parámetros}
 
-Recordemos que los parámetros del algoritmo, $\alpha$ y $\beta$ denotan 
+Recordemos que los parámetros del algoritmo, $\phi$ y $\psi$ denotan 
 respectivamente la cantidad exacta de ejes en los que difieren los 
 vecinos de la matriz de incidencia dirigida (de la iteración actual) y 
 el tamaño del conjunto de vecinos.
 
 \smallskip
 
-Para estimar $\alpha$ y $\beta$ empleamos un grafo completo de 100 
+Para estimar $\phi$ y $\psi$ empleamos un grafo completo de 100 
 nodos y consideramos distintos valores posibles de los parámetros: 
-$\alpha \in \{1,2,3,4\}$ y $\beta \in \{2,4,6,8,10\}$. Cada par 
-$(\alpha_i, \beta_j)$ define un test. Para cada test el algoritmo se 
+$\phi \in \{1,2,3,4\}$ y $\psi \in \{2,4,6,8,10\}$. Cada par 
+$(\phi_i, \psi_j)$ define un test. Para cada test el algoritmo se 
 ejecutó durante $10^4$ iteraciones y se repitió $5$ veces. El resultado 
 del error medio está reflejado en la tabla \ref{tab:ajuste1} y en el 
 heat-map de la figura \ref{fig:ajuste1}. Lo que se confirma 
 inmediatamente es algo razonable: cuanto mayor es el tamaño del 
-conjunto de vecinos ($\beta$), menor es el error del algoritmo. Por 
-otro lado, surge que la mejor elección de $\alpha$ es $2$, o sea 
+conjunto de vecinos ($\psi$), menor es el error del algoritmo. Por 
+otro lado, surge que la mejor elección de $\phi$ es $2$, o sea 
 conviene considerar vecinos que difieran en exactamente $2$ ejes. Esto 
 último, se pudo confirmar en una prueba más exhaustiva en la cual 
-fijamos $\beta$ en $10$ y ejecutamos $50$ veces cada test durante 
+fijamos $\psi$ en $10$ y ejecutamos $50$ veces cada test durante 
 $2 . 10^4$ iteraciones. El resultado está reflejado en el boxplot de la 
 figura \ref{fig:ajuste2}. En este caso, es interesante notar cómo 
-disminuye la varianza a medida que $\alpha$ aumenta.
+disminuye la varianza a medida que $\phi$ aumenta.
 
 \smallskip
 
@@ -714,8 +713,8 @@ en los experimentos, el criterio que adoptamos para ajustar los
 parámetros es el siguiente:
 
 \begin{itemize}
-	\item $\alpha = 2$
-	\item $\beta = 10^{-2} |E|$: esta proporción de vecinos permite 
+	\item $\phi = 2$
+	\item $\psi = 10^{-2} |E|$: esta proporción de vecinos permite 
 	procesar instancias de grafos de mayor tamaño.
 \end{itemize}
 
@@ -730,7 +729,7 @@ uniformes.
 		\toprule
 		\multicolumn{2}{c}{Parámetros} \\
 		\cmidrule(r){1-2}
-		$\alpha$ & $\beta$ & error promedio \\
+		$\phi$ & $\psi$ & error promedio \\
 		\midrule
 		1 & 2 & $0.5189745$ \\
 		1 & 4 & $0.2568497$ \\
@@ -775,20 +774,18 @@ uniformes.
 	\label{fig:ajuste2} % Label for referencing with \ref{bear}
 \end{figure}
 
-\newpage
-
 \subsection{Grafos completos}
 
 Los grafos completos son aquellos en los que todo par de nodos está 
 conectado por un eje. Esta familia es importante en el contexto del 
 problema que estamos analizando porque a medida que crece el tamaño de 
-la instancia del grafo de input, la \emph{pseudo-norma} estima mejor a 
+la instancia del grafo de input, la \emph{$\alpha$-norma} estima mejor a 
 la proyección ortogonal de $f$ sobre el subespacio generado por las 
 columnas de las matrices de incidencia dirigida. Más específicamente, 
 el ángulo entre dos columnas de una matriz de incidencia dirigida puede 
 calcularse mediante la expresión:
 
-$$cos(d_i,d_j) = \frac{d_i d_j}{||d_i|| \ ||d_j||} = 
+$$cos(d_i,d_j) = \frac{d_i d_j}{\|d_i\| \ \|d_j\|} = 
 \frac{d_i d_j}{deg(v_i) \ deg(v_j)}$$
 
 donde $cos(d_i,d_j)$ es el coseno del ángulo entre las columnas de $D$ 
@@ -848,8 +845,6 @@ observa una velocidad de convergencia aceptable.
 	\label{fig:cycle} % Label for referencing with \ref{bear}
 \end{figure}
 
-\newpage
-
 \subsection{Mallas 3D}
 
 \begin{figure}
@@ -903,14 +898,12 @@ Para cada malla se hicieron 20 experimentos, cada uno de los cuales se
 ejecutó durante $2.10^4$ iteraciones. La figura \ref{fig:meshes} 
 muestra la media del error en función de la cantidad de iteraciones. En 
 estos casos observamos que inicialmente la convergencia es muy rápida, 
-pero a partir de una cierto punto se estabiliza. Este hecho da 
+pero a partir de un cierto punto se estabiliza. Este hecho da 
 indicios de que esta estrategia debería complementarse con otra que 
 permita refinar la mejor solución encontrada.
 
 %venusv.wrl  -> nV: 819 nE: 2452
 %elephant.wrl -> nV: 623 nE: 1759
-
-\newpage
 
 \section{Conclusiones y Trabajo futuro}
 
@@ -920,7 +913,7 @@ diferencial en los ejes. Este enfoque permite resolver distintos tipos
 de problemas diferenciales que se modelen con grafos. El algoritmo 
 metaheurístico que planteamos está basado en comparar \emph{matrices 
 de incidencia dirigida} asociadas al grafo de input. Para ello 
-consideramos un criterio que denominamos \emph{pseudo-norma} vinculado 
+consideramos un criterio que denominamos \emph{$\alpha$-norma} vinculado 
 a la proyección ortogonal del vector que representa al dato diferencial 
 sobre el subespacio generado por las columnas de las matrices de 
 incidencia dirigida.
@@ -956,13 +949,35 @@ procesamiento de este tipo de sistemas. En una a futura implementación
 %	BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------
 
+\renewcommand\refname{Referencias}
+
 \begin{thebibliography}{99} % Bibliography - this is intentionally simple in this template
+
+\bibitem[Botsch, Kobbelt, Pauly, Alliez, Lévy , 2010]{BKPAL:2010}
+Botsch M., Kobbelt L., Pauly M., Alliez P., Lévy B.,
+\newblock \textit{Polygon Mesh Processing}
+\newblock A. K. Peters, 2010
+
+\bibitem[Gendrau, Potvin, 2010]{GP:2010}
+Gendreau M. and Potvin J., 
+\newblock \textit{Handbook of Metaheuristics}, 
+\newblock Springer, 2010
+
+\bibitem[Harari, 1969]{Harari:1969}
+Harary F., 
+\newblock \textit{Graph Theory}, 
+\newblock Addison-Wesley, 1969
 
 \bibitem[Koutis, Miller and Peng, 2010]{KMP:2010}
 Koutis I., Miller G. L. and Peng R., 
 \newblock \textit{Approaching optimality for solving sdd linear systems}, 
 \newblock 51st Annual Symposium on Foundations of Computer Science, IEEE, 
 2010, pp. 235-244
+
+\bibitem[Saad, 2007]{Saad:2007}
+Saad Y., 
+\newblock \textit{Iterative methods for sparse linear systems}, 
+\newblock SIAM, 2007.
 
 \bibitem[Spielman, 2010]{Spielman:2010}
 Spielman D. A.,
@@ -978,6 +993,11 @@ sparsification, and solving linear systems},
 \newblock Proceedings of the thirty-sixth annual ACM symposium on Theory of 
 Computing, ACM, 2004, pp. 81-90
 
+\bibitem[Talbi, 2009]{Talbi:2009}
+Talbi E.G., 
+\newblock \textit{Metaheuristics: from design to implementation}, 
+\newblock Wiley, 2009.
+
 \bibitem[Teng, 2010]{Teng:2010}
 Shang-Hua Teng,
 \newblock \textit{The laplacian paradigm: Emerging algorithms for massive 
@@ -985,25 +1005,10 @@ graphs},
 \newblock Theory and Applications of Models of Computation, Lecture Notes in 
 Computer Science, vol. 6108, 2010, pp. 2-14
 
-\bibitem[Gendrau, Potvin, 2010]{GP:2010}
-Gendreau M. and Potvin J., 
-\newblock \textit{Handbook of Metaheuristics}, 
-\newblock Springer, 2010
-
-\bibitem[Talbi, 2009]{Talbi:2009}
-Talbi E.G., 
-\newblock \textit{Metaheuristics: from design to implementation}, 
-\newblock Wiley, 2009.
-
-\bibitem[Saad, 2007]{Saad:2007}
-Saad Y., 
-\newblock \textit{Iterative methods for sparse linear systems}, 
-\newblock SIAM, 2007.
-
-\bibitem[Botsch, Kobbelt, Pauly, Alliez, Lévy , 2010]{BKPAL:2010}
-Botsch M., Kobbelt L., Pauly M., Alliez P., Lévy B.,
-\newblock \textit{Polygon Mesh Processing}
-\newblock A. K. Peters, 2010
+\bibitem[Ward, Kincaid, 2009]{WK:2009}
+Ward C., Kincaid D. (2009), 
+\newblock \textit{Linear Algebra: Theory and Applications}
+\newblock Sudbury, Ma: Jones and Bartlett. pp. 544, 558.
 
 \end{thebibliography}
 
