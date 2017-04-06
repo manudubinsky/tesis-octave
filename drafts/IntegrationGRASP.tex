@@ -107,10 +107,11 @@ $e=v\to w$ como $dx(e) = x(w) - x(v)$.
 %Recíprocamente, si se analizan todas las orientaciones asociadas a un 
 %grafo, es posible resolver el problema propuesto. 
 
-Concretamente, se trata de encontrar por un lado la ``mejor" 
-\textit{matriz de incidencia dirigida} $D$, y por el otro la mejor 
-función de pesos en los ejes $x: V \rightarrow \mathbb{R}$ de modo de 
-minimizar la expresión:
+Concretamente, si consideramos la correspondencia entre orientaciones 
+de $G$ y \textit{matrices de incidencia dirigida}, se trata de 
+encontrar: por un lado la ``mejor" \textit{matriz de incidencia 
+dirigida} $D$, y por el otro la mejor función de pesos en los ejes 
+$x: V \rightarrow \mathbb{R}$ de modo de minimizar la expresión:
 
 $$E(x) = \|D\bm{x}-\bm{f}\|^2$$
 
@@ -135,6 +136,27 @@ El algoritmo que proponemos explora el espacio de todas las
 orientaciones posibles del grafo original.
 
 \subsection{Contexto del problema}
+El problema surgió como una variante de la definición de \textit{1-forma 
+diferencial} en el contexto de \textit{mallas 3D}. 
+
+\bigskip
+
+Las formas diferenciales \cite{S:1965,T:2008} conceptualizan la noción 
+de entidad integrable. Informalmente se puede pensar en una 
+\textit{1-forma diferencial} como una cantidad que mide 
+una distancia infinitesimal y que puede ser integrada a lo largo de una 
+curva. Análogamente una \textit{2-forma diferencial} es una cantidad 
+que mide una superficie infinitesimal y que puede ser integrada a lo de 
+una superficie. Y en general, una \textit{k-forma diferencial} está 
+asociada a una variedad diferencial $k$-dimensional y puede ser 
+integrada en dimensión $k$. Esta noción permite unificar varios 
+teoremas clásicos como el \textit{teorema de Green} y el \textit{teorema 
+de Stokes}. Además de la naturaleza analítica de este punto de vista, 
+las formas diferenciales tienen una rica estructura algebraica que 
+permite entre otras cosas trasladar propiedades invariantes entre dos 
+variedades vincualdas mediante mapas diferenciales. El precursor de la 
+teoría fue \textit{Elie Cartan} a fines del siglo XIX.
+
 
 \subsection{Aplicaciones}
 
@@ -993,6 +1015,11 @@ sparsification, and solving linear systems},
 \newblock Proceedings of the thirty-sixth annual ACM symposium on Theory of 
 Computing, ACM, 2004, pp. 81-90
 
+\bibitem[Spivak, 1965]{S:1965}
+Spivak M.,
+\newblock \textit{Calculus on Manifolds},
+\newblock W. A. Benjamin
+
 \bibitem[Talbi, 2009]{Talbi:2009}
 Talbi E.G., 
 \newblock \textit{Metaheuristics: from design to implementation}, 
@@ -1005,10 +1032,16 @@ graphs},
 \newblock Theory and Applications of Models of Computation, Lecture Notes in 
 Computer Science, vol. 6108, 2010, pp. 2-14
 
+\bibitem[Tu, 2008]{T:2008}
+Tu, L. W. 
+\newblock \textit{An Introduction to Manifolds},
+\newblock Springer
+
 \bibitem[Ward, Kincaid, 2009]{WK:2009}
 Ward C., Kincaid D. (2009), 
 \newblock \textit{Linear Algebra: Theory and Applications}
 \newblock Sudbury, Ma: Jones and Bartlett. pp. 544, 558.
+
 
 \end{thebibliography}
 
