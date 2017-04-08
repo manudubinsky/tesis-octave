@@ -342,16 +342,16 @@
 % author names and affiliations
 % use a multiple column layout for up to three different
 % affiliations
-\author{\IEEEauthorblockN{Manuel Dubinsky y Fernando Asteasuain}
-\IEEEauthorblockA{Dpto. Tecnología y Administración\\
-Ingeniería Informática\\
-Universidad Nacional de Avellaneda\\
-Argentina}
-\and
-\IEEEauthorblockN{César Massri}
+\author{\IEEEauthorblockN{César Massri}
 \IEEEauthorblockA{Dpto. de Matemática\\
 Facultad de Ciencias Exactas y Naturales\\
 Universidad de Buenos Aires\\
+Argentina}
+\and
+\IEEEauthorblockN{Manuel Dubinsky y Fernando Asteasuain}
+\IEEEauthorblockA{Dpto. Tecnología y Administración\\
+Ingeniería Informática\\
+Universidad Nacional de Avellaneda\\
 Argentina}}
 
 % conference papers do not typically use \thanks and this command
@@ -470,7 +470,7 @@ $$
 El algoritmo que proponemos explora el espacio de todas las 
 orientaciones posibles del grafo original.
 
-\subsection{Contexto del problema}
+\subsection{Contexto del problema y trabajos relacionados}
 El problema surgió a partir de la definición de \textit{1-forma 
 diferencial} en el contexto de \textit{mallas 3D}. 
 
@@ -497,10 +497,28 @@ XIX.
 
 Por otro lado, las \textit{mallas 3D} o \textit{mallas poligonales} 
 \cite{BKPAL:2010} permiten representar superficies inmersas en el 
-espacio tridimensional. Las caras son aproximaciones lineales de 
-pequeñas vecindades de la superficie. Y el grafo subyacente de una 
-malla describe los bordes de las caras. Son objetos de estudio en el 
-área de \textit{procesamiento digital de geometría}. 
+espacio tridimensional. Están compuestas por aproximaciones lineales 
+poligonales de pequeñas vecindades de la superficie denominadas caras. 
+Y tienen asociado un grafo cuyos ejes definen los lados de las caras. 
+Son objetos de estudio fundamentales en el área de 
+\textit{procesamiento digital de geometría}. Esta área ha crecido de 
+manera sostenida en los últimos veinte años debido a la capacidad de 
+obtener modelos geométricos de objetos reales mediante técnicas como: 
+tomografía computarizada, resonancia magnética, escaneo mediante láser y 
+ultrasonido, y microscopía. Numerosas disciplinas como la medicina, la 
+ingeniería, la astrofísica, la exploración geográfica, la arquitectura 
+y el urbanismo, como así también las industrias cinematográfica, de 
+videojuegos, y de fabricación de manufacturas se nutren continuamente 
+de modelos tridimensionales. El área de \textit{procesamiento digital 
+de geometría} es la encargada de proveer herramientas y aplicaciones 
+para producir dichos modelos. Las aplicaciones son muy variadas, 
+algunos ejemplos son: escaneo 3D 
+\cite{LRAT:2008}, navegación de vehículos autónomos \cite{CMT:2008}, 
+reconocimiento de patrones \cite{TC:1992}, 
+reconocimiento de trayectorias \cite{ZT:2009}, construcción de modelos 
+tridimensionales de sitios arqueológicos \cite{REVEAL}, de esculturas 
+y objetos antiguos \cite{BMMRT:2002}, cinematografía 3D 
+\cite{RT:2007}, etc.
 
 \subsection{Aplicaciones}
 
@@ -729,16 +747,16 @@ en construir un algoritmo que devuelva la ``mejor solución posible".
 
 \noindent{\textbf{Preprocesamiento de las hojas del grafo}}
 
-Recordemos la formulación inicial del problema: queremos hallar una 
-función de pesos en los nodos $x: V \rightarrow \mathbb{R}$ de modo de 
-minimizar el error:
+Inicialmente proponemos un preprocesamiento del grafo con el objetivo de 
+simplificarlo. En la formulación del problema de minimización:
 
-$$E(x) := \sum_{e \in E} (dx(e) - f(e))^2$$
+$$E(x) = \|D\bm{x}-\bm{f}\|^2 = \sum_{e \in E} (dx(e) - f(e))^2$$
 
 Consideremos una hoja $v$ de $G$ (un nodo de grado 1), a su único 
-vecino $w$ y al eje que los liga $e=(v,w)$. De acuerdo a la formulación, 
-surge que $x(v) = x(w) \pm f(e)$, es decir que $x(v)$ queda 
-determinado por $x(w)$, $f(e)$ y la elección de una orientación de $e$.
+vecino $w$ y al eje que los liga $e=(v,w)$. Dependiendo de la 
+orientación de $e$, surge que $x(v) = x(w) \pm 
+f(e)$, es decir que $x(v)$ queda determinado por $x(w)$, $f(e)$ y la 
+elección de una orientación de $e$.
 
 \smallskip
 
@@ -789,11 +807,11 @@ $$cos(\alpha) \ \|d_i\| \ \|d_j\|= d_i  d_j \implies cos(\alpha) =
 
 El módulo de esta fracción se maximiza cuando las normas de las 
 columnas son más pequeñas o de modo equivalente: cuando los grados de 
-los nodos correspondientes se minimizan. Cabe aclarar que la norma de 
-cada columna de $D$ es igual al grado del nodo asociado a esa columna, 
-esto se deduce de la diagonal de $L = D^t D$. Recordemos que 
-el grado de cada nodo de  $G$, luego de preprocesar las hojas, es al 
-menos 2. Entonces resulta que:
+los nodos correspondientes se minimizan. Respecto a esta última 
+observación, cabe aclarar que la norma de cada columna de $D$ es igual 
+al grado del nodo asociado a esa columna, esto se deduce de la diagonal 
+de $L = D^t D$. Recordemos que el grado de cada nodo de  $G$, luego de 
+preprocesar las hojas, es al menos 2. Entonces resulta que:
 
 $$0\le cos \ \alpha = \frac{d_i d_j}{\|d_i\| \ \|d_j\|} \le -\frac{1}{2}$$
 
@@ -818,8 +836,8 @@ emplearemos para compararlas.
 \noindent{\textbf{La \textit{$\alpha$-norma}. Un criterio para comparar 
 matrices de incidencia dirigida}}
 
-Una interpretación geométrica del problema $argmin_D\|D \bm x- \bm f
-\|^2$ es la siguiente: encontrar la ``mejor" matriz de incidencia 
+Una interpretación geométrica del problema de minimización que queremos 
+resolver es la siguiente: encontrar la ``mejor" matriz de incidencia 
 dirigida $D$ tal que la proyección ortogonal de $f$ sobre el subespacio 
 generado por las columnas de $D$ tenga norma máxima. En el caso de que 
 el vector $f$ esté contenido en el subespacio, entonces el problema 
@@ -901,7 +919,7 @@ incidencia dirigida es $2^m$  (donde $|E|=m$), computar el problema
 para grafos de tamaño grande es dificil de resolver. 
 Este espacio es 
 extremadamente grande incluso para grafos pequeños. Por lo tanto, el 
-problema requiere un enfoque metaheurístico que nos permita encontrar 
+problema admite un enfoque metaheurístico que nos permita encontrar 
 una solución ``buena" (aunque no necesariamente la mejor).
 
 \smallskip
@@ -1178,21 +1196,22 @@ grafos la cantidad de ejes es del orden de $|V| = n$.
 
 \smallskip
 
+En este caso consideramos tres tipos de instancias de ciclos simples: 
+de 1000, 2000 y 4000 nodos. Para cada tipo de instancia, se hicieron 
+20 experimentos, cada uno de los cuales se ejecutó durante 500 
+iteraciones. La figura \ref{fig:cycle} muestra la media del error en 
+función de la cantidad de iteraciones para cada tipo de instancia. 
+También en este caso, se observa una velocidad de convergencia 
+aceptable.
+
+\smallskip
+
 Es importante mencionar que en este caso, la limitación que existe para 
 procesar instancias con una mayor cantidad de ejes es la resolución del 
 sistema laplaciano $Lx = D^t f$. La matriz $L$ es de tamaño $n \times 
 n$, eso impone un límite a esta implementación. Una implementación 
 paralelizada de la resolución del sistema lineal permitiría que el 
 algoritmo escale sin limitaciones.
-
-\smallskip
-
-Consideramos tres tipos de instancias de ciclos simples: de 1000, 2000 
-y 4000 nodos. Para cada tipo de instancia, se hicieron 20 experimentos, 
-cada uno de los cuales se ejecutó durante 500 iteraciones. La figura 
-\ref{fig:cycle} muestra la media del error en función de la cantidad 
-de iteraciones para cada tipo de instancia. También en este caso, se 
-observa una velocidad de convergencia aceptable.
 
 \begin{figure}
 	\includegraphics[width=\linewidth]{cycle_graphs.png} % Figure image
@@ -1236,12 +1255,18 @@ observa una velocidad de convergencia aceptable.
 	\end{tabular}
 \end{table}
 
+Recordemos que las \textit{mallas 3D} o \textit{mallas poligonales} 
+permiten representar superficies inmersas en el espacio tridimensional. 
+Las caras son aproximaciones lineales de pequeñas vecindades de la 
+superficie. Y el grafo subyacente de una malla describe los bordes de 
+las caras. 
 
-En nuestro caso empleamos dos superficies 
-compactas para evaluar el algoritmo: \emph{venus} (figura 
-\ref{fig:venus}) y \emph{elephant} (figura \ref{fig:elephant}). 
-La tabla \ref{tab:meshes} detalla la información de los grafos 
-($G=(V,E)$) de ambas mallas.
+\smallskip
+
+En este caso empleamos dos superficies compactas para evaluar el 
+algoritmo: \emph{venus} (figura \ref{fig:venus}) y \emph{elephant} 
+(figura \ref{fig:elephant}). La tabla \ref{tab:meshes} detalla la 
+información de los grafos ($G=(V,E)$) de ambas mallas.
 
 \smallskip
 
@@ -1259,7 +1284,7 @@ permita refinar la mejor solución encontrada.
 \section{Conclusiones y Trabajo futuro}
 
 En este trabajo abordamos un problema que denominamos \emph{integración 
-no orientada en grafos} que ``integra" (en términos analíticos) un dato 
+en grafos} que ``integra" (en términos analíticos) un dato 
 diferencial en los ejes. Este enfoque permite resolver distintos tipos 
 de problemas diferenciales que se modelen con grafos. El algoritmo 
 metaheurístico que planteamos está basado en comparar \emph{matrices 
@@ -1295,6 +1320,12 @@ laplaciana}. Actualmente hay importantes líneas de trabajo abordando
 nuevas metodologías iterativas que reducen el tiempo de 
 procesamiento de este tipo de sistemas. En una a futura implementación
  sería importante incorporar estos enfoques. 
+
+\bigskip
+
+Por último habria que formalizar adecuadamente los argumentos 
+estadísticos por los cuales la $alpha$-norma es una aproximación 
+razonable de la proyección ortogonal de un vector sobre un subespacio.
 
 % An example of a floating figure using the graphicx package.
 % Note that \label must occur AFTER (or within) \caption.
@@ -1402,14 +1433,14 @@ procesamiento de este tipo de sistemas. En una a futura implementación
   \section*{Agradecimiento}
 \fi
 
-Los autores queremos agradecer al Prof. Gabriel Taubin por plantearnos 
-el problema de integración de formas diferenciales en el contexto de 
-mallas 3D y por su generosa disposición a responder nuestras preguntas.
+%Los autores queremos agradecer al Prof. Gabriel Taubin por plantearnos 
+%el problema de integración de formas diferenciales en el contexto de 
+%mallas 3D y por su generosa disposición a responder nuestras preguntas.
 
-\bigskip
+%\bigskip
 
-Asimismo queremos agradecer al Prof. Fernando Cukierman por guiar 
-nuestro estudio en el área de geometría diferencial.
+%Asimismo queremos agradecer al Prof. Fernando Cukierman por guiar 
+%nuestro estudio en el área de geometría diferencial.
 
 
 % trigger a \newpage just before the given reference
@@ -1439,26 +1470,55 @@ nuestro estudio en el área de geometría diferencial.
 
 \begin{thebibliography}{1}
 
-\bibitem[Botsch, Kobbelt, Pauly, Alliez, Lévy , 2010]{BKPAL:2010}
+\bibitem[Taubin et al., 2002]{BMMRT:2002}
+Bernardini F., Martin I., Mittleman J., Rushmeier H., Taubin G.,
+\newblock \textit{Building a Digital Model of Michelangelo's Florentine Pieta'}
+\newblock IEEE Computer Graphics and Applications.
+
+\bibitem[Botsch, Kobbelt, Pauly, Alliez, Lévy, 2010]{BKPAL:2010}
 Botsch M., Kobbelt L., Pauly M., Alliez P., Lévy B.,
 \newblock \textit{Polygon Mesh Processing}
-\newblock A. K. Peters, 2010
+\newblock A. K. Peters, 2010.
+
+\bibitem[Crispell, Mundy, Taubin, 2008]{CMT:2008}
+Crispell D., Mundy J., Taubin G.,
+\newblock \textit{Parallax-Free Aerial Video Registration}
+\newblock British Machine Vision Conference 2008.
+
+
 
 \bibitem[Gendrau, Potvin, 2010]{GP:2010}
 Gendreau M. and Potvin J., 
 \newblock \textit{Handbook of Metaheuristics}, 
-\newblock Springer, 2010
+\newblock Springer, 2010.
 
 \bibitem[Harari, 1969]{Harari:1969}
 Harary F., 
 \newblock \textit{Graph Theory}, 
-\newblock Addison-Wesley, 1969
+\newblock Addison-Wesley, 1969.
 
-\bibitem[Koutis, Miller and Peng, 2010]{KMP:2010}
+\bibitem[Koutis, Miller, Peng, 2010]{KMP:2010}
 Koutis I., Miller G. L. and Peng R., 
 \newblock \textit{Approaching optimality for solving sdd linear systems}, 
 \newblock 51st Annual Symposium on Foundations of Computer Science, IEEE, 
-2010, pp. 235-244
+2010, pp. 235-244.
+
+\bibitem[Lanman, Raskar, Agrawal, Taubin, 2008]{LRAT:2008}
+Lanman D., Raskar R., Agrawal A., Taubin G., 
+\newblock \textit{Shield Fields: Modeling and Capturing 3D Occluders}, 
+\newblock ACM Transactions on Graphics (TOG), Vol 27, Issue 5, December 
+2008, Siggraph Asia Proceedings.
+
+
+\bibitem[REVEAL]{REVEAL}
+\newblock Reconstruction and ExploratoryVisualization: Engineering 
+meets Art / ArchaeoLogy.
+
+\bibitem[Ronfard, Taubin, 2007]{RT:2007}
+Ronfard R., Taubin G., 
+\newblock \textit{Introducing 3D Cinematography}, 
+\newblock IEEE Computer Graphics and Applications (pp. 18-20).
+
 
 \bibitem[Saad, 2007]{Saad:2007}
 Saad Y., 
@@ -1470,50 +1530,88 @@ Spielman D. A.,
 \newblock \textit{Algorithms, graph theory, and linear equations in laplacian 
 matrices}, 
 \newblock Proceedings of the International Congress of Mathematicians, vol. 4, 
-2010, pp. 2698-2722
+2010, pp. 2698-2722.
 
-\bibitem[Spielman and Teng, 2004]{ST:2004}
+\bibitem[Spielman, Teng, 2004]{ST:2004}
 Spielman D. A. and Shang-Hua Teng,
 \newblock \textit{Nearly-linear time algorithms for graph partitioning, graph 
 sparsification, and solving linear systems}, 
 \newblock Proceedings of the thirty-sixth annual ACM symposium on Theory of 
-Computing, ACM, 2004, pp. 81-90
+Computing, ACM, 2004, pp. 81-90.
 
 \bibitem[Spivak, 1965]{S:1965}
 Spivak M.,
 \newblock \textit{Calculus on Manifolds},
-\newblock W. A. Benjamin
+\newblock W. A. Benjamin.
 
 \bibitem[Talbi, 2009]{Talbi:2009}
 Talbi E.G., 
 \newblock \textit{Metaheuristics: from design to implementation}, 
 \newblock Wiley, 2009.
 
+\bibitem[Taubin, Cooper, 1992]{TC:1992}
+Taubin G., Cooper D.B., 
+\newblock \textit{2D and 3D Object Recognition and Positioning with 
+Algebraic Invariants and Covariants}, 
+\newblock Academic Press.
+
+
 \bibitem[Teng, 2010]{Teng:2010}
 Shang-Hua Teng,
 \newblock \textit{The laplacian paradigm: Emerging algorithms for massive 
 graphs}, 
 \newblock Theory and Applications of Models of Computation, Lecture Notes in 
-Computer Science, vol. 6108, 2010, pp. 2-14
+Computer Science, vol. 6108, 2010, pp. 2-14.
 
 \bibitem[Tu, 2008]{T:2008}
 Tu, L. W. 
 \newblock \textit{An Introduction to Manifolds},
-\newblock Springer
+\newblock Springer.
 
 \bibitem[Ward, Kincaid, 2009]{WK:2009}
-Ward C., Kincaid D. (2009), 
+Ward C., Kincaid D., 
 \newblock \textit{Linear Algebra: Theory and Applications}
 \newblock Sudbury, Ma: Jones and Bartlett. pp. 544, 558.
 
+\bibitem[Zhao, Taubin, 2009]{ZT:2009}
+Zhao Y., Taubin G., 
+\newblock \textit{Real-Time High Definition Stereo on GPGPU using 
+Progressive Multi-Resolution Adaptive Windows}
+\newblock NVIDIA Research Summit 2009, NVIDIA GPU Technology Conference.
 
 
 \end{thebibliography}
 
-
-
-
 % that's all folks
+
 \end{document}
+
+
+%[17] Taubin G., Cooper D.B. (1992) 2D and 3D Object Recognition and Positioning with Algebraic Invariants and Covariants. Academic Press.
+
+%[18] Lanman D., Crispell D.,Taubin G. (2009) Surround Structured Lighting: 3-D Scanning with Orthographic Illumination. Computer Vision and Image Understanding (CVIU), Volume 113, Issue 11,(pp 1107-1117).
+
+%[19] Leotta M., Vandergon A., Taubin G. (2008) 3D Slit Scanning with Planar Constraints. Computer Graphics Forum, Volume 27, Number 8, (pp. 2066-2080).
+
+%[20] Lanman D., Raskar R., Agrawal A., Taubin G. (2008) Shield Fields: Modeling and Capturing 3D Occluders. ACM Transactions on Graphics (TOG), Vol 27, Issue 5, December 2008, Siggraph Asia Proceedings.
+
+%[21] Osman Ulusoy A., Calakli F., Taubin G. (2009) One Shot Scanning Using DeBrujin Spaced Grids. IEEE International Workshop on 3-D Digital Imaging and Modeling (3DIM'09), Kyoto, Japan
+
+%[22] Ronfard R., Taubin G. (2007) Introducing 3D Cinematography. IEEE Computer Graphics and Applications (pp. 18-20).
+
+%[23] Bernardini F., Martin I., Mittleman J., Rushmeier H., Taubin G. (2002) Building a Digital Model of Michelangelo's Florentine Pieta'. IEEE Computer Graphics & Applications.
+
+%[24] Zhao Y., Taubin G. (2009) Real-Time High Definition Stereo on GPGPU using Progressive Multi-Resolution Adaptive Windows. NVIDIA Research Summit 2009, NVIDIA GPU Technology Conference.
+
+%[25] Bergou A. J., Swartz S., Breuer K., Taubin G. 3D Reconstruction of Bat Flight Kinematics from Sparse Multiple Views
+
+%[26] Crispell D., Mundy J., Taubin G. (2008) Parallax-Free Aerial Video Registration. British Machine Vision Conference 2008.
+
+%[27] Andaló F.A., Calakli F., Taubin G., Goldenstein S. Accurate 3D Footwear Impression Recovery From Photographs
+% 
+
+
+
+
 
 
