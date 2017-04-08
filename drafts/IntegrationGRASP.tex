@@ -80,7 +80,7 @@ arbitrario.
 
 Dado un grafo conexo $G=(V,E)$ \cite{Harari:1969} y una función 
 de pesos en los ejes $f: E \rightarrow \mathbb{R}$, queremos hallar 
-una orientacion de los ejes $G$ y una función de pesos en los 
+una orientacion de los ejes de $G$ y una función de pesos en los 
 nodos $x: V \rightarrow \mathbb{R}$ de modo 
 de minimizar el error:
 
@@ -136,27 +136,36 @@ El algoritmo que proponemos explora el espacio de todas las
 orientaciones posibles del grafo original.
 
 \subsection{Contexto del problema}
-El problema surgió como una variante de la definición de \textit{1-forma 
+El problema surgió a partir de la definición de \textit{1-forma 
 diferencial} en el contexto de \textit{mallas 3D}. 
 
 \bigskip
 
 Las formas diferenciales \cite{S:1965,T:2008} conceptualizan la noción 
-de entidad integrable. Informalmente se puede pensar en una 
+de objeto integrable. Intuitivamente se puede pensar en una 
 \textit{1-forma diferencial} como una cantidad que mide 
 una distancia infinitesimal y que puede ser integrada a lo largo de una 
 curva. Análogamente una \textit{2-forma diferencial} es una cantidad 
-que mide una superficie infinitesimal y que puede ser integrada a lo de 
-una superficie. Y en general, una \textit{k-forma diferencial} está 
-asociada a una variedad diferencial $k$-dimensional y puede ser 
+que mide una superficie infinitesimal y que puede ser integrada a lo 
+largo de una superficie. Y en general, una \textit{k-forma diferencial} 
+está asociada a una variedad diferencial $k$-dimensional y puede ser 
 integrada en dimensión $k$. Esta noción permite unificar varios 
 teoremas clásicos como el \textit{teorema de Green} y el \textit{teorema 
-de Stokes}. Además de la naturaleza analítica de este punto de vista, 
+de Stokes}. Además de la naturaleza geométrica de este punto de vista, 
 las formas diferenciales tienen una rica estructura algebraica que 
 permite entre otras cosas trasladar propiedades invariantes entre dos 
-variedades vincualdas mediante mapas diferenciales. El precursor de la 
-teoría fue \textit{Elie Cartan} a fines del siglo XIX.
+variedades mediante mapas diferenciales. El precursor de la 
+teoría fue el matemático francés \textit{Elie Cartan} a fines del siglo 
+XIX.
 
+\bigskip
+
+Por otro lado, las \textit{mallas 3D} o \textit{mallas poligonales} 
+\cite{BKPAL:2010} permiten representar superficies inmersas en el 
+espacio tridimensional. Las caras son aproximaciones lineales de 
+pequeñas vecindades de la superficie. Y el grafo subyacente de una 
+malla describe los bordes de las caras. Son objetos de estudio en el 
+área de \textit{procesamiento digital de geometría}. 
 
 \subsection{Aplicaciones}
 
@@ -904,11 +913,7 @@ observa una velocidad de convergencia aceptable.
 \end{table}
 
 
-Las mallas poligonales permiten representar superficies inmersas en el 
-espacio tridimensional \cite{BKPAL:2010}. Son objetos de estudio en el área de 
-computación gráfica. Las caras son aproximaciones lineales de pequeñas 
-vecindades de la superficie. El grafo subyacente de una malla decribe 
-los bordes de las caras. En nuestro caso empleamos dos superficies 
+En nuestro caso empleamos dos superficies 
 compactas para evaluar el algoritmo: \emph{venus} (figura 
 \ref{fig:venus}) y \emph{elephant} (figura \ref{fig:elephant}). 
 La tabla \ref{tab:meshes} detalla la información de los grafos 
