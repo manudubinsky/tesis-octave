@@ -349,8 +349,8 @@ Universidad de Buenos Aires\\
 Argentina}
 \and
 \IEEEauthorblockN{Manuel Dubinsky y Fernando Asteasuain}
-\IEEEauthorblockA{Dpto. Tecnología y Administración\\
-Ingeniería Informática\\
+\IEEEauthorblockA{Ingeniería Informática\\
+Dpto. Tecnología y Administración\\
 Universidad Nacional de Avellaneda\\
 Argentina}}
 
@@ -472,12 +472,13 @@ orientaciones posibles del grafo original.
 
 \subsection{Contexto del problema y trabajos relacionados}
 El problema surgió a partir de la definición de \textit{1-forma 
-diferencial} en el contexto de \textit{mallas 3D}. 
+diferencial} en el contexto de \textit{mallas poligonales}. 
 
 \bigskip
 
 Las formas diferenciales \cite{S:1965,T:2008} conceptualizan la noción 
-de objeto integrable. Intuitivamente se puede pensar en una 
+de objeto integrable. Son objetos de estudio en geometría diferencial. 
+Intuitivamente se puede pensar en una 
 \textit{1-forma diferencial} como una cantidad que mide 
 una distancia infinitesimal y que puede ser integrada a lo largo de una 
 curva. Análogamente una \textit{2-forma diferencial} es una cantidad 
@@ -495,12 +496,12 @@ XIX.
 
 \bigskip
 
-Por otro lado, las \textit{mallas 3D} o \textit{mallas poligonales} 
+Por otro lado, las \textit{mallas poligonales} 
 \cite{BKPAL:2010} permiten representar superficies inmersas en el 
 espacio tridimensional. Están compuestas por aproximaciones lineales 
 poligonales de pequeñas vecindades de la superficie denominadas caras. 
-Y tienen asociado un grafo cuyos ejes definen los lados de las caras. 
-Son objetos de estudio fundamentales en el área de 
+Y tienen asociado un grafo cuyos nodos y ejes definen los vértices y 
+lados de las caras. Son objetos de estudio fundamentales en el área de 
 \textit{procesamiento digital de geometría}. Esta área ha crecido de 
 manera sostenida en los últimos veinte años debido a la capacidad de 
 obtener modelos geométricos de objetos reales mediante técnicas como: 
@@ -519,6 +520,32 @@ reconocimiento de trayectorias \cite{ZT:2009}, construcción de modelos
 tridimensionales de sitios arqueológicos \cite{REVEAL}, de esculturas 
 y objetos antiguos \cite{BMMRT:2002}, cinematografía 3D 
 \cite{RT:2007}, etc.
+
+\bigskip
+
+La teoría de formas diferenciales tiene su contraparte discreta en el 
+marco de las mallas poligonales. Esto se debe a que una malla poligonal 
+puede ser entendida como una descomposición simplicial 
+\cite{Hatcher:2004} de la superficie que está modelando. Y una forma 
+diferencial puede interpretarse como un complejo de co-cadena sobre 
+dicha descomposición. En el trabajo \cite{DKT:2006}, los autores 
+muestran cómo integrar formas diferenciales mediante una técnica de 
+interpolación. En ese contexto los $1$-símplices de la descomposición, 
+o dicho de otro modo: los ejes del grafo asociado a la malla, ya están 
+dotados de una orientación. Y están sujetos a la equivalencia 
+${v_0v_1} = -{v_1v_0}$, es decir que si se considera la orientación 
+contraria de un eje, su término aociado en el complejo de co-cadena 
+cambia de signo (esto es compatible con el primer teorema fundamental 
+del cálculo). 
+
+\bigskip
+
+El problema que consideramos en este trabajo es una variante en la 
+cual los ejes del grafo subyacente no están dotados de una orientación. 
+El problema de optimización consiste justamente en encontrar una 
+orientación que ajuste del mejor modo posible los valores de los 
+vértices de acuerdo a una función de pesos en los ejes del grafo.
+
 
 \subsection{Aplicaciones}
 
@@ -549,7 +576,7 @@ las demás entradas de la fila $k$.
 \smallskip
 
 En otros términos, una matriz de incidencia dirigida representa una 
-posible orientación de los ejes de un grafo no dirigido $G$. Y el 
+ orientación de los ejes de un grafo no dirigido $G$. Y el 
 espacio de matrices de incidencia dirigida asociado a $G$ 
 equivale al espacio de todas las orientaciones posibles de $G$.
 
@@ -854,7 +881,10 @@ ortogonal de $f$ sobre $D$ como si las columnas de $D$ fueran
 ortogonales y denotaremos a esta aproximación \textit{$\alpha$-norma}.
  De este modo, entre dos matrices de incidencia dirigida $D$ y 
  $\bar{D}$ nuestro criterio será optar por aquella con mayor 
- $\alpha$-norma. 
+ $\alpha$-norma. La justificación de esta decisión se basa en que 
+ calcular una base ortonormal del subespacio generado por las columnas 
+ de $D$, mediante por ejemplo el método de \emph{Gram-Schmidt} 
+ \cite{WK:2009} no es viable en términos de costo computacional.
 
 \smallskip
 
@@ -874,7 +904,7 @@ $$
 Y luego dividir cada componente por la norma correspondiente:
 
 $$
-\alpha-norm_f(D) = D^t f
+\alpha(D,f) = D^t f
 \begin{bmatrix}
 	\|d_1\|^{-1}\\
 	\dots \\
@@ -1024,7 +1054,7 @@ análisis del algoritmo evaluado sobre tres familias de grafos:
 	\item \emph{Ciclos simples}: grafo que define un ciclo sin ciclos 
 	propios; se puede pensar en un polígono simple como modelo 
 	geométrico.
-	\item \emph{Mallas 3D}: son representaciones de superficies 
+	\item \emph{Mallas poligonales}: son representaciones de superficies 
 	inmersas en el espacio tridimensional; tienen más estructura que un 
 	grafo porque los nodos tienen asociada una posición en el espacio.
 \end{itemize}
@@ -1034,7 +1064,7 @@ de que los grafos completos y los ciclos simples determinan los casos
 extremos en términos del grado de sus nodos: los grafos completos 
 maximizan el grado, mientras que los ciclos simples lo minimizan. 
 Recordar que el grado de los nodos es por los menos $2$. Y los grafos 
-asociados a mallas $3D$ son aquellos en los que inicialmente se planteó 
+asociados a mallas poligonales son aquellos en los que inicialmente se planteó 
 el problema que analizamos en este trabajo.
 
 \smallskip
@@ -1219,34 +1249,34 @@ algoritmo escale sin limitaciones.
 	\label{fig:cycle} % Label for referencing with \ref{bear}
 \end{figure}
 
-\subsection{Mallas 3D}
+\subsection{Mallas poligonales}
 
 \begin{figure}
 	\includegraphics[scale=.21]{venusv_solid.jpg} % Figure image
 	\includegraphics[scale=.21]{venusv_graph.jpg} % Figure image
-	\caption{Malla 3D y su grafo subyacente}% Figure caption
+	\caption{\textbf{venus}: malla poligonal y su grafo subyacente}% Figure caption
 	\label{fig:venus} % Label for referencing with \ref{bear}
 \end{figure}
 
 \begin{figure}
 	\includegraphics[scale=.21]{elephav_solid.jpg} % Figure image
 	\includegraphics[scale=.21]{elephav_graph.jpg} % Figure image
-	\caption{Malla 3D y su grafo subyacente}% Figure caption
+	\caption{\textbf{elephant}: malla poligonal y su grafo subyacente}% Figure caption
 	\label{fig:elephant} % Label for referencing with \ref{bear}
 \end{figure}
 
 \begin{figure}
 	\includegraphics[width=\linewidth]{3dmeshes.png} % Figure image
-	\caption{Mallas 3D}% Figure caption
+	\caption{Mallas poligonales}% Figure caption
 	\label{fig:meshes} % Label for referencing with \ref{bear}
 \end{figure}
 
 \begin{table}
-	\caption{Mallas 3D}
+	\caption{Mallas poligonales}
 	\centering
 	\begin{tabular}{llr}
 		\toprule
-		malla & |V| & |E| \\
+		malla & $|V|$ & $|E|$ \\
 		\midrule
 		venus & 819 & 2452 \\
 		elephant & 623 & 1759 \\
@@ -1255,7 +1285,7 @@ algoritmo escale sin limitaciones.
 	\end{tabular}
 \end{table}
 
-Recordemos que las \textit{mallas 3D} o \textit{mallas poligonales} 
+Recordemos que las \textit{mallas poligonales} 
 permiten representar superficies inmersas en el espacio tridimensional. 
 Las caras son aproximaciones lineales de pequeñas vecindades de la 
 superficie. Y el grafo subyacente de una malla describe los bordes de 
@@ -1297,7 +1327,7 @@ incidencia dirigida.
 \bigskip
 
 Evaluamos el algoritmo en instancias de tres familias de grafos: grafos 
-completos, ciclos simples y mallas 3D. Y observamos que se comporta 
+completos, ciclos simples y mallas poligonales. Y observamos que se comporta 
 adecuadamente dado que converge a una solución aproximada del problema 
 en un tiempo razonable. No obstante, hay que remarcar que para ciertas 
 instancias de input, a partir de cierto punto el algoritmo se 
@@ -1324,7 +1354,7 @@ procesamiento de este tipo de sistemas. En una a futura implementación
 \bigskip
 
 Por último habria que formalizar adecuadamente los argumentos 
-estadísticos por los cuales la $alpha$-norma es una aproximación 
+estadísticos por los cuales la $\alpha$-norma es una aproximación 
 razonable de la proyección ortogonal de un vector sobre un subespacio.
 
 % An example of a floating figure using the graphicx package.
@@ -1433,14 +1463,16 @@ razonable de la proyección ortogonal de un vector sobre un subespacio.
   \section*{Agradecimiento}
 \fi
 
-%Los autores queremos agradecer al Prof. Gabriel Taubin por plantearnos 
-%el problema de integración de formas diferenciales en el contexto de 
-%mallas 3D y por su generosa disposición a responder nuestras preguntas.
+Queremos agradecer al proyecto UndavCyT 2014 “Especificaciones formales 
+tempranas del comportamiento de sistemas de software".
 
-%\bigskip
+\bigskip
 
-%Asimismo queremos agradecer al Prof. Fernando Cukierman por guiar 
-%nuestro estudio en el área de geometría diferencial.
+Los autores queremos agradecer al Prof. Gabriel Taubin por plantearnos 
+el problema de integración de formas diferenciales en el contexto de 
+mallas poligonales y por su generosa disposición a responder nuestras 
+preguntas. Asimismo queremos agradecer al Prof. Fernando Cukierman por 
+guiar nuestro estudio en el área de geometría diferencial.
 
 
 % trigger a \newpage just before the given reference
@@ -1485,8 +1517,13 @@ Crispell D., Mundy J., Taubin G.,
 \newblock \textit{Parallax-Free Aerial Video Registration}
 \newblock British Machine Vision Conference 2008.
 
-
-
+\bibitem[Desbrun, Kanso, Tong, 2006]{DKT:2006}
+Desbrun M., Kanso E., Tong Y.,
+\newblock \textit{Discrete differential forms for computational 
+modeling}
+\newblock Proceeding SIGGRAPH '06 ACM SIGGRAPH 2006 Courses Pages 
+39-54 .
+ 
 \bibitem[Gendrau, Potvin, 2010]{GP:2010}
 Gendreau M. and Potvin J., 
 \newblock \textit{Handbook of Metaheuristics}, 
@@ -1496,6 +1533,11 @@ Gendreau M. and Potvin J.,
 Harary F., 
 \newblock \textit{Graph Theory}, 
 \newblock Addison-Wesley, 1969.
+
+\bibitem[Hatcher, 2004]{Hatcher:2004}
+Hatcher A., 
+\newblock \textit{Algebraic Topology}, 
+\newblock Cambridge University Press.
 
 \bibitem[Koutis, Miller, Peng, 2010]{KMP:2010}
 Koutis I., Miller G. L. and Peng R., 
@@ -1509,7 +1551,6 @@ Lanman D., Raskar R., Agrawal A., Taubin G.,
 \newblock ACM Transactions on Graphics (TOG), Vol 27, Issue 5, December 
 2008, Siggraph Asia Proceedings.
 
-
 \bibitem[REVEAL]{REVEAL}
 \newblock Reconstruction and ExploratoryVisualization: Engineering 
 meets Art / ArchaeoLogy.
@@ -1518,7 +1559,6 @@ meets Art / ArchaeoLogy.
 Ronfard R., Taubin G., 
 \newblock \textit{Introducing 3D Cinematography}, 
 \newblock IEEE Computer Graphics and Applications (pp. 18-20).
-
 
 \bibitem[Saad, 2007]{Saad:2007}
 Saad Y., 
@@ -1555,7 +1595,6 @@ Taubin G., Cooper D.B.,
 Algebraic Invariants and Covariants}, 
 \newblock Academic Press.
 
-
 \bibitem[Teng, 2010]{Teng:2010}
 Shang-Hua Teng,
 \newblock \textit{The laplacian paradigm: Emerging algorithms for massive 
@@ -1578,7 +1617,6 @@ Zhao Y., Taubin G.,
 \newblock \textit{Real-Time High Definition Stereo on GPGPU using 
 Progressive Multi-Resolution Adaptive Windows}
 \newblock NVIDIA Research Summit 2009, NVIDIA GPU Technology Conference.
-
 
 \end{thebibliography}
 
