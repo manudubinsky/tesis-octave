@@ -92,6 +92,9 @@
 \usepackage{booktabs}
 \usepackage{graphicx} 
 
+\usepackage[spanish]{babel}
+
+
 % *** CITATION PACKAGES ***
 %
 \ifCLASSOPTIONcompsoc
@@ -342,17 +345,25 @@
 % author names and affiliations
 % use a multiple column layout for up to three different
 % affiliations
-\author{\IEEEauthorblockN{César Massri}
-\IEEEauthorblockA{Dpto. de Matemática\\
-Facultad de Ciencias Exactas y Naturales\\
-Universidad de Buenos Aires\\
-Argentina}
-\and
-\IEEEauthorblockN{Manuel Dubinsky y Fernando Asteasuain}
+\author{
+\IEEEauthorblockN{Manuel Dubinsky}
 \IEEEauthorblockA{Ingeniería Informática\\
 Dpto. Tecnología y Administración\\
 Universidad Nacional de Avellaneda\\
-Argentina}}
+Argentina}
+\and
+\IEEEauthorblockN{César Massri}
+\IEEEauthorblockA{Dpto. de Matemática\\
+Universidad de CAECE,\\
+IMAS, CONICET\\
+Argentina}
+\and
+\IEEEauthorblockN{Fernando Asteasuain}
+\IEEEauthorblockA{Ingeniería Informática\\
+Dpto. Tecnología y Administración\\
+Universidad Nacional de Avellaneda\\
+Argentina}
+}
 
 % conference papers do not typically use \thanks and this command
 % is locked out in conference mode. If really needed, such as for
@@ -386,26 +397,24 @@ Argentina}}
 
 
 
-
 % make the title area
 \maketitle
 
 % As a general rule, do not put math, special symbols or citations
 % in the abstract
+
+\renewcommand\abstractname{Abstract}
+
 \begin{abstract}
-Dado un grafo orientado $\vec G=(\vec V,\vec E)$ y una función de pesos 
-en los nodos $x: \vec V \rightarrow \mathbb{R}$, definimos el 
-\textit{diferencial} $dx: \vec E \rightarrow \mathbb{R}$ en cada eje $e=v\to 
-w$ como $dx(e) = x(w) - x(v)$. En el presente trabajo abordamos el 
-siguiente problema: dado un grafo conexo $G=(V,E)$  (no orientado) y 
-una función de pesos $f: E \rightarrow \mathbb{R}$, se 
-trata de encontrar la mejor orientación de los ejes de $G$ y la función 
-de pesos en los nodos $x: V \rightarrow \mathbb{R}$ cuyo 
-\textit{diferencial} ajuste del mejor modo posible (en términos de 
-cuadrados mínimos) los pesos de los ejes dados por $f$. Para ello 
-presentamos un algoritmo basado en la metaheurística GRASP cuya 
-simplicidad permite paralelizarlo para procesar instancias de tamaño 
-arbitrario.
+
+Given an edge-weighted graph, we analyze the problem of finding an 
+orientation of its edges and a function on its nodes, such that 
+for each oriented edge the consistent subtraction of the function on 
+its incident vertices (ie.: head - tail), is the best approximation in 
+a least square sense to the original edge-weighted function. We 
+present a simple GRASP algorithm to find a ``good" \ solution that is 
+suitable for distributed execution.
+
 \end{abstract}
 
 % no keywords
@@ -430,27 +439,27 @@ arbitrario.
 
 Dado un grafo conexo $G=(V,E)$ \cite{Harari:1969} y una función 
 de pesos en los ejes $f: E \rightarrow \mathbb{R}$, queremos hallar 
-una orientacion de los ejes de $G$ y una función de pesos en los 
+una orientación de los ejes de $G$ y una función de pesos en los 
 nodos $x: V \rightarrow \mathbb{R}$ de modo 
 de minimizar el error:
 
 $$E(x) := \sum_{e \in E} (dx(e) - f(e))^2$$
 
-donde $dx: E \rightarrow \mathbb{R}$ es el \textit{diferencial} de $x$ 
-(asociado a la orientacion de los ejes) y se define en cada eje 
+\noindent donde $dx: E \rightarrow \mathbb{R}$ es el \textit{diferencial} de $x$ 
+(asociado a la orientación de los ejes) y se define en cada eje 
 $e=v\to w$ como $dx(e) = x(w) - x(v)$.
 
 \smallskip
 
 Concretamente, si consideramos la correspondencia entre orientaciones 
 de $G$ y \textit{matrices de incidencia dirigida}, se trata de 
-encontrar: por un lado la ``mejor" \textit{matriz de incidencia 
+encontrar: por un lado la ``mejor'' \textit{matriz de incidencia 
 dirigida} $D$, y por el otro la mejor función de pesos en los ejes 
 $x: V \rightarrow \mathbb{R}$ de modo de minimizar la expresión:
 
 $$E(x) = \|D\bm{x}-\bm{f}\|^2$$
 
-donde:
+\noindent donde:
 
 $$
 \bm{x} = 
@@ -534,7 +543,7 @@ interpolación. En ese contexto los $1$-símplices de la descomposición,
 o dicho de otro modo: los ejes del grafo asociado a la malla, ya están 
 dotados de una orientación. Y están sujetos a la equivalencia 
 ${v_0v_1} = -{v_1v_0}$, es decir que si se considera la orientación 
-contraria de un eje, su término aociado en el complejo de co-cadena 
+contraria de un eje, su término asociado en el complejo de co-cadena 
 cambia de signo (esto es compatible con el primer teorema fundamental 
 del cálculo). 
 
@@ -556,7 +565,7 @@ Por ejemplo, supongamos que los nodos representan regiones geográficas
 y queremos construir un mapa topográfico basado en ciertas relaciones 
 diferenciales de altura entre algunas regiones.
 
-Otro ejemplo podría ser el de ordenar cronológicamente ciertos eventos 
+Otro ejemplo es el de ordenar cronológicamente ciertos eventos 
 en base a algunas relaciones diferenciales entre ellos.
 
 \section{Preliminares}
@@ -617,7 +626,8 @@ $L$. Como en nuestro caso $G$ es conexo el rango de $D$ es $n-1$.
 \noindent{\textbf{Sistema lineal inducido por $D$}}
 
 Recordemos que el problema que queremos resolver es encontrar la matriz 
-de incidencia dirigida $D$, es decir la ``mejor" orientación de los ejes 
+de incidencia dirigida $D$, es decir la ``mejor'' 
+orientación de los ejes 
 del grafo $G$, de modo de minimizar la expresión:
 
 $$E(x) = \|D\bm{x}-\bm{f}\|^2$$
@@ -627,10 +637,10 @@ incidencia dirigida asociado a $G$. Una vez que conseguimos una
 matriz candidata, el problema de minimización es equivalente a encontrar
 dónde se anula el gradiente de $E(x)$:
  
-$$\nabla E = [\frac{\partial E}{\partial x_1}, \dots, \frac{\partial 
-E}{\partial x_n}] = D^tDx-D^tf=0$$
+$$\nabla E = \left[\frac{\partial E}{\partial x_1}, \dots, \frac{\partial 
+E}{\partial x_n}\right] = D^tDx-D^tf=0$$
 
-Que a su vez es equivalente a resolver el sistema lineal:
+\noindent Que a su vez es equivalente a resolver el sistema lineal:
 
 $$D^tDx = Lx = D^tf$$
 
@@ -656,8 +666,8 @@ Teng:2010}).
 Para elaborar el criterio que nos permita comparar dos matrices de 
 incidencia dirigida y decidir cuál es mejor en el contexto del problema 
 que queremos resolver, vamos a referirnos a nociones básicas de 
-proyección ortogonal \cite{WK:2009} de un vector sobre un subespacio de un espacio 
-vectorial.
+proyección ortogonal de un vector sobre un subespacio de un espacio 
+vectorial, \cite{WK:2009}.
 
 \smallskip
 
@@ -756,10 +766,10 @@ contexto del problema que queremos resolver.
 En esta sección describiremos el algoritmo y los detalles de la 
 implementación.
 
-\subsection{La ``mejor" matriz de incidencia dirigida}
+\subsection{La ``mejor'' matriz de incidencia dirigida}
 
 El primer paso de la estrategia que vamos a desarrollar es tratar de 
-encontrar la ``mejor" matriz de incidencia dirigida, o dicho en otros 
+encontrar la ``mejor'' matriz de incidencia dirigida, o dicho en otros 
 términos: de orientar los ejes del grafo $G$ del mejor modo posible para 
 minimizar el error:
 
@@ -768,7 +778,7 @@ $$E(x) = \|D\bm{x}-\bm{f}\|^2$$
 Como el espacio de matrices de incidencia dirigida asociado a $G$ es un 
 espacio de tamaño exponencial respecto a la cantidad de ejes, dado que 
 cada eje puede tener dos orientaciones, nuestra propuesta está centrada 
-en construir un algoritmo que devuelva la ``mejor solución posible".
+en construir un algoritmo que devuelva la ``mejor solución posible''.
 
 \bigskip
 
@@ -815,7 +825,7 @@ $L$ y $D$:
 
 $$L = D^t D$$
 
-es que el producto interno de dos columnas distintas de una matriz de 
+\noindent es que el producto interno de dos columnas distintas de una matriz de 
 incidencia dirigida vale $-1$ o $0$ dependiendo de si existe un eje 
 entre los nodos asociados a dichas columnas o no. Notar el hecho 
 evidente de que si el producto es $0$, las columnas son
@@ -840,11 +850,11 @@ al grado del nodo asociado a esa columna, esto se deduce de la diagonal
 de $L = D^t D$. Recordemos que el grado de cada nodo de  $G$, luego de 
 preprocesar las hojas, es al menos 2. Entonces resulta que:
 
-$$0\le cos \ \alpha = \frac{d_i d_j}{\|d_i\| \ \|d_j\|} \le -\frac{1}{2}$$
+$$-\frac{1}{2}\le cos \ \alpha = \frac{d_i d_j}{\|d_i\| \ \|d_j\|} \le 0,\quad \forall i\neq j.$$
 
 \smallskip
 
-Implicando que $\frac{\pi}{2}\le\alpha \leq \frac{2\pi}{3}$.
+\noindent Implicando que $\frac{\pi}{2}\le\alpha \leq \frac{2\pi}{3}$.
 
 \smallskip
 
@@ -864,9 +874,9 @@ emplearemos para compararlas.
 matrices de incidencia dirigida}}
 
 Una interpretación geométrica del problema de minimización que queremos 
-resolver es la siguiente: encontrar la ``mejor" matriz de incidencia 
-dirigida $D$ tal que la proyección ortogonal de $f$ sobre el subespacio 
-generado por las columnas de $D$ tenga norma máxima. En el caso de que 
+resolver es la siguiente: encontrar la ``mejor'' matriz de incidencia 
+dirigida $D$ tal que la distancia de $f$ sobre el subespacio 
+generado por las columnas de $D$ sea mínima. En el caso de que 
 el vector $f$ esté contenido en el subespacio, entonces el problema 
 tiene solución exacta, es decir: el sistema lineal $Dx = f$ tiene 
 solución.
@@ -904,22 +914,22 @@ $$
 Y luego dividir cada componente por la norma correspondiente:
 
 $$
-\alpha(D,f) = D^t f
+\alpha(D,f) = \| D^t f
 \begin{bmatrix}
 	\|d_1\|^{-1}\\
 	\dots \\
-	\|d_n\|^{-1}
-\end{bmatrix} = \begin{bmatrix}
+	\|d_n\|^{-1} 
+\end{bmatrix} \|= \|\begin{bmatrix}
 	cos(\alpha_1) \ \|f\|\\
 	\dots \\
 	cos(\alpha_n) \ \|f\|
-\end{bmatrix}
+\end{bmatrix}\|
 $$
 
 \smallskip
 
 Notemos que para cambiar la dirección de un eje en una matriz de 
-incidencia dirigida $D$, hay que invertir la fila correspondiente al 
+incidencia dirigida $D$, hay que cambiarle el signo a la fila correspondiente al 
 eje que se quiere modificar. Y de modo más general, si queremos cambiar 
 la dirección de varios ejes simultáneamente la nueva matriz $\bar{D}$
 se puede calcular del siguiente modo:
@@ -928,7 +938,7 @@ $$\bar{D} = \bar{I} D$$
 
 \smallskip
 
-donde $\bar{I}$ es la matriz diagonal de $m \times m$ que tiene un $-1$ 
+\noindent donde $\bar{I}$ es la matriz diagonal de $m \times m$ que tiene un $-1$ 
 en cada fila asociada a cada eje que queremos invertir y $1$ en el resto 
 de sus componentes.
 
@@ -937,20 +947,28 @@ de sus componentes.
 Notemos que la norma de las columnas de $D$ y $\bar{D}$ son iguales 
 porque sólo difieren en el signo de algunas componentes. Por lo tanto, 
 la norma de las columnas de las matrices de incidencia dirigida puede 
-calcularse una sola vez.
+calcularse una sola vez. 
+%En conclusión, obtenemos la identidad,
+%\[
+%\alpha(\bar{I}D,f)=\bar{I}\alpha(D,f).
+%\]
+
+
+
 
 \bigskip
+
 \subsection{El enfoque metaheurístico}
 
 El problema que queremos resolver se traduce en encontrar una matriz de 
 incidencia dirigida $D$ que maximice la $\alpha$-norma de $f$. 
 Dado que el tamaño del espacio de matrices de 
 incidencia dirigida es $2^m$  (donde $|E|=m$), computar el problema
-para grafos de tamaño grande es dificil de resolver. 
+para grafos de tamaño grande es difícil de resolver. 
 Este espacio es 
 extremadamente grande incluso para grafos pequeños. Por lo tanto, el 
 problema admite un enfoque metaheurístico que nos permita encontrar 
-una solución ``buena" (aunque no necesariamente la mejor).
+una solución ``buena'' (aunque no necesariamente la mejor).
 
 \smallskip
 
@@ -996,7 +1014,7 @@ comentamos las funciones auxiliares.
 		\While{p}
 			\State $\Omega \gets Neighbors(currentPoint)$
 			\State $bestNeighbor \gets BestNeighbor(\Omega,f)$
-			\If{$\alpha$(bestNeighbor,f) > $\alpha$(bestPoint,f)}
+			\If{$\alpha(bestNeighbor,f)>\alpha(bestPoint,f)$}
 				\State $bestPoint \gets bestNeighbor$
 			\EndIf
 			\State $currentPoint \gets bestNeighbor$
@@ -1073,13 +1091,13 @@ Es importante notar que las instancias de input del algoritmo $(G,f)$
 donde $G=(V,E)$ es un grafo y $f: E \rightarrow \mathbb{R}$ es una 
 función de pesos, se construyeron de modo tal de que exista una 
 solución exacta. Es decir, que en cada caso existe una función de pesos 
-en los nodos $x: V \rightarrow \mathbb{R}$ cuyo \textit{diferencial no 
-orientado} ajusta exactamente a $f$. En este contexto medimos el error 
+en los nodos $x: V \rightarrow \mathbb{R}$ cuyo diferencial 
+ajusta exactamente a $f$. En este contexto medimos el error 
 del siguiente modo:
 
 $$error(D) = \frac{\|Dx-f\|}{\|f\|}$$
 
-donde $D$ es la matriz de incidencia dirigida y $x$ es la función de 
+\noindent donde $D$ es la matriz de incidencia dirigida y $x$ es la función de 
 pesos en los nodos que devuelve el algoritmo. Por lo tanto, el error 
 está contenido en el intervalo $[0,1]$
 
@@ -1191,7 +1209,7 @@ calcularse mediante la expresión:
 $$cos(d_i,d_j) = \frac{d_i d_j}{\|d_i\| \ \|d_j\|} = 
 \frac{d_i d_j}{deg(v_i) \ deg(v_j)}$$
 
-donde $cos(d_i,d_j)$ es el coseno del ángulo entre las columnas de $D$ 
+\noindent donde $cos(d_i,d_j)$ es el coseno del ángulo entre las columnas de $D$ 
 correspondientes a los nodos $v_i$ y $v_j$ del grafo. A medida que el 
 grado de los nodos crece, el coseno tiende a $0$, o sea: las columnas 
 de $D$ se van volviendo más ortogonales.
@@ -1314,7 +1332,7 @@ permita refinar la mejor solución encontrada.
 \section{Conclusiones y Trabajo futuro}
 
 En este trabajo abordamos un problema que denominamos \emph{integración 
-en grafos} que ``integra" (en términos analíticos) un dato 
+en grafos} que ``integra'' (en términos analíticos) un dato 
 diferencial en los ejes. Este enfoque permite resolver distintos tipos 
 de problemas diferenciales que se modelen con grafos. El algoritmo 
 metaheurístico que planteamos está basado en comparar \emph{matrices 
@@ -1353,7 +1371,7 @@ procesamiento de este tipo de sistemas. En una a futura implementación
 
 \bigskip
 
-Por último habria que formalizar adecuadamente los argumentos 
+Por último habría que formalizar adecuadamente los argumentos 
 estadísticos por los cuales la $\alpha$-norma es una aproximación 
 razonable de la proyección ortogonal de un vector sobre un subespacio.
 
@@ -1463,8 +1481,8 @@ razonable de la proyección ortogonal de un vector sobre un subespacio.
   \section*{Agradecimiento}
 \fi
 
-Queremos agradecer al proyecto UndavCyT 2014 “Especificaciones formales 
-tempranas del comportamiento de sistemas de software".
+Queremos agradecer al proyecto UndavCyT 2014 ``Especificaciones formales 
+tempranas del comportamiento de sistemas de software''.
 
 \bigskip
 
