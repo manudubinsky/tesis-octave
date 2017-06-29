@@ -478,6 +478,9 @@ $$
 
 El algoritmo que proponemos explora el espacio de todas las 
 orientaciones posibles del grafo original.
+Nuestra principal contribución son los criterios empleados en la
+metaheurística, que constituye el diseño de una ``norma'' ($\alpha$-norma)
+para comparar dichas orientaciones.
 
 \subsection{Contexto del problema y trabajos relacionados}
 El problema surgió a partir de la definición de \textit{1-forma 
@@ -554,6 +557,13 @@ cual los ejes del grafo subyacente no están dotados de una orientación.
 El problema de optimización consiste justamente en encontrar una 
 orientación que ajuste del mejor modo posible los valores de los 
 vértices de acuerdo a una función de pesos en los ejes del grafo.
+Creemos que la formulación planteada en este trabajo es novedosa.
+No encontramos antecedentes en la bibliografía y
+es por esto
+que no pudimos referirnos a instancias y algoritmos con las cuales compararnos
+en la fase experimental.
+
+
 
 
 \subsection{Aplicaciones}
@@ -752,7 +762,7 @@ se tratará de definir una noción de vecindad en el espacio de matrices
 de incidencia dirigida asociado a un grafo. Y por otro lado, GRASP 
 requiere cierto grado de azar en la elección del vecino a explorar en 
 la siguiente iteración; esto busca impedir que el algoritmo se 
-estabilice entorno a un mínimo local (no necesariamente un mínimo 
+estabilice en torno a un mínimo local (no necesariamente un mínimo 
 global). 
 
 \smallskip
@@ -799,14 +809,7 @@ elección de una orientación de $e$.
 
 Por lo tanto, es posible reducir el grafo original $G$, eliminando 
 recursivamente sus  hojas de modo de obtener un grafo más simple (un 
-grafo con menos ejes y nodos):
-
-\begin{verbatim}
-         while (G has leaves) {
-             G = stripLeaves(G);
-         }
-\end{verbatim}
-
+grafo con menos ejes y nodos).
 Un corolario es que si $G$ es un árbol, entonces $x: V 
 \rightarrow \mathbb{R}$ queda determinada por alguna orientación de 
 los ejes y por $x(v)$ para un nodo $v$.
@@ -919,14 +922,17 @@ $$
 	\|d_1\|^{-1}\\
 	\dots \\
 	\|d_n\|^{-1} 
-\end{bmatrix} \|= \|\begin{bmatrix}
+\end{bmatrix} \| 
+=\|\begin{bmatrix}
 	cos(\alpha_1) \ \|f\|\\
 	\dots \\
 	cos(\alpha_n) \ \|f\|
-\end{bmatrix}\|
+\end{bmatrix}\|=
+$$
+$$
+\|f\|\sqrt{cos^2(\alpha_1)+\ldots+cos^2(\alpha_n)}
 $$
 
-\smallskip
 
 Notemos que para cambiar la dirección de un eje en una matriz de 
 incidencia dirigida $D$, hay que cambiarle el signo a la fila correspondiente al 
@@ -1026,10 +1032,10 @@ comentamos las funciones auxiliares.
 \end{algorithm}
 
 La función \emph{Initialize(G)} se encarga de construir 
-una matriz de incidencia dirigida inicial. Concretamente la orientación 
-de los ejes de esa matriz se define desde el nodo con menor 
-etiqueta al de mayor a partir de un etiquetado previo de los nodos del 
-grafo. 
+una matriz de incidencia dirigida inicial. Concretamente,
+dado un etiquetado de los nodos, se define la orientación de un eje
+desde el nodo menor 
+al de mayor etiqueta. 
 
 \smallskip
 
@@ -1069,8 +1075,7 @@ análisis del algoritmo evaluado sobre tres familias de grafos:
 \begin{itemize}
 	\item \emph{Grafos completos}: son aquellos en los que todo par de  
 	nodos está ligado por un eje.
-	\item \emph{Ciclos simples}: grafo que define un ciclo sin ciclos 
-	propios; se puede pensar en un polígono simple como modelo 
+	\item \emph{Ciclos simples}: grafo que define un ciclo; se puede pensar en un polígono simple como modelo 
 	geométrico.
 	\item \emph{Mallas poligonales}: son representaciones de superficies 
 	inmersas en el espacio tridimensional; tienen más estructura que un 
@@ -1090,9 +1095,11 @@ el problema que analizamos en este trabajo.
 Es importante notar que las instancias de input del algoritmo $(G,f)$ 
 donde $G=(V,E)$ es un grafo y $f: E \rightarrow \mathbb{R}$ es una 
 función de pesos, se construyeron de modo tal de que exista una 
-solución exacta. Es decir, que en cada caso existe una función de pesos 
+solución exacta. Es decir, se 
+eligió de manera aleatoria (distribuida uniformemente en un intervalo específico)
+una función de pesos 
 en los nodos $x: V \rightarrow \mathbb{R}$ cuyo diferencial 
-ajusta exactamente a $f$. En este contexto medimos el error 
+es $f$. En este contexto medimos el error 
 del siguiente modo:
 
 $$error(D) = \frac{\|Dx-f\|}{\|f\|}$$
@@ -1342,7 +1349,7 @@ a la proyección ortogonal del vector que representa al dato diferencial
 sobre el subespacio generado por las columnas de las matrices de 
 incidencia dirigida.
 
-\bigskip
+\
 
 Evaluamos el algoritmo en instancias de tres familias de grafos: grafos 
 completos, ciclos simples y mallas poligonales. Y observamos que se comporta 
@@ -1353,27 +1360,38 @@ estabiliza entorno a un error de $0.1$; esto sugiere que la técnica que
 presentamos en este trabajo debería complementarse con otra para 
 refinar la solución.
 
-\bigskip
+\
 
 El algoritmo es simple, por lo cual es posible paralelizarlo de modo 
 horizontal y procesar instancias de mayor tamaño mediante técnicas 
 de procesamiento distribuido (ej.: \emph{map-reduce}).
 
-\bigskip
+\
 
 En la implementación que presentamos, la mayor limitación está 
 relacionada a la resolución de \emph{sistemas laplacianos}, es decir: 
 sistemas lineales $Lx=b$ en los que $L$ es una \emph{matriz 
 laplaciana}. Actualmente hay importantes líneas de trabajo abordando 
 nuevas metodologías iterativas que reducen el tiempo de 
-procesamiento de este tipo de sistemas. En una a futura implementación
+procesamiento de este tipo de sistemas. En una futura implementación
  sería importante incorporar estos enfoques. 
 
-\bigskip
+\
 
-Por último habría que formalizar adecuadamente los argumentos 
-estadísticos por los cuales la $\alpha$-norma es una aproximación 
-razonable de la proyección ortogonal de un vector sobre un subespacio.
+En un trabajo futuro, planeamos formalizar adecuadamente los argumentos 
+probabilísticos por los cuales la $\alpha$-norma es una aproximación 
+razonable de la norma de la proyección ortogonal de un vector sobre un subespacio.
+También planeamos estudiar alternativas a la función \emph{Initialize(G)}
+de modo de poder reducir el tiempo de computo del algoritmo.
+
+\ 
+
+Respecto a la complejidad del problema planteado, sospechamos que
+es NP-completo (lo que justifica la utilización de metaheurísticas)
+y será el tema de estudio en un trabajo futuro.
+Otra línea de investigación, será plantear el problema
+en el contexto de programación entera cuadrática para calcular soluciones exactas a instancias más pequeñas
+y compararlas con nuestra estrategia.
 
 % An example of a floating figure using the graphicx package.
 % Note that \label must occur AFTER (or within) \caption.
@@ -1472,14 +1490,7 @@ razonable de la proyección ortogonal de un vector sobre un subespacio.
 
 % conference papers do not normally have an appendix
 
-% use section* for acknowledgment
-\ifCLASSOPTIONcompsoc
-  % The Computer Society usually uses the plural form
-  \section*{Agradecimientos}
-\else
-  % regular IEEE prefers the singular form
-  \section*{Agradecimiento}
-\fi
+\section*{Agradecimientos}
 
 Queremos agradecer al proyecto UndavCyT 2014 ``Especificaciones formales 
 tempranas del comportamiento de sistemas de software''.
@@ -1492,6 +1503,11 @@ mallas poligonales y por su generosa disposición a responder nuestras
 preguntas. Asimismo queremos agradecer al Prof. Fernando Cukierman por 
 guiar nuestro estudio en el área de geometría diferencial.
 
+\
+
+Agradecemos a los revisores del Simposio de Investigación
+Operativa por sus valiosos aportes
+para enriquecer este trabajo. 
 
 % trigger a \newpage just before the given reference
 % number - used to balance the columns on the last page
