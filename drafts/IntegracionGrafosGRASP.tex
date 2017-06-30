@@ -685,8 +685,8 @@ Sean $v,w \in \mathbb{R}^n$, notamos $p_v(w)$ a la proyección de $w$
 sobre $v$. Mediante relaciones trigonométricas básicas podemos 
 calcular $\|p_v(w)\|$ (la norma de $p_v(w)$):
 
-$$\frac{|v w|}{\|w\|} = \frac{|cos(\alpha)| \ \|v\| \ \|w\|}{\|w\|} = 
-|cos(\alpha)| \ \|v\| = \|p_v(w)\|$$
+$$\frac{|v w|}{\|v\|} = \frac{|cos(\alpha)| \ \|v\| \ \|w\|}{\|v\|} = 
+|cos(\alpha)| \ \|w\| = \|p_v(w)\|$$
 
 De modo más general, notamos $p_S(w)$ a la proyección ortogonal de $w$
 sobre un subespacio $S \subset \mathbb{R}^n$ generado por una base 
@@ -731,7 +731,7 @@ $$
 \smallskip
 
 Informalmente, el caso general se puede reducir a este caso simple 
-mediante una matriz rotación, que preserva las normas.
+mediante una matriz de rotación, que preserva las normas.
 
 \subsection{Metaheurísticas}
 
@@ -954,13 +954,43 @@ Notemos que la norma de las columnas de $D$ y $\bar{D}$ son iguales
 porque sólo difieren en el signo de algunas componentes. Por lo tanto, 
 la norma de las columnas de las matrices de incidencia dirigida puede 
 calcularse una sola vez. 
-%En conclusión, obtenemos la identidad,
+
+%\
+%
+%\noindent {\bf Relación entre la {\it $\alpha$-norma} y la norma de la proyección ortogonal}
+%
+%Fijemos una matriz $D$ y consideremos
+%$S=\langle d_1,\ldots,d_{n}\rangle$ el subespacio generado por la columnas
+%de $D$ y sea $\{s_1,\ldots,s_{k}\}$ una base ortonormal de $S$, $k\leq n$.
+%Como hemos mencionado, la norma de $p_S(f)$ puede calcularse
 %\[
-%\alpha(\bar{I}D,f)=\bar{I}\alpha(D,f).
+%\|p_S(f)\|^2=|fs_1|^2+\ldots+|fs_{k}|^2
 %\]
-
-
-
+%y la $\alpha$-norma
+%\[
+%\alpha(D,f)^2=\frac{|fd_1|^2}{\|d_1\|^2}+\ldots+\frac{|fd_n|^2}{\|d_n\|^2}.
+%\]
+%Por simplicidad denotemos $e_i:=d_i/\|d_i\|$.
+%Consideremos la matriz rectangular $C=\{c_{ij}\}$ que verifica
+%$e_i=\sum c_{ij}s_j$ y los vectores $x=(fs_1,\ldots,fs_k)$
+%e $y=(fe_1,\ldots,fe_n)$. Es fácil verificar
+%que $Cx=y$, $\|x\|=\|p_S(f)\|$ y que 
+%$\alpha=\|y\|$. Dado que $C$ tiene rango máximo, 
+%existen constantes positivas $m$ y $M$ tales que
+%\[
+%m\|x\|\le \|Cx\|\le M\|x\|,\quad\forall x.
+%\]
+%La constante $M$ resulta de la continuidad de $C$
+%y la constante $m$ se sigue de que existe una matriz $C'$ 
+%tal que $C'Cx=x$ para todo $x$ y entonces
+%$\|x\|=\|C'Cx\|\le \|C'\|\|Cx\|$, luego $m=1/\|C'\|$.
+%Finalmente obtenemos la relación
+%para $x=(fs_1,\ldots,fs_k)$
+%\[
+%m\|p_S(f)\|\le \alpha(D,f)\le M\|p_S(f)\|.
+%\]
+%En otras palabras, el crecimiento o decrecimiento
+%de $\alpha$ acota al de $\|p_S(f)\|$.
 
 \bigskip
 
@@ -1389,9 +1419,12 @@ de modo de poder reducir el tiempo de computo del algoritmo.
 Respecto a la complejidad del problema planteado, sospechamos que
 es NP-completo (lo que justifica la utilización de metaheurísticas)
 y será el tema de estudio en un trabajo futuro.
-Otra línea de investigación, será plantear el problema
+Respecto a esto, uno de los objetivos será plantear el problema
 en el contexto de programación entera cuadrática para calcular soluciones exactas a instancias más pequeñas
 y compararlas con nuestra estrategia.
+Notar que la $\alpha$-norma puede pensarse como una ecuación cuadrática
+sobre el espacio de matrices $D$ y esto es un caso particular
+de lo estudiado en \cite{MA:1976}.
 
 % An example of a floating figure using the graphicx package.
 % Note that \label must occur AFTER (or within) \caption.
@@ -1584,6 +1617,12 @@ Lanman D., Raskar R., Agrawal A., Taubin G.,
 \newblock \textit{Shield Fields: Modeling and Capturing 3D Occluders}, 
 \newblock ACM Transactions on Graphics (TOG), Vol 27, Issue 5, December 
 2008, Siggraph Asia Proceedings.
+
+\bibitem[Manders, Adleman, 1976]{MA:1976}
+Manders 	K., Adleman L.,
+\newblock \textit{NP-complete decision problems for quadratic polynomials},
+\newblock Proceeding STOC '76 Proceedings of the eighth annual ACM symposium on Theory of computing
+pp 23-29.
 
 \bibitem[REVEAL]{REVEAL}
 \newblock Reconstruction and ExploratoryVisualization: Engineering 
