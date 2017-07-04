@@ -1,0 +1,74 @@
+	Objetivos  Generales y Específicos
+Nuestro plan de trabajo se enmarca en el área de Procesamiento Digital de Geometría. Es un área de carácter interdisciplinario con un gran número de aplicaciones importantes. Entre las cuales se puede mencionar el scan 3D y el desarrollo de software de diseño. 
+
+Los objetos de estudio son curvas, superficies y cuerpos sólidos modelados mediante mallas poligonales. Las estructuras de datos y la complejidad de los algoritmos son relevantes porque los modelos 3D pueden alcanzar los cientos de millones de puntos.
+
+
+Las mallas poligonales son grafos que modelan cuerpos en el espacio. Los ciclos simples del grafo se denominan “caras”. Las caras son polígonos convexos simples (en general triángulos o cuadrados) que modelan una pequeña parte de la superficie de un objeto tridimensional. Sobre una malla se pueden definir muchas operaciones de deformación con el objetivo de, por ejemplo, suavizar o simplificar el objeto representado. También se pueden definir operaciones de interacción entre varias mallas para simular el comportamiento de los cuerpos.
+
+
+
+El scan 3D es un área que comprende una gran variedad de técnicas que permiten determinar modelos 3D de un objeto o de una escena del mundo real. Para eso se requieren sistemas de captura de imágenes que involucran proyectores, cámaras fotográficas y de video, espejos, laser, etc. Para construir un modelo 3D, se requiere llevar a cabo secuencias de procedimientos que varían de acuerdo al sistema de captura empleado y el tipo de objeto que se quiere modelar. En general hay una fase inicial de calibración de los componentes del sistema que permite compensar por software las características particulares de cada componente para que no introduzcan ruido en la captura. Entre esas particularidades se pueden mencionar: la curvatura en los bordes de la lente de los proyectores, o los parámetros intrínsecos de las cámaras fotográficas. El siguiente paso está asociado a la preparación de la escena que en general está dado por la iluminación de la misma. En la fase de captura se toman fotografías de la escena y (en caso de ser necesario) alternativamente se mueve el objeto para registrar la información necesaria para la fase siguiente. A continuación se procesan las imágenes, se extraen conjuntos de puntos de cada una y se establecen las correspondencias entre dichos conjuntos. A partir de las correspondencias de puntos se establece una primera versión del modelo tridimensional que se irá refinando mediante varios procedimientos que tendrán en cuenta la textura, la eliminación de ruido, la uniformización de las caras de la malla, la interpolación de regiones no visibles, etc.
+
+
+
+El scan 3D y el procesamiento de mallas poligonales pueden emplearse para generar datos de entrada para impresoras 3D. De este modo es posible imprimir objetos en base a un modelo dado.
+
+
+
+Muchos problemas del área provienen del software de diseño y animación. La verosimilitud en los movimientos de los cuerpos, las características de los materiales, las texturas y  las leyes físicas subyacentes plantean problemas específicos al Procesamiento Digital de Geometría. Éstos se traducen en problemas matemáticos muy concretos, por ejemplo: medir distancias en una superficie, calcular la variación del volumen de un cuerpo sometido a una deformación, encontrar invariantes geométricos de curvas, o integrar un campo de vectores. Y éstos a su vez se expresan computacionalmente en términos de resolución de sistemas de ecuaciones lineales, técnicas de optimización combinatoria, y algoritmos de teoría de grafos. 
+
+
+
+El área está relacionada con las áreas de visión en robótica y procesamiento de imágenes. Algunos puntos de contacto son: la construcción de mapas tridimensionales para los sistemas de navegación de vehículos autónomos, reconocimiento de patrones,  y reconocimiento de trayectorias.
+
+
+
+La intención de nuestro trabajo es abordar de forma progresiva distintos aspectos del área. En la primera parte, el objetivo será generar datos de entrada para impresoras 3D  a partir de modelos reales mediante la implementación de sistemas de scan 3D. En la segunda parte, estudiaremos el problema de la construcción de mapas tridimensionales a partir de imágenes generadas por vehículos autónomos. Simultáneamente estudiaremos problemas geométricos de interés para el área.  
+
+
+
+	Metodología
+
+
+
+Inicialmente se trabajará en tres direcciones simultáneamente. Una dirección será el estudio de las técnicas de scan 3D con mejor relación costo-calidad. Otra dirección será el análisis de alternativas de software open source para construir y procesar mallas poligonales. Y por último, se analizarán los formatos de datos de entrada de las impresoras  3D. El resultado final de esta primera etapa de nuestro trabajo será la implementación de un sistema completo de captura-impresión 3D con el objetivo de producir piezas basadas en objetos reales.
+
+
+
+En la siguiente etapa se abordarán aspectos de la visión robótica. Estudiaremos el problema de obtener modelos 3D de objetos y escenas a partir de imágenes generadas por vehículos autónomos. Para eso inicialmente se estudiarán los modelos de visión robótica más adecuados. Luego se analizará la relación entre los modelos de visión y el modelado 3D. Evaluaremos técnicas de procesamiento paralelo con el objetivo de construir modelos 3D en tiempo real. Y por último vamos a relacionar lo anterior con la especificación y validación del comportamiento de robots y vehículos autónomos.
+
+
+
+Simultáneamente vamos a estudiar problemas geométricos de interés del área.
+
+
+
+	Dominios de Aplicación
+
+
+
+Las técnicas de scan 3D tienen campos de aplicación muy diversos. Por ejemplo: la construcción de modelos tridimensionales de sitios arqueológicos, de esculturas y objetos antiguos, el estudio del movimiento de ciertas especies animales, la cinematografía 3D, la digitalización de huellas para uso forense, etc. En particular, resulta interesante asociar algunas de estas técnicas con la impresión 3D para imprimir objetos en base a un modelo dado. Dicha asociación puede resultar muy fructífera teniendo como objetivo la construcción de herramientas y repuestos de máquinas. 
+
+
+
+El software de procesamiento de modelos tridimensionales tiene importantes aplicaciones en el diseño, la arquitectura, la ingeniería, la medicina por imágenes, la industria, etc. 
+
+
+
+Es interesante la interacción con la visión robótica para confeccionar mapas tridimensionales y modelar objetos. En este sentido es interesante el problema de construir mapas para los sistemas de navegación de vehículos autónomos. Y vincular estas ideas con el área de especificación del comportamiento robótico para la industria.
+
+
+
+	Factibilidad
+
+
+La presente investigación será llevada a cabo en el marco de mi tesis doctoral. Los directores de tesis son el Prof. Gabriel Taubin (Universidad de Brown, EEUU) y el Prof. Fernando Cukierman (Universidad de Buenos Aires, Argentina). Ambos son matemáticos argentinos reconocidos. El Prof. Taubin es experto en el área de Procesamiento Digital de Geometría con una vasta experiencia en todos los temas en los que vamos a plantear nuestro trabajo. El Prof. Cukierman es experto en geometría en un sentido amplio con especial énfasis en los campos de Geometría Diferencial y Geometría Algebraica.
+
+Otro objetivo importante es la interacción y colaboración con el Dr. Fernando Astesuain para incorporarme a las líneas de investigación que él está llevando adelante en la UNDAV. Trabajaremos en aquellos temas de interés común para fortalecer la actividad de investigación en la universidad.
+
+
+	Objetivos relacionados a la Universidad Nacional de Avellaneda (UNDAV)
+
+
+El presente plan de trabajo permitirá el crecimiento de líneas de investigación y desarrollo  dentro de la UNDAV, buscando potenciar su aspecto académico, la formación de recursos humanos, y la transferencia a la industria.  
