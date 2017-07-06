@@ -110,7 +110,10 @@ $$S' := \{p + d(p) \ | \ p \in S\}$$
 Para una representación de la superficie en términos de una malla poligonal, 
 una deformación está completamente determinada por los vectores de desplazamiento 
 $d_i = d(p_i)$ de los vértices de la malla $p_i \in S$. De modo que los 
-desplazamientos de los puntos interiores de las caras se aproximan linealmente. \\
+desplazamientos de los puntos interiores de las caras se aproximan linealmente.
+
+\
+
 En la práctica, este problema debe ser considerado en el contexto de enriquecer 
 la funcionalidad de las herramientas de diseño tridimensional. Es decir, por 
 un lado hay que proveerle a los usuarios una interface simple para definir 
@@ -259,7 +262,7 @@ mediante tres familias de \emph{B-splines} \cite{G:2015}:
 $$f(u,v,w) = \sum_j \sum_k \sum_l c_{jkl} N_j(u) N_k(v) N_l(w)$$
 
 Donde los $c_{jkl}$ son los puntos de control. En particular cada vértice de 
-la superficie $f(u_i, v_i, w_i) = p_i \in S$ es una combinación polinomial 
+la superficie $f(u_i, v_i, w_i) = p_i \in S$ es una combinación lineal 
 de estos:
 
 $$p_i = f(u_i, v_i, w_i) = \sum_j \sum_k \sum_l c_{jkl} N_j(u_i) N_k(v_i) N_l(w_i)$$
@@ -270,13 +273,16 @@ de los desplazamiento de los puntos de control $\delta c_{jkl} = c_{jkl}' - c_{j
 $$d(u,v,w) = \sum_j \sum_k \sum_l \delta c_{jkl} N_j(u) N_k(v) N_l(w)$$
 
 De manera que el desplazamiento del punto $p_i$ se calcula como $p_i' = 
-p_i + d(u_i,v_i,w_i)$
+p_i + d(u_i,v_i,w_i)$.
 
 \
 
 La \emph{técnica de encapsulamiento} es una generalización que en lugar 
 de definir un reticulado de todo el espacio ambiente, considera una malla 
-poligonal que encapsula a la superficie (figura \ref{fig:caballo}).
+poligonal que encapsula a la superficie (figura \ref{fig:caballo}). Los 
+puntos de la superficie se expresan como combinaciones lineales de los 
+vértices de control definidos por la malla poligonal \cite{L:2008}. Y la 
+deformación es de modo análogo al procedimiento anterior.
 
 \begin{figure}
 	\includegraphics[scale=.5]{caballo.png} % Figure image
@@ -285,22 +291,50 @@ poligonal que encapsula a la superficie (figura \ref{fig:caballo}).
 	\label{fig:caballo} % Label for referencing with \ref{bear}
 \end{figure}
 
-\subsection{Otros temas relacionados}
-
+\subsection{Sistemas lineales}
+El requerimiento de que las técnicas de deformación de superficies sean 
+interactivas implica que los algoritmos deben ser eficientes. Este hecho 
+se tradujo en una tendencia general de los autores a analizar versiones lineales 
+del problema. Es decir que en general los métodos deben resolver un sistema 
+de ecuaciones lineales. A las técnicas iterativas tradicionales como los 
+métodos de \emph{Jacobi} y \emph{Gauss-Seidel}.
 
 \section{Naturaleza del aporte original proyectado}
 
-Los resultados obtenidos a partir de este proyecto de investigación serán de gran valor para la comunidad que investiga y desarrolla en SDS y asistentes virtuales, así como también a la comunidad científica orientada a estudiar cómo los humanos interactuamos entre nosotros y con computadoras. Es así que, por un lado, los aportes serán en primer lugar importantes para generar nuevas hipótesis en torno a cómo los humanos interactuamos cuando dialogamos (tanto entre humanos como con computadoras) y a validar experimentalmente hipótesis previamente disponibles en la literatura o generadas por nosotros. Nótese que, aun cuando estos aportes sean netamente académicos y científicos, es de esperar que, sobre la base de los resultados que obtengamos, se puedan también extraer recomendaciones en torno a cómo mejorar los sistemas de diálogo que actualmente se encuentran incorporados tanto en computadoras personales como en dispositivos móviles. Debe mencionarse que existen concretos de este recorrido de la academia a la industria en el desarrollo de SDS, por ejemplo, en en el caso de toma de turnos en diálogo (\textit{turn-taking}).
-
+Nuestro trabajo consiste en aportar nuevos enfoques al problema de 
+deformación de mallas poligonales. Esto implica realizar aportes tanto en 
+la creación de nuevos algoritmos como en la adaptación de los avances 
+que se han producido en los últimos años en el área de resolución de 
+sistemas lineales laplacianos a las técnicas ya existentes. Por otro lado, 
+vamos a privilegiar realizar el trabajo en el marco de las herramientas 
+\emph{open-source} de diseño e impresión 3D, porque entendemos que puede 
+resultar de interés tanto a nivel académico como a nivel de la industria. 
 
 \section{Lugar de trabajo, infraestructura, factibilidad de desarrollo del trabajo y su financiamiento}
 
-El lugar de trabajo en el que se desarrollará mi doctorado es el Departamento de Computación (DC) de la Facultad de Ciencias Exactas y Naturales de la Universidad de Buenos Aires. El DC cuenta con un cluster de cómputo, diversos laboratorios de computación (que pueden ser utilizados para realizar experimentos), servicio de red, mail, web y hosting de servidores para grupos de investigación. Esta infraestructura comprende todo lo necesario para el desarrollo de mi propuesta de trabajo.
+El lugar de trabajo en el que se desarrolla mi doctorado es el Departamento 
+de Tecnología y Administración de la Universidad Nacional de Avellaneda. 
+Dicho trabajo no requiere una infraestructura que exceda las capacidades 
+de una computadora personal, porque tanto el proceso de implementación como 
+el de ejecución de los algoritmos tienen como objetivo restringirse a ese 
+contexto.
 
-Desde el año 2015, formo parte del grupo de investigación LIAA (Laboratorio de Inteligencia Artificial Aplicada). El LIAA es un espacio interdisciplinario donde se emplean técnicas de inteligencia artificial y aprendizaje automático en diferentes problemáticas aplicadas. A este grupo pertenecen cuatro investigadores (incluyendo al director de mi doctorado), junto con estudiantes postdoctorado, doctorado y tesistas de licenciatura. Es de esperar que éstos no sólo guien mi trabajo, sino que sean colaboradores en distintos proyectos en los cuales participe. Por otra parte, el grupo me provee de computadora de escritorio, grabadores para habla, y una sala experimentale para poder trabajar. Finalmente, en  el DC se dictan numerosas materias de posgrado útiles para mi doctorado.
+\
 
-En lo referido a mi financiamiento, cuento con una beca de estudios proveniente de un convenio firmado, a través de la Fundación Ciencias Exactas, entre la Universidad de Buenos Aires y la Constantine the Philosopher University en Nitra, Eslovaquia. Adicionalmente, soy profesor titular de dos materias de grado dictadas en la Lic. en Economía Empresarial de la Universidad Torcuato di Tella.
+Con respecto a la factibilidad, quien dirige el trabajo que desarrollo es 
+el Prof. Gabriel Taubin (Universidad de Brown, EEUU), un reconocido experto 
+en el área de Procesamiento Digital de Geometría con una vasta experiencia 
+en todos los temas planteados. Además trabajo en colaboración 
+con Francisco Gómez Fernández (Departamento de Ciencias de la Computación, 
+UBA), estudiante postdoctoral del Prof. Taubin.
 
+
+\
+
+En lo referido al financiamiento, cuento con un cargo de dedicación exclusiva 
+en el Departamento de Tecnología y Administración de la Universidad Nacional 
+de Avellaneda y con un cargo de dedicación simple en el Departamento de Ciencias 
+de la Computación de la Universidad de Buenos Aires.
 
 \section{Plan de trabajo}
 
@@ -331,10 +365,12 @@ Con respecto a materias, hasta el momento logré la aprobación de las siguiente
 
 \textsf{Materia} & \textsf{Período} & \textsf{Calificación} & \textsf{Puntaje}\\
 \hline
-Introducción a las Tecnologías del Habla & 2do 2012 & 9 & 3\\
-Reconocimiento de Patrones & 1ro 2015 & 10 & 4\\
-Introducción a la Neurociencia Computacional & 2do 2015 & 10  & 5 \\
-Maestría en Data Mining & 1ro 2015 & -  & 5 \\ 
+Reescritura, Cálculo Lambda y Sustituciones Explícitas & 2do 2014 & 10 & 4\\
+Seminario sobre Computación, Ciencia y Sociedad & 2do 2014 & 10 & 1\\
+Procesamiento Digital de Imágenes & 2do. 2015 & 10  & 4 \\
+Visión en Robótica & 1ro 2016 & 10 & 4 \\ 
+Computación Móvil & 1ro 2016 & 10 & 3 \\ 
+Metaheurísticas & 2do 2016 & 10 & 4 \\ 
 \hline
 \end{tabular}
 
