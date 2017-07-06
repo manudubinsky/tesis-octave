@@ -89,7 +89,7 @@ muestras de puntos y manipular las formas (ej.: simplificarlas, deformarlas,
  suavizarlas y parametrizarlas) \cite{BKPAL:2010}. Se encarga además de 
  formular las estructuras de datos para modelar la información geométrica. 
  En este sentido, las mallas poligonales son las representaciones discretas 
- de los  objetos. Básicamente son grafos \cite{Harari:1969} que modelan, 
+ de los  objetos. Básicamente son grafos \cite{Harari:1969} que modelan 
  superficies inmersas en el espacio tridimensional. Sus vértices son  
  una muestra de los puntos de la superficie. A cada vértice de la 
  malla se le asocia su posición en el espacio (ej.: coordenadas cartesianas). 
@@ -121,7 +121,7 @@ usuarios consiste en permitirles definir dos regiones sobre la superficie:
 y/o rotación) de $H$ y (2) una región fija $F$ que permanecerá invariante. 
 El algoritmo de deformación se encargará de producir una transformación 
 suave del conjunto de puntos intermedios entre $F$ y $H$ (figura \ref{fig:def}). 
-Denotaremos a dicho conjunto de puntos intermedios como el conjunto $R$. 
+Denotaremos $R$ a dicho conjunto de puntos intermedios.
 
 \
 
@@ -140,10 +140,10 @@ de diseño e impresión 3D.
 
 \section{Antecedentes existentes sobre el tema}
 
-En la última década se produjeron varios trabajos en relación al problema 
-de deformación de mallas poligonales. Esencialmente hay dos grandes enfoques 
-para abordarlo: (1) deformaciones intrínsecas de la superficie y (2) deformaciones 
-del espacio. Por un lado, las deformaciones intrínsecas consideran que la 
+Esencialmente hay dos grandes enfoques para abordar el problema 
+de deformación de mallas poligonales: (1) deformaciones intrínsecas de la 
+superficie y (2) deformaciones del espacio. Por un lado, las deformaciones 
+intrínsecas consideran que la 
 función de desplazamientos $d: S \rightarrow \mathbb{R}^3$ se define sobre 
 la superficie $S$ y se calcula a partir de su malla poligonal asociada. Los 
 métodos derivados de este enfoque son muy flexibles porque las condiciones 
@@ -163,16 +163,127 @@ fijo o invariante) y (3) el conjunto $R$ (conjunto de puntos intermedios,
 o sea el soporte de la deformación).
 
 \subsection{Métodos de deformaciones intrínsecas de la superficie}
-Dentro de este enfoque, las técnicas más simples consisten en 
-propagar la transformación afín de la manija ($H$) al conjunto 
-$R$. Para que la transformación resulte suave entre $H$ y $F$, la propagación 
-es controlada mediante una función de distancia $s: R \rightarrow [0,1]$ 
-de cada punto de $R$ al conjunto fijo ($F$). Dicha función permite controlar 
-para cada punto la magnitud de la transformación, de modo tal que los puntos 
-cercanos a $H$ se transformen más que los puntos cercanos a $F$.
+Dentro de este enfoque, las técnicas más simples denominandas \emph{técnicas 
+de propagación} consisten en propagar la transformación afín de la manija 
+($H$) al conjunto $R$. Para que la transformación resulte suave entre $H$ 
+y $F$, la propagación se regula mediante una función de distancia 
+$s: R \rightarrow [0,1]$ de cada punto de $R$ al conjunto fijo ($F$). Dicha 
+función permite controlar para cada punto la magnitud de la transformación, 
+de modo tal que los puntos cercanos a $H$ se transformen en mayor proporción 
+que los puntos cercanos a $F$. La función de distancia ($s$) puede estar 
+asociada a una distancia geodésica sobre la superficie 
+\cite{BK:2003} o a una distancia euclídea en el espacio ambiente \cite{P:2003}. 
+Estas técnicas son simples pero las deformaciones que resultan de ellas 
+pueden ser poco intuitivas en el sentido de que a veces no modelan efectos 
+de fuerzas físicas actuando sobre la superficie.
 
+\
+
+La técnica \emph{shell-based} inspirada en modelos físicos produce deformaciones 
+más intuitivas. Minimiza ciertas funciones de energía que modelan el estiramiento 
+y la curvatura de la superficie. El modelo general involucra ciertas nociones 
+geométricas; dada una superficie $S$ se definen $I$ y $II$, la primera y 
+segunda forma fundamental \cite{doCarmo:1976}. Miden el área y la curvatura 
+infinitesimal en cada entorno de la superficie. Por otro lado, una deformación 
+de la superficie $S$ tiene asociadas sus propias formas fundamentales: $I'$ 
+y $II'$. La idea es encontrar la deformación $S'$ que minimice la energía:
+
+$$E(S') = \int \int ||I - I'||^2 + ||II-II'||^2$$
+
+Informalmente, la minimización de la expresión está asociada a una deformación 
+cuyo estiramiento y curvatura global requiere la mínima energía posible 
+(en términos físicos) \cite{T:1987}. \\
+Para poder aplicar el modelo general a una malla poligonal es preciso definir 
+una versión discreta. Para eso previamente se simplifica el modelo sustituyendo 
+las formas fundamentales por derivadas parciales de la función de desplazamientos 
+$d: S \rightarrow \mathbb{R}^3$ \cite{WW:1992}:
+
+$$E(d) = \int \int (||d_u||^2 + ||d_v||^2) + 
+(||d_{uu}||^2 + 2 ||d_{uv}||^2 + ||d_{vv}||^2) \ du \ dv$$
+
+El problema se reformula en términos de encontrar la función de 
+desplazamientos que minimiza la expresión. Para resolverlo, hay 
+que resolver la ecuación diferencial de \emph{Euler-Lagrange} asociada:
+
+$$\Delta d + \Delta^2 d = 0$$
+
+Donde $\Delta d$ es el \emph{operador de Laplace} \cite{E:1998}. La versión 
+discreta se reduce a resolver un sistema lineal de la 
+forma: $(L + L^2) \bar d = \bar b$ donde $L$ es una \emph{matriz laplaciana} 
+\cite{B:2013}, $\bar b$ son las condiciones de iniciales de la ecuacion diferencial 
+y $\bar d$ es el vector de los desplazamientos de los vértices de la malla 
+poligonal.
+
+\
+
+El problema que presenta la técnica \emph{shell-based} es que al simplificar 
+la formulacion del problema para transformarlo en un problema lineal, las 
+deformaciones pueden perder calidad de los detalles de la superficie. Una 
+forma de preservar esos detalles es complementarla con la técnica de deformacion 
+\emph{multi-escala}. Esta técnica se inspira en nociones de procesamiento 
+de señales. Consiste en descomponer a la superficie en dos (o más) bandas 
+de frecuencias, de modo tal que la banda de frecuencias bajas corresponde 
+a una version global suavizada (sin detalles) de la superficie y la banda 
+de frecuencias altas corresponde a los detalles locales de la superficie. 
+De este modo la deformacion se aplica sobre la banda de frecuencias bajas 
+y a la superficie resultante se le agregan los detalles de la banda de 
+frecuencias altas. Hay distintas variantes en relacion al tratamiento 
+de los detalles, considerarlos como: vectores de desplazamientos \cite{K:1998}, 
+desplazamientos respecto al vector normal \cite{K:1999}, desplazamientos de 
+volúmenes \cite{BK:2003b}, transferencia de la deformacion a los detalles 
+\cite{B:2006}.
+
+\
+
+Otro conjunto denominado \emph{técnicas diferenciales} consideran modificar 
+propiedades diferenciales en lugar de coordenadas espaciales. Los dos ejemplos 
+más conocidos consideran el \emph{gradiente} y el \emph{laplaciano}. Los 
+métodos basados en el gradiente, modifican 
+los gradientes de la superficie original y calculan la deformacion como  
+aquella que minimiza (en términos de cuadrados mínimos) la diferencia respecto 
+a los gradientes modificados (\cite{Y:2004}, \cite{Z:2005}). Los métodos 
+basados en el \emph{laplaciano} son análogos (\cite{L:2004}, \cite{S:2004}, 
+\cite{ZH:2005}). En ambos casos, la version discreta de estas técnicas implica 
+resolver un sistema lineal laplaciano. 
 
 \subsection{Métodos de deformaciones del espacio}
+Las técnicas de \emph{deformaciones del espacio} deforman el espacio ambiente 
+modificando implícitamente a la superficie. Es decir, consideran funciones 
+de desplazamiento de la forma $d: \mathbb{R}^3 \rightarrow \mathbb{R}^3$.
+
+\
+
+La \emph{técnica de reticulado} parametriza el espacio ambiente 
+mediante tres familias de \emph{B-splines} \cite{G:2015}:
+
+$$f(u,v,w) = \sum_j \sum_k \sum_l c_{jkl} N_j(u) N_k(v) N_l(w)$$
+
+Donde los $c_{jkl}$ son los puntos de control. En particular cada vértice de 
+la superficie $f(u_i, v_i, w_i) = p_i \in S$ es una combinación polinomial 
+de estos:
+
+$$p_i = f(u_i, v_i, w_i) = \sum_j \sum_k \sum_l c_{jkl} N_j(u_i) N_k(v_i) N_l(w_i)$$
+
+Por otro lado, la deformación del espacio está especificada en términos 
+de los desplazamiento de los puntos de control $\delta c_{jkl} = c_{jkl}' - c_{jkl}$:
+
+$$d(u,v,w) = \sum_j \sum_k \sum_l \delta c_{jkl} N_j(u) N_k(v) N_l(w)$$
+
+De manera que el desplazamiento del punto $p_i$ se calcula como $p_i' = 
+p_i + d(u_i,v_i,w_i)$
+
+\
+
+La \emph{técnica de encapsulamiento} es una generalización que en lugar 
+de definir un reticulado de todo el espacio ambiente, considera una malla 
+poligonal que encapsula a la superficie (figura \ref{fig:caballo}).
+
+\begin{figure}
+	\includegraphics[scale=.5]{caballo.png} % Figure image
+	\caption{\emph{Técnica de encapsulamiento}. Una malla poligonal 
+	encapsula a la superficie y permite controlar su deformación.}% Figure caption
+	\label{fig:caballo} % Label for referencing with \ref{bear}
+\end{figure}
 
 \subsection{Otros temas relacionados}
 
