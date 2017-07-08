@@ -210,7 +210,7 @@ que resolver la ecuación diferencial de \emph{Euler-Lagrange} asociada:
 
 $$\Delta d + \Delta^2 d = 0$$
 
-Donde $\Delta d$ es el \emph{operador de Laplace} \cite{E:1998}. La versión 
+Donde $\Delta$ es el \emph{operador de Laplace} \cite{E:1998}. La versión 
 discreta se reduce a resolver un sistema lineal de la 
 forma: $(L + L^2) \bar d = \bar b$ donde $L$ es una \emph{matriz laplaciana} 
 \cite{B:2013}, $\bar b$ son las condiciones de iniciales de la ecuacion diferencial 
@@ -282,7 +282,7 @@ de definir un reticulado de todo el espacio ambiente, considera una malla
 poligonal que encapsula a la superficie (figura \ref{fig:caballo}). Los 
 puntos de la superficie se expresan como combinaciones lineales de los 
 vértices de control definidos por la malla poligonal \cite{L:2008}. Y la 
-deformación es de modo análogo al procedimiento anterior.
+deformación se implementa de modo análogo al procedimiento anterior.
 
 \begin{figure}
 	\includegraphics[scale=.5]{caballo.png} % Figure image
@@ -294,10 +294,45 @@ deformación es de modo análogo al procedimiento anterior.
 \subsection{Sistemas lineales}
 El requerimiento de que las técnicas de deformación de superficies sean 
 interactivas implica que los algoritmos deben ser eficientes. Este hecho 
-se tradujo en una tendencia general de los autores a analizar versiones lineales 
-del problema. Es decir que en general los métodos deben resolver un sistema 
-de ecuaciones lineales. A las técnicas iterativas tradicionales como los 
-métodos de \emph{Jacobi} y \emph{Gauss-Seidel}.
+se tradujo en una tendencia general de los autores a considerar versiones 
+simplificadas del problema. Es decir que en general los métodos deben resolver 
+ sistemas de ecuaciones lineales. Inclusive los sistemas lineales que surgen 
+de las técnicas de deformación de mallas poligonales pertenecen a una clase 
+más restringida: los sistemas laplacianos esparsos. Es decir que además 
+la matriz es simétrica y definida positiva.
+
+\
+
+Los algoritmos de resolución de ecuaciones lineales se dividen en dos grupos: 
+(1) \emph{métodos directos} y (2) \emph{métodos iterativos}. Los métodos 
+directos producen una solución exacta y se basan en una factorización conveniente 
+de la matriz. Los métodos iterativos son algoritmos de punto fijo en 
+el sentido de que convergen monótonamente a la solución; estos métodos 
+inducen una función que cuantifica el error en cada iteración 
+$e^{(i)} = x^* - x^{(i)}$, donde $x^*$ es la solución exacta y $x^{(i)}$ 
+es el valor calculado por el algoritmo en el $i$-esima iteración.
+
+\
+
+Algunos ejemplos de métodos directos consideran las siguientes factorizaciones 
+la  matriz ($M$): $M=LU$ (donde $L$ es triangular inferior y $U$ triangular 
+superior), $M=QR$ (donde $Q$ es ortogonal y $R$ es triangular superior) y 
+descomposición en valores suingulares ($M = U \Sigma V^*$, donde $U$ y $V^*$ 
+son ortonormales y $\Sigma$ es diagonal).
+
+\
+
+Por otro lado, los métodos iterativos más conocidos son: \emph{Jacobi}, 
+\emph{Gauss-Seidel} y \emph{Gradiente Conjugado}. Son muy efectivos para 
+atenuar las frecuencias altas del error $e^{(i)}$, pero se degrada mucho 
+su eficiencia si el error es una función suave (como en el caso de los sistemas 
+laplacianos). Por ese motivo se creó una variante denominada \emph{Multigrid}, 
+que básicamente
+
+\
+
+Del análisis de los algoritmos conocidos para resolver sistema \cite{K:2005} A las técnicas iterativas tradicionales 
+como los métodos de \emph{Jacobi} y \emph{Gauss-Seidel}.
 
 \section{Naturaleza del aporte original proyectado}
 
@@ -325,8 +360,9 @@ Con respecto a la factibilidad, quien dirige el trabajo que desarrollo es
 el Prof. Gabriel Taubin (Universidad de Brown, EEUU), un reconocido experto 
 en el área de Procesamiento Digital de Geometría con una vasta experiencia 
 en todos los temas planteados. Además trabajo en colaboración 
-con Francisco Gómez Fernández (Departamento de Ciencias de la Computación, 
-UBA), estudiante postdoctoral del Prof. Taubin.
+con un estudiante postdoctoral del Prof. Taubin que desarrolla su trabajo 
+en el Departamento de Ciencias de la Computación de la Universidad de Buenos 
+Aires.
 
 
 \
@@ -340,23 +376,31 @@ de la Computación de la Universidad de Buenos Aires.
 
 \begin{itemize}
 
-\item Generación de nuevos estudios de corpus y análisis de corpus ya disponibles en nuestro grupo.
+\item Creación de nuevos algoritmos de deformación de mallas poligonales.
 
-\item Colaboración en proyectos del grupo de investigación, sea a través de colaboración con otros investigadores o estudiantes de doctorado, o dirigiendo a tesistas de licenciatura del grupo.
+\item Implementación de los algoritmos creados en el marco de herramientas 
+\emph{open-source}.
 
-\item Revisión del estado del arte en lo referido a la medición de atributos prosódicos y a la síntesis de los mismos.
+\item Adaptación de los avances recientes en la resolución de sistemas lineales 
+laplacianos al contexto de los algoritmos de deformación de mallas poligonales.
 
-\item Refinamiento de hipótesis, diseño experimental y ejecución de experimentos para validar hipótesis pre-existentes.
+\item Creación de un curso avanzado para difundir los contenidos del área 
+de Procesamiento Digital de Geometría.
 
-\item Publicación de resultados en conferencias y revistas de alto impacto.
+\item Publicación de resultados en conferencias y revistas.
 
 \end{itemize}
 
 \subsection{Avances ya realizados}
 
-Hasta el momento hemos avanzado tanto en la línea de análisis de corpus como en la de diseño, ejecución y análisis de experimentos. En los referido a estudio de corpus, llevamos adelante un estudio orientado a analizar cómo se relacionan medidas de mimetización con aspectos sociales en conversaciones entre humanos (dicho estudio fue presentado en Interspeech 2016, \cite{perez2016disentrainment}). También hemos avanzado en tres experimentos de laboratorio. En el primero analizamos cómo impactan distintos esquemas de variaciones prośodicas en la selección de ayudantes virtuales (dicho estudio fue presentado en Interspeech 2016, \cite{levitan2016implementing}). En el segundo estudiamos cómo distintos atributos prosódicos impactan en el tiempo de respuesta asociado a responder si una declaración sintetizada es verdadera o no (dicho estudio fue enviado a Interspeech 2017 y actualmente se encuentra en etapa de evaluación). En el tercero, el cual se encuentra en etapa de diseño y implementación, evaluaremos cómo la mimetización a nivel de acto de diálogo (e.g., a nivel de preguntas o a nivel de respuestas) impacta en la confianza de los usuarios.
+Hasta el momento hemos avanzado en el estudio y análisis de los algoritmos 
+existentes del problema de deformación de mallas poligonales. Y estamos 
+implementando el primer algoritmo novedoso basado en ideas del Prof. Taubin. 
 
-Con respecto a materias, hasta el momento logré la aprobación de las siguientes materias relacionadas con mi tema de doctorado.
+\
+
+Con respecto al plan de materias, hasta el momento logré la aprobación de 
+las que detallo a continuación:
 
 \hfill
 
