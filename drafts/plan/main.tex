@@ -315,10 +315,12 @@ es el valor calculado por el algoritmo en el $i$-esima iteración.
 \
 
 Algunos ejemplos de métodos directos consideran las siguientes factorizaciones 
-la  matriz ($M$): $M=LU$ (donde $L$ es triangular inferior y $U$ triangular 
-superior), $M=QR$ (donde $Q$ es ortogonal y $R$ es triangular superior) y 
-descomposición en valores suingulares ($M = U \Sigma V^*$, donde $U$ y $V^*$ 
-son ortonormales y $\Sigma$ es diagonal).
+de la  matriz ($M$): $M=LU$ (donde $L$ es triangular inferior y $U$ triangular 
+superior), $M=QR$ (donde $Q$ es ortogonal y $R$ es triangular superior), 
+descomposición en valores singulares ($M = U \Sigma V^*$, donde $U$ y $V^*$ 
+son ortonormales y $\Sigma$ es diagonal) y $M = LL^t$ (donde $L$ es triangular 
+inferior, esta descomposición es posible si $M$ es simétrica y definida 
+positiva).
 
 \
 
@@ -327,12 +329,30 @@ Por otro lado, los métodos iterativos más conocidos son: \emph{Jacobi},
 atenuar las frecuencias altas del error $e^{(i)}$, pero se degrada mucho 
 su eficiencia si el error es una función suave (como en el caso de los sistemas 
 laplacianos). Por ese motivo se creó una variante denominada \emph{Multigrid}, 
-que básicamente
+que básicamente define un encaje de mallas poligonales de modo tal que 
+los errores asociados a los sistemas lineales correspondientes definan 
+funciones de menor suavidad para permitir mejorar la eficiencia.
 
 \
 
-Del análisis de los algoritmos conocidos para resolver sistema \cite{K:2005} A las técnicas iterativas tradicionales 
-como los métodos de \emph{Jacobi} y \emph{Gauss-Seidel}.
+También se crearon algunas variantes de los algoritmos directos específicamente 
+para resolver sistemas esparsos. El más importante es el método de 
+\emph{Cholesky Esparso}.
+
+\
+
+Del análisis de los algoritmos \cite{K:2005} surge que los métodos 
+\emph{Multigrid} y \emph{Cholesky Esparso} son los más eficientes y 
+permiten resolver sistemas lineales asociados a mallas de $10^5$ nodos 
+de modo tal que pueden ser implementados por herramientas interactivas.
+
+\
+
+Finalmente, es importante mencionar que en el último tiempo ha
+habido grandes avances en la creación de nuevos métodos
+iterativos para resolver sistemas laplacianos (\cite{S:2010}, \cite{T:2010}, 
+\cite{K:2010}). Estos métodos deberían ser considerados y adaptados en el 
+contexto del área de Procesamiento Digital de Geometría.
 
 \section{Naturaleza del aporte original proyectado}
 
@@ -384,9 +404,6 @@ de la Computación de la Universidad de Buenos Aires.
 \item Adaptación de los avances recientes en la resolución de sistemas lineales 
 laplacianos al contexto de los algoritmos de deformación de mallas poligonales.
 
-\item Creación de un curso avanzado para difundir los contenidos del área 
-de Procesamiento Digital de Geometría.
-
 \item Publicación de resultados en conferencias y revistas.
 
 \end{itemize}
@@ -394,8 +411,65 @@ de Procesamiento Digital de Geometría.
 \subsection{Avances ya realizados}
 
 Hasta el momento hemos avanzado en el estudio y análisis de los algoritmos 
-existentes del problema de deformación de mallas poligonales. Y estamos 
-implementando el primer algoritmo novedoso basado en ideas del Prof. Taubin. 
+existentes del problema de deformación de mallas poligonales.
+
+\
+
+Implementamos un algoritmo original basado en la discretización de \emph{1-formas 
+diferenciales} (\cite{S:1965},\cite{T:2008}). Concretamente las formas diferenciales 
+conceptualizan la noción de objeto integrable sobre una variedad diferenciable 
+orientada. Intuitivamente se puede pensar en una 1-forma diferencial como una 
+cantidad que mide una distancia infinitesimal y que puede ser integrada a 
+lo largo de una curva. Existe una dualidad entre campos de vectores y 1-formas 
+diferenciales. Si $G=(V,E)$ es el grafo asociado a una malla poligonal, 
+podemos considerar que los ejes definen un campo de vectores discreto y podemos 
+definir un mapa de pesos en los ejes $f: E \rightarrow \mathbb{R}^3$. Cada 
+componente de la imagen de $f$ está relacionada a un desplazamiento en la 
+dimensión correspondiente del espacio ambiente. De manera análoga a las técnicas 
+de deformación diferencial mencionadas anteriormente (gradiente y laplaciano), 
+los desplazamientos en cada dimensión del espacio pueden ser analizados 
+como un problema independiente. El problema consiste en encontrar funciones 
+de pesos en los nodos (una para cada dimensión) $x: V \rightarrow \mathbb{R}$, 
+de modo tal que el diferencial de $x$ ajuste del mejor modo posible (en 
+términos de cuadrados mínimos) a la función $f$:
+
+$$E(x) = \sum_{(i,j) \in E} ||dx_{ij} - f_h(e_{ij})||^2 ; \ 1 \le h \le 3$$
+
+$dx$ es el diferencial de $x$ y se define en cada eje $e_{ij}=(x_i,x_j)$ 
+como $dx_{ij} = x_j - x_i$. El algoritmo considera resolver un sistema 
+lineal $M x = f$, donde la matriz $M$ admite una descomposición en bloques 
+de la forma:
+
+\begin{equation}
+     M=\begin{bmatrix}
+         D B\\
+         A I
+	\end{bmatrix} \in \mathbb{R}^{|E| \times |E|}
+\end{equation}
+
+donde $D$ es la \emph{matriz de incidencia dirigida} asociada a las direcciones 
+de los ejes de un \emph{árbol generador} de $G$, $A$ son los $loop-edges$ 
+(o sea los ejes que definen ciclos en el árbol generador), $I$ es la matriz 
+identidad y las columnas de $B$ están elegidas de modo tal que los subespacios 
+
+\begin{equation}
+     \begin{bmatrix}
+         D\\
+         A
+	\end{bmatrix};
+	\begin{bmatrix}
+         B\\
+         I
+	\end{bmatrix}
+\end{equation}
+
+sean ortogonales en $\mathbb{R}^{|E| \times |E|}$. 
+La performance del algoritmo está asociada a qué tan esparsa es la matriz 
+$M$. Ese hecho está relacionado a la elección del árbol generador inicial. 
+Los mejores árboles son los más estrechos (\emph{low-stretch spanning trees}). 
+Y en el caso de que se utilicen algoritmos iterativos para resolver el sistema 
+lineal, es importante la elección de la solución inicial.
+
 
 \
 
