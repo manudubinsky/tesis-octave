@@ -356,14 +356,65 @@ contexto del área de Procesamiento Digital de Geometría.
 
 \section{Naturaleza del aporte original proyectado}
 
-Nuestro trabajo consiste en aportar nuevos enfoques al problema de 
-deformación de mallas poligonales. Esto implica realizar aportes tanto en 
-la creación de nuevos algoritmos como en la adaptación de los avances 
-que se han producido en los últimos años en el área de resolución de 
-sistemas lineales laplacianos a las técnicas ya existentes. Por otro lado, 
-vamos a privilegiar realizar el trabajo en el marco de las herramientas 
-\emph{open-source} de diseño e impresión 3D, porque entendemos que puede 
-resultar de interés tanto a nivel académico como a nivel de la industria. 
+En la actualidad el problema de deformación de mallas poligonales no es 
+considerado de modo aislado, sino vinculado a otro tipo de operaciones. 
+
+\
+
+Sobre superficies y sólidos se pueden definir operaciones  
+de fracturas y cortes que se enfocan en la simulación del comportamiento 
+de los materiales que los componen. Ese tipo de operaciones son esenciales 
+en sistemas de simulación de cirugías médicas y en el diseño de piezas para 
+impresión 3D (\cite{KBT:2017}).
+
+\
+
+El problema de \emph{parametrización de una malla poligonal} consiste 
+en construir un mapa entre la malla y otro espacio (ej.: euclídeo \cite{RPPS:2017} 
+o esférico \cite{AKL:2017}). Construir parametrizaciones con buenas propiedades (ej.: 
+inyectividad local) es muy importante. En particular, dada una 
+parametrización inyectiva, es posible deformar la malla a partir de 
+deformar la imagen de la parametrización. 
+
+\
+
+La fabricación de piezas 3D requiere optimizar la cantidad de material 
+empleado. Eso implica tener herramientas de diseño que provean funciones 
+para construir superficies minimales. Los sistemas de ecuaciones que surgen 
+en este contexto son muy similares a los que aparecen en algunas formulaciones 
+del problema de deformación (\cite{POT:2017}). 
+
+\
+
+Muchos problemas requieren analizar la variación de una malla poligonal 
+en un intervalo de tiempo. La relación entre dos instantes sucesivos se 
+puede modelar mediante técnicas de deformación (\cite{PKCCH:2017}). En este 
+sentido, a modo de ejemplo podemos considerar el problema de modelar la 
+interacción entre un líquido y el cabello (\cite{FTBZG:2017}).
+
+\
+
+Otros problemas interesantes son: la construcción automatizada 
+de origami y de superficies con pliegues curvos y las deformaciones del 
+papel (\cite{KMM:2017}). En este caso es interesante que la interface con el usuario para 
+especificar la deformación no requiere una manija, sino que se especifica 
+mediante la compresión simultánea de cadenas cuyos extremos están fijos 
+en dos puntos de la superficie.
+
+\
+
+Actualmente la capacidad de procesamiento de las computadoras personales 
+permite considerar métodos no lineales para la deformación interactiva de 
+mallas poligonales (\cite{SPSKL:2017}).
+
+\
+
+Nuestro trabajo consiste en proveer herramientas de deformación de mallas 
+poligonales que puedan ser construidas por impresoras 3D. Eso implica por 
+un lado restringir los grados de libertad de las deformaciones a las capacidades 
+y limitaciones de los modelos de las impresoras y por otro definir interfaces 
+de usuario adecuadas para su uso en la construcción de prototipos de piezas.
+
 
 \section{Lugar de trabajo, infraestructura, factibilidad de desarrollo del trabajo y su financiamiento}
 
