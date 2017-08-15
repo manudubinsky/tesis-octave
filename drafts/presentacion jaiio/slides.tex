@@ -77,7 +77,7 @@ $$
 \only<2->{	
 	\begin{center}
 		\begin{tikzpicture}[scale=.9, transform shape]
-		\tikzstyle{every node} = [circle, fill=gray!30]
+		\tikzstyle{every node} = [circle, fill=blue!30]
 		\node (1) at (0, 2) {$v_1$};
 		\node (2) at (2, 2) {$v_2$};
 		\node (3) at (2, 0) {$v_3$};
@@ -97,9 +97,9 @@ $$
 	\begin{center}	
 		$L = \begin{bmatrix}
 			 3 & -1 & -1 & -1  \\
-			-1 &  3 & -1 &  0  \\
+			-1 &  2 & -1 &  0  \\
 			-1 & -1 &  3 & -1  \\
-			-1 &  0 & -1 &  3  \\
+			-1 &  0 & -1 &  2  \\
 		\end{bmatrix}$
 	\end{center}
 }
@@ -125,7 +125,7 @@ $D_{kj}=1$ y vale $0$ en las demás entradas. Obs: $L = D^tD$
 \only<2->{	
 	\begin{center}
 		\begin{tikzpicture}[scale=.9, transform shape, >=latex]
-		\tikzstyle{every node} = [circle, fill=gray!30]
+		\tikzstyle{every node} = [circle, fill=blue!30]
 		\node (1) at (0, 2) {$v_1$};
 		\node (2) at (2, 2) {$v_2$};
 		\node (3) at (2, 0) {$v_3$};
@@ -157,41 +157,88 @@ $D_{kj}=1$ y vale $0$ en las demás entradas. Obs: $L = D^tD$
 \end{frame}
 
 
-\begin{frame}
+\begin{frame}[t]
 \frametitle{Proyección ortogonal}
+\begin{block}{Definición}
+La \emph{proyección ortogonal} de un vector $y \in \mathbb{R}^n$ sobre un 
+subespacio $U \subset \mathbb{R}^n$ (de dimensión $k$) se define como: 
+$\min\limits_{\hat y \in U} ||y - \hat y||$
 
+\end{block}
+
+\begin{columns}[t]
+	\column{.5\textwidth}
+\only<2->{	
+	\begin{center}
+		\includegraphics[scale=.27]{proyeccion.jpg}
+	\end{center}
+}
+	\column{.5\textwidth}
+
+	\begin{center}	
+	\begin{itemize}
+		\only<3->{
+			\item Si $M = (x_1, \dots, x_k)\in \mathbb{R}^{n \times k}$ 
+			donde $\{x_i\}_{1 \leq i \leq k}$ define una base ortonormal de $U$ 
+			entonces $\hat y = M M^t y$
+		}
+		\only<4>{
+			\item El cociente $\frac{||\hat y||}{||y||}$ cuantifica la proporción  
+			del vector $y$ generada por el subespacio $U$
+		}
+	\end{itemize}
+	\end{center}
+\end{columns}
 
 \end{frame}
 
 \section{Contexto}
 
-\begin{frame}
+\begin{frame}[t]
 \frametitle{Mallas poligonales}
 
-\begin{itemize}
-	\item Grafos que modelan superficies inmersas en $\mathbb{R}^3$
-	\item Los vértices son un muestra de los puntos de la superficie
-	\item A cada vértice se le asocia su posicion en el espacio (ej.: 
-	coordenadas cartesianas)
-	\item Los ciclos simples del grafo se denominan \emph{caras}
-	\item Las caras son polígonos convexos simples (ej.: triángulos o 
-	cuadrados) que modelan una pequeña parte de la superficie  aproximando 
-	linealmente sus puntos interiores
-\end{itemize}
+\begin{center}
+	Las \emph{mallas poligonales} son grafos que modelan superficies inmersas en $\mathbb{R}^3$.
+\end{center}
 
+\begin{columns}[t]
+	\column{.5\textwidth}
+\only<2->{	
+	\begin{center}
+		\includegraphics[scale=.29]{elephav_graph.jpg}
+	\end{center}
+}
+	\column{.5\textwidth}
+\only<3->{	
+	\begin{center}
+		\includegraphics[scale=.29]{elephav_solid.jpg}
+	\end{center}
+}
+\end{columns}
 
 \end{frame}
 
-\begin{frame}
+\begin{frame}[t]
 \frametitle{Deformación de mallas poligonales}
 
 \begin{itemize}
 	\item Una \emph{deformación} de una malla poligonal $S$ es un mapa 
-	$d: S \rightarrow S'$ que asocia a cada punto $p \in S$ un vector de 
+	$d: S \rightarrow S'$ que asocia a cada nodo $p \in S$ un vector de 
 	desplazamiento $d(p)$.
-	\item Este tipo de operaciones es frecuente en herramientas de diseño 
-	3D (ej.: arquitectura, industria, dibujos de animación, etc.)
+	\only<2->{
+		\item Este tipo de operaciones es frecuente en herramientas de diseño 
+		3D
+	}
 \end{itemize}
+
+
+\only<3->{	
+	\begin{center}
+		\includegraphics[scale=.5]{deformacion.png}
+	\end{center}
+}
+
+	
 
 \end{frame}
 
