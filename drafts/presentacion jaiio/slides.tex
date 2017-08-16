@@ -15,7 +15,7 @@
  
 %-----------------------------------------------------------------------------------------
 
-\usetikzlibrary{arrows,automata,shapes}
+\usetikzlibrary{arrows,angles,calc,patterns,quotes}
 \setbeamertemplate{navigation symbols}{}
 \newcommand{\redstar}{\color{red}$\bigstar$\color{black}\xspace}
 \fillednodesfalse
@@ -183,8 +183,9 @@ $\min\limits_{\hat y \in U} ||y - \hat y||$
 			entonces $\hat y = M M^t y$
 		}
 		\only<4>{
-			\item El cociente $\frac{||\hat y||}{||y||}$ cuantifica la proporción  
-			del vector $y$ generada por el subespacio $U$
+			\item El cociente $\rho_U(y) = \frac{||\hat y||}{||y||}$ 
+			cuantifica la proporción  del vector $y$ generada por el 
+			subespacio $U$
 		}
 	\end{itemize}
 	\end{center}
@@ -218,58 +219,252 @@ $\min\limits_{\hat y \in U} ||y - \hat y||$
 
 \end{frame}
 
+%\begin{frame}[t]
+%\frametitle{Deformación de mallas poligonales}
+
+%\begin{itemize}
+	%\item Una \emph{deformación} de una malla poligonal $S$ es un mapa 
+	%$d: S \rightarrow S'$ que asocia a cada nodo $p \in S$ un vector de 
+	%desplazamiento $d(p)$.
+	%\only<2->{
+		%\item Este tipo de operaciones es frecuente en herramientas de diseño 
+		%3D
+	%}
+%\end{itemize}
+
+
+%\only<3->{	
+	%\begin{center}
+		%\includegraphics[scale=.5]{deformacion.png}
+	%\end{center}
+%}
+
+%\end{frame}
+
 \begin{frame}[t]
-\frametitle{Deformación de mallas poligonales}
+\frametitle{Integración de 1-formas diferenciales}
 
 \begin{itemize}
-	\item Una \emph{deformación} de una malla poligonal $S$ es un mapa 
-	$d: S \rightarrow S'$ que asocia a cada nodo $p \in S$ un vector de 
-	desplazamiento $d(p)$.
-	\only<2->{
-		\item Este tipo de operaciones es frecuente en herramientas de diseño 
-		3D
-	}
-\end{itemize}
+	\item Una 1-forma diferencial mide una ``cantidad" infinitesimal que 
+	puede ser integrada a lo largo de una curva. 
+\only<2->{	
+	\item Se pueden definir sobre mallas poligonales
+	\begin{itemize}
+		\item Fijar una dirección para cada eje 
+		\item Fijar un función $f: E \rightarrow \mathbb{R}$ ($f$ es la 
+		forma diferencial)
+		\item Integrar $f$ consiste en encontrar una función $x: V 
+		\rightarrow \mathbb{R}$ tal que $f(e) = x(v_j) - x(v_i)$ para 
+		cada eje dirigido $e = (v_i \rightarrow v_j)$
+	\end{itemize}
+}
 
+\begin{columns}[t]
+	\column{.5\textwidth}
+\only<3>{	
+\vskip5pt
 
-\only<3->{	
 	\begin{center}
-		\includegraphics[scale=.5]{deformacion.png}
+		\begin{tikzpicture}[scale=.9, transform shape, >=latex]
+		\tikzstyle{every node} = [circle, fill=blue!30]
+		\node (1) at (0, 2) {$v_1$};
+		\node (2) at (2, 2) {$v_2$};
+		\node (3) at (2, 0) {$v_3$};
+		\node (4) at (0, 0) {$v_4$};
+
+		\tikzstyle{every node} = [draw=none,fill=none,font=\scriptsize,midway]
+		\draw [-] (1) -- (2);
+		\draw [-] (1) -- (3);
+		\draw [-] (1) -- (4);
+		\draw [-] (2) -- (3);
+		\draw [-] (3) -- (4);
+		\end{tikzpicture}
 	\end{center}
 }
 
-	
+\only<4>{	
 
-\end{frame}
+\vskip4pt
 
-\begin{frame}
-\frametitle{Integración de 1-formas diferenciales}
+	\begin{center}
+		\begin{tikzpicture}[scale=.9, transform shape, >=latex]
+		\tikzstyle{every node} = [circle, fill=blue!30]
+		\node (1) at (0, 2) {$v_1$};
+		\node (2) at (2, 2) {$v_2$};
+		\node (3) at (2, 0) {$v_3$};
+		\node (4) at (0, 0) {$v_4$};
+
+		\tikzstyle{every node} = [draw=none,fill=none,font=\scriptsize,midway]
+		\draw [->] (1) -- (2);
+		\draw [->] (1) -- (3);
+		\draw [->] (1) -- (4);
+		\draw [->] (2) -- (3);
+		\draw [->] (3) -- (4);
+		\end{tikzpicture}
+	\end{center}
+}
+
+\only<5>{	
+	\begin{center}
+		\begin{tikzpicture}[scale=.9, transform shape, >=latex]
+		\tikzstyle{every node} = [circle, fill=blue!30]
+		\node (1) at (0, 2) {$v_1$};
+		\node (2) at (2, 2) {$v_2$};
+		\node (3) at (2, 0) {$v_3$};
+		\node (4) at (0, 0) {$v_4$};
+
+		\tikzstyle{every node} = [draw=none,fill=none,font=\scriptsize,midway]
+		\draw [->] (1) -- node[above] {3} (2);
+		\draw [->] (1) -- node[above] {5} (3);
+		\draw [->] (1) -- node[left]  {7} (4);
+		\draw [->] (2) -- node[right] {2} (3);
+		\draw [->] (3) -- node[below] {2} (4);
+		\end{tikzpicture}
+	\end{center}
+}
+
+\only<6->{	
+	\begin{center}
+		\begin{tikzpicture}[scale=.9, transform shape, >=latex]
+		\tikzstyle{every node} = [circle, fill=blue!30]
+		\node (1) at (0, 2) {2};
+		\node (2) at (2, 2) {5};
+		\node (3) at (2, 0) {7};
+		\node (4) at (0, 0) {9};
+
+		\tikzstyle{every node} = [draw=none,fill=none,font=\scriptsize,midway]
+		\draw [->] (1) -- node[above] {3} (2);
+		\draw [->] (1) -- node[above] {5} (3);
+		\draw [->] (1) -- node[left]  {7} (4);
+		\draw [->] (2) -- node[right] {2} (3);
+		\draw [->] (3) -- node[below] {2} (4);
+		\end{tikzpicture}
+	\end{center}
+}
+
+
+	\column{.5\textwidth}
+
+	\begin{center}	
+	\begin{itemize}
+		\only<7->{
+			\item Si tiene solución, hay infinitas.
+		}
+		\only<8->{
+			\item Puede no tener solución.
+		}
+		\only<9->{
+			\item $\min\limits_{x} ||Dx-f||$
+		}
+		\only<10->{
+			\item $Lx = D^t D x = b$
+		}
+
+	\end{itemize}
+	\end{center}
+\end{columns}
+
+\end{itemize}
+
 
 \end{frame}
 
 \section{Problema}
 
-\begin{frame}
+\begin{frame}[t]
 \frametitle{Formulación}
 
-Problema de Minimizacion
-Encontrar la mejor orientacion de los ejes
-Subespacio en el que la norma de la proyeccion ortogonal del vector de pesos es máxima
+\begin{block}{Problema}
+Dado un grafo $G=(V,E)$ y una función de pesos en los ejes $f: E 
+\rightarrow \mathbb{R}$, se trata de resolver el siguiente problema de 
+minimización:
+
+$$\min\limits_{D,x} ||Dx-f||$$
+
+\end{block}
+
+\begin{center}	
+\begin{itemize}
+	\only<2->{
+		\item Encontrar la orientación de los ejes y la	función de pesos 
+		en los nodos $x: V \rightarrow \mathbb{R}$ que minimice el error 
+		global.
+	}
+	\only<3->{
+		\item Heurística: encontrar el subespacio $D$ en el que la norma 
+		de la proyección ortogonal de $f$ sea máxima con respecto a 
+		$\rho_D(f)$
+	}
+\end{itemize}
+\end{center}
+
 \end{frame}
 
-\begin{frame}
-\frametitle{Posibles aplicaciones}
+
+\begin{frame}[t]
+\frametitle{Observaciones}
+
+\begin{itemize}
+	\only<1->{
+		\item Procedimiento en 2 fases:
+		\begin{enumerate}
+			\item Encontrar la matriz de incidencia dirigida $D$ que 
+			maximice $\rho_D(y)$
+			\item Resolver el sistema laplaciano asociado: $Lx = b$
+		\end{enumerate}
+	}
+	\only<2->{
+		\item Hay que explorar el espacio de matrices de incidencia 
+		dirigida del grafo $G$. Tamaño del espacio: $2^{|E|}$.
+	}
+	\only<3->{
+		\item Calcular de manera exacta la norma de la proyección ortogonal 
+		de $f$ sobre el subespacio generado por las columnas de cada 
+		matriz de incidencia dirigida $D$ no es viable.
+	}
+	\only<4->{
+		\item Abordar el problema de manera aproximada con una 
+		metaheurística.
+	}
+\end{itemize}
 
 \end{frame}
 
-\section{Estrategia}
-
-\begin{frame}
+\begin{frame}[t]
 \frametitle{$\alpha$-norma}
 
-Gram-Schmidt es costoso, ver costo
-Estimacion de la norma: $\alpha$-norma 
-Ángulos acotados entre las columnas de una matriz de incidencia dirigida
+\begin{columns}[t]
+	\column{.2\textwidth}
+\only<1->{	
+\begin{tikzpicture}[scale=.9, transform shape, >=latex]
+  \coordinate (v1) at (0,0);
+  \coordinate (v2) at (1,2);
+  \coordinate (v3) at (2.5,0);
+  % add coordinate at the extension of the line from v1 to v2
+  \coordinate (v2-2) at ($(v1)!1.2!(v2)$); 
+
+  \draw[->] (v1) -- node[above left] {$\vec{d_i}$} (v2);
+  \draw[->] (v1) -- node[below] {$\vec{d_j}$} (v3);
+
+  % draw line and angle
+\pic [draw, -, "$\alpha$", angle eccentricity=1.5] {angle = v3--v1--v2};
+\end{tikzpicture}
+}
+	\column{.5\textwidth}
+	\begin{itemize}
+\only<1->{
+	\item El ángulo entre dos columnas $d_i, d_j$ de una matriz de 
+	incidencia dirigida $D$ está acotado:
+	$$\alpha \in [90^{\circ},120^{\circ}]$$
+}
+\only<2->{
+	\item Estimación de la norma de la proyección ortogonal de $f$ 
+	sobre el subespacio generado por $D$: 
+	$$\alpha(f) = ||D D^t f||$$
+}
+	\end{itemize}
+
+\end{columns}
 
 \end{frame}
 
@@ -301,6 +496,11 @@ Parámetros
 \section{Conclusiones}
 \begin{frame}
 \frametitle{Conclusiones}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Posibles aplicaciones}
 
 \end{frame}
 
