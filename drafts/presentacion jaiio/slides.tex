@@ -61,7 +61,7 @@
 
 \begin{block}{Definición}
 Dado un grafo $G=(V,E)$, su \emph{matriz laplaciana} $L \in 
-\mathbb{N}^{|V| \times |V|}$ se define del siguiente modo:
+\mathbb{Z}^{|V| \times |V|}$ se define del siguiente modo:
 
 $$
 	L_{ij} =
@@ -357,7 +357,7 @@ $\min\limits_{\hat y \in U} ||y - \hat y||$
 			\item $\min\limits_{x} ||Dx-f||$
 		}
 		\only<10->{
-			\item $Lx = D^t D x = b$
+			\item $Lx = D^t f$
 		}
 
 	\end{itemize}
@@ -409,8 +409,8 @@ $$\min\limits_{D,x} ||Dx-f||$$
 		\item Procedimiento en 2 fases:
 		\begin{enumerate}
 			\item Encontrar la matriz de incidencia dirigida $D$ que 
-			maximice $\rho_D(y)$
-			\item Resolver el sistema laplaciano asociado: $Lx = b$
+			maximice $\rho_D(f)$
+			\item Resolver el sistema laplaciano asociado: $Lx = D^t f$
 		\end{enumerate}
 	}
 	\only<2->{
@@ -423,15 +423,15 @@ $$\min\limits_{D,x} ||Dx-f||$$
 		matriz de incidencia dirigida $D$ no es viable.
 	}
 	\only<4->{
-		\item Abordar el problema de manera aproximada con una 
-		metaheurística.
+		\item Proponemos abordar el problema de manera aproximada con 
+		una metaheurística.
 	}
 \end{itemize}
 
 \end{frame}
 
 \begin{frame}[t]
-\frametitle{$\alpha$-norma}
+\frametitle{$D$-norma}
 
 \begin{columns}[t]
 	\column{.2\textwidth}
@@ -450,18 +450,27 @@ $$\min\limits_{D,x} ||Dx-f||$$
 \pic [draw, -, "$\alpha$", angle eccentricity=1.5] {angle = v3--v1--v2};
 \end{tikzpicture}
 }
-	\column{.5\textwidth}
+	\column{.8\textwidth}
 	\begin{itemize}
 \only<1->{
-	\item El ángulo entre dos columnas $d_i, d_j$ de una matriz de 
+	\item El ángulo entre dos columnas $d_i, d_j$ de cualquier matriz de 
 	incidencia dirigida $D$ está acotado:
 	$$\alpha \in [90^{\circ},120^{\circ}]$$
 }
 \only<2->{
-	\item Estimación de la norma de la proyección ortogonal de $f$ 
-	sobre el subespacio generado por $D$: 
-	$$\alpha(f) = ||D D^t f||$$
+	\item Si se normalizan las columnas de $D=[d_1 \dots d_{|V|}]$: $\hat 
+	D = [\frac{d_1}{||d_1||} \dots \frac{d_{|V|}}{||d_{|V|}||}]$
 }
+\only<3->{
+	\item Se puede estimar la norma de la proyección ortogonal de $f$ 
+	sobre el subespacio generado por $D$: 
+	$$||f||_D := ||\hat D \hat D^t f|| \approx ||\hat D^t f||$$
+}
+\only<4->{
+	\item Y se puede estimar $\rho_D(f)$: 
+	$$\hat \rho_D(f) :=  \frac{||f||_D}{||f||}$$
+}
+
 	\end{itemize}
 
 \end{columns}
@@ -470,25 +479,111 @@ $$\min\limits_{D,x} ||Dx-f||$$
 
 \section{Implementación}
 
-\begin{frame}
-\frametitle{Metaheurísticas GRASP}
+\begin{frame}[t]
+\frametitle{$k$-vecindad de $D$}
+
+\vskip10pt
+
+Para explorar el espacio de matrices de incidencia dirigida del grafo 
+$G$, definimos una noción de vecindad.
+
+\vskip20pt
+
+\only<2->{
+\begin{block}{Definición}
+La \emph{k-vecindad} de una matriz de incidencia dirigida $D$ es el 
+conjunto: 
+
+$$\{D' / D \ y \ D' \ difieren \ en \ la \ orientacion \ de \ 
+exactamente \ k \ ejes\}$$
+
+
+\end{block}
+}
 
 \end{frame}
 
 \begin{frame}
 \frametitle{Algoritmo}
 
-Parámetros
-
+\begin{algorithm}[H]
+    \caption{Integrate($G,f,\phi,\psi$)}
+	\begin{algorithmic}
+		\State $currentPoint \gets Initialize(G)$
+		\State $bestPoint \gets currentPoint$
+		\While{p}
+			\State $\Omega \gets Neighbors(currentPoint,\phi,\psi)$
+			\State $bestNeighbor \gets BestNeighbor(\Omega,f)$
+			\If{$||f||_D^2 > ||f||_D^2$}
+				\State $bestPoint \gets bestNeighbor$
+			\EndIf
+			\State $currentPoint \gets bestNeighbor$
+		\EndWhile
+		\State Solve laplacian system $L x = D^t f$ \\
+		\Return $x$
+	\end{algorithmic}
+	\label{alg:alg1}
+\end{algorithm}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[t]
 \frametitle{Detalles técnicos}
+	\begin{center}	
+	\begin{itemize}
+		\only<1->{
+			\item Para calcular $||f||_D^2$ no es necesario normalizar las 
+			columnas de $D$ explícitamente, porque $||d_i||^2 = deg(v_i)$ 
+			(donde $d_i$ es la $i$-esima columna de $D$)
+		}
+		\only<2->{
+			\item Calcular $||f||_{D_i}^2$ para los elementos de la 
+			k-vecindad de $D$ es sencillo porque sólo pocos términos se 
+			modifican respecto $||f||_D$
+		}
+		\only<3->{
+			\item El sistema lineal laplaciano se puede resolver con 
+			técnicas novedosas
+		}
+		\only<4->{
+			\item La matriz de incidencia dirigida inicial es arbitraria. 
+		}
+		\only<5->{
+			\item Los parámetros fueron ajustados empíricamente de acuerdo 
+			al tamaño de las instancias de prueba: $\phi = 2$, $\psi = 
+			10^{-2} |E|$
+		}
+
+	\end{itemize}
+	\end{center}
 
 \end{frame}
 
-\begin{frame}
+\begin{frame}[t]
 \frametitle{Casos de prueba}
+\begin{columns}[t]
+	\column{.5\textwidth}
+	
+\only<1->{	
+	\begin{center}
+		\includegraphics[scale=.24]{complete_graphs.png}
+	\end{center}
+}
+
+\only<3->{	
+	\begin{center}
+		\includegraphics[scale=.24]{3dmeshes.png}
+	\end{center}
+}
+
+	\column{.5\textwidth}
+	
+\only<2->{	
+	\begin{center}
+		\includegraphics[scale=.24]{cycle_graphs.png}
+	\end{center}
+}
+
+\end{columns}
 
 \end{frame}
 
