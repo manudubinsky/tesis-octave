@@ -423,8 +423,8 @@ $$\min\limits_{D,x} ||Dx-f||$$
 		matriz de incidencia dirigida $D$ no es viable.
 	}
 	\only<4->{
-		\item Proponemos abordar el problema de manera aproximada con 
-		una metaheurística.
+		\item Proponemos abordar el problema de manera aproximada mediante 
+		una metaheurística GRASP.
 	}
 \end{itemize}
 
@@ -538,14 +538,14 @@ exactamente \ k \ ejes\}$$
 		\only<2->{
 			\item Calcular $||f||_{D_i}^2$ para los elementos de la 
 			k-vecindad de $D$ es sencillo porque sólo pocos términos se 
-			modifican respecto $||f||_D$
+			modifican respecto $||f||_D^2$
 		}
 		\only<3->{
 			\item El sistema lineal laplaciano se puede resolver con 
 			técnicas novedosas
 		}
 		\only<4->{
-			\item La matriz de incidencia dirigida inicial es arbitraria. 
+			\item La matriz de incidencia dirigida inicial es arbitraria
 		}
 		\only<5->{
 			\item Los parámetros fueron ajustados empíricamente de acuerdo 
@@ -591,11 +591,42 @@ exactamente \ k \ ejes\}$$
 \section{Conclusiones}
 \begin{frame}
 \frametitle{Conclusiones}
+	\begin{center}
+	\begin{itemize}
+	\only<1->{
+		\item Formulamos una versión más general del problema de integración 
+		de $1$-formas diferenciales sobre mallas poligonales
+	}
+	\only<2->{
+		\item Definimos un criterio para estimar la proyección ortogonal 
+		de un vector sobre el subespacio generado por las columnas de una 
+		matriz de incidencia dirigida
+	}
+	\only<3->{
+		\item Implementamos un algoritmo basado en una heurística para 
+		resolver el problema de manera aproximada
+	}
+	\end{itemize}
+	\end{center}
 
 \end{frame}
 
 \begin{frame}
-\frametitle{Posibles aplicaciones}
+\frametitle{Trabajo futuro}
+	\begin{center}
+	\begin{itemize}
+	\only<1->{
+		\item Demostrar que la complejidad del problema es $NP$-completo
+	}
+	\only<2->{
+		\item Proponer argumentos estadísticos que garanticen cotas para 
+		la convergencia del algoritmo
+	}
+	\only<3->{
+		\item Aplicar el algoritmo a problemas reales de \emph{scheduling}
+	}
+	\end{itemize}
+	\end{center}
 
 \end{frame}
 
