@@ -514,7 +514,7 @@ exactamente \ k \ ejes\}$$
 		\While{p}
 			\State $\Omega \gets Neighbors(currentPoint,\phi,\psi)$
 			\State $bestNeighbor \gets BestNeighbor(\Omega,f)$
-			\If{$||f||_D^2 > ||f||_D^2$}
+			\If{$||f||_{bestNeighbor}^2 > ||f||_{bestPoint}^2$}
 				\State $bestPoint \gets bestNeighbor$
 			\EndIf
 			\State $currentPoint \gets bestNeighbor$
@@ -524,38 +524,6 @@ exactamente \ k \ ejes\}$$
 	\end{algorithmic}
 	\label{alg:alg1}
 \end{algorithm}
-\end{frame}
-
-\begin{frame}[t]
-\frametitle{Detalles técnicos}
-	\begin{center}	
-	\begin{itemize}
-		\only<1->{
-			\item Para calcular $||f||_D^2$ no es necesario normalizar las 
-			columnas de $D$ explícitamente, porque $||d_i||^2 = deg(v_i)$ 
-			(donde $d_i$ es la $i$-esima columna de $D$)
-		}
-		\only<2->{
-			\item Calcular $||f||_{D_i}^2$ para los elementos de la 
-			k-vecindad de $D$ es sencillo porque sólo pocos términos se 
-			modifican respecto $||f||_D^2$
-		}
-		\only<3->{
-			\item El sistema lineal laplaciano se puede resolver con 
-			técnicas novedosas
-		}
-		\only<4->{
-			\item La matriz de incidencia dirigida inicial es arbitraria
-		}
-		\only<5->{
-			\item Los parámetros fueron ajustados empíricamente de acuerdo 
-			al tamaño de las instancias de prueba: $\phi = 2$, $\psi = 
-			10^{-2} |E|$
-		}
-
-	\end{itemize}
-	\end{center}
-
 \end{frame}
 
 \begin{frame}[t]
@@ -635,6 +603,38 @@ exactamente \ k \ ejes\}$$
 \begin{center}
 ¿Preguntas?
 \end{center}
+\end{frame}
+
+\begin{frame}[t]
+\frametitle{Detalles técnicos}
+	\begin{center}	
+	\begin{itemize}
+		\only<1->{
+			\item Para calcular $||f||_D^2$ no es necesario normalizar las 
+			columnas de $D$ explícitamente, porque $||d_i||^2 = deg(v_i)$ 
+			(donde $d_i$ es la $i$-esima columna de $D$)
+		}
+		\only<2->{
+			\item Calcular $||f||_{D_i}^2$ para los elementos de la 
+			k-vecindad de $D$ es sencillo porque sólo pocos términos se 
+			modifican respecto $||f||_D^2$
+		}
+		\only<3->{
+			\item El sistema lineal laplaciano se puede resolver con 
+			técnicas novedosas
+		}
+		\only<4->{
+			\item La matriz de incidencia dirigida inicial es arbitraria
+		}
+		\only<5->{
+			\item Los parámetros fueron ajustados empíricamente de acuerdo 
+			al tamaño de las instancias de prueba: $\phi = 2$, $\psi = 
+			10^{-2} |E|$
+		}
+
+	\end{itemize}
+	\end{center}
+
 \end{frame}
 
 
